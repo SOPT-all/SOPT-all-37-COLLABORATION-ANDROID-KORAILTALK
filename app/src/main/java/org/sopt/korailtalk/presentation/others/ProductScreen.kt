@@ -21,7 +21,7 @@ fun ProductRoute(
 }
 
 @Composable
-fun ProductScreen(
+private fun ProductScreen(
     modifier: Modifier = Modifier
 ) {
     Column(

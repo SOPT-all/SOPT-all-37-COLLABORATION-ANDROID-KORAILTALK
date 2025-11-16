@@ -24,7 +24,7 @@ fun HomeRoute(
 }
 
 @Composable
-fun HomeScreen(
+private fun HomeScreen(
     onReservationClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {

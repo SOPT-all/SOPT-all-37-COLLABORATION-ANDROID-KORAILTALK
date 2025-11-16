@@ -21,7 +21,7 @@ fun TicketRoute(
 }
 
 @Composable
-fun TicketScreen(
+private fun TicketScreen(
     modifier: Modifier = Modifier
 ) {
     Column(

@@ -21,7 +21,7 @@ fun SaleRoute(
 }
 
 @Composable
-fun SaleScreen(
+private fun SaleScreen(
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -37,6 +37,6 @@ fun SaleScreen(
 
 @DefaultPreview
 @Composable
-private fun ProductScreenPreview() {
+private fun SaleScreenPreview() {
     SaleScreen()
 }

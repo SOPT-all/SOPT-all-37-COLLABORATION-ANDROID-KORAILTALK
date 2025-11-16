@@ -26,7 +26,7 @@ fun ReservationRoute(
 }
 
 @Composable
-fun ReservationScreen(
+private fun ReservationScreen(
     onBackClick: () -> Unit,
     onTrailItemClick: () -> Unit,
     modifier: Modifier = Modifier

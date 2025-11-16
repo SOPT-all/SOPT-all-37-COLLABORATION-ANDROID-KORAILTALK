@@ -27,7 +27,7 @@ fun CheckoutRoute(
 }
 
 @Composable
-fun CheckoutScreen(
+private fun CheckoutScreen(
     onBackClick: () -> Unit,
     onCloseClick: () -> Unit,
     modifier: Modifier = Modifier
