@@ -5,7 +5,7 @@ import org.sopt.korailtalk.R
 import org.sopt.korailtalk.core.navigation.MainTabRoute
 import org.sopt.korailtalk.core.navigation.Route
 
-internal enum class MainTab(
+enum class MainTab(
     @DrawableRes val iconResId: Int,
     val route: MainTabRoute,
     val label: String

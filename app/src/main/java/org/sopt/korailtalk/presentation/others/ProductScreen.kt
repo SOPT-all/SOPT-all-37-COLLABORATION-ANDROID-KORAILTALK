@@ -1,4 +1,4 @@
-package org.sopt.korailtalk.presentation.home
+package org.sopt.korailtalk.presentation.others
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,16 +12,16 @@ import androidx.compose.ui.Modifier
 import org.sopt.korailtalk.core.common.util.preview.DefaultPreview
 
 @Composable
-fun HomeRoute(
+fun ProductRoute(
     paddingValues: PaddingValues
 ) {
-    HomeScreen(
+    ProductScreen(
         modifier = Modifier.padding(paddingValues)
     )
 }
 
 @Composable
-fun HomeScreen(
+fun ProductScreen(
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -30,13 +30,13 @@ fun HomeScreen(
         modifier = modifier.fillMaxSize()
     ) {
         Text(
-            "Home"
+            "Product"
         )
     }
 }
 
 @DefaultPreview
 @Composable
-private fun HomeScreenPreview() {
-    HomeScreen()
+private fun ProductScreenPreview() {
+    ProductScreen()
 }
