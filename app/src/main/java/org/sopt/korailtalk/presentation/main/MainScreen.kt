@@ -6,11 +6,13 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import kotlinx.collections.immutable.toPersistentList
+import org.sopt.korailtalk.presentation.checkout.navigation.checkoutNavGraph
 import org.sopt.korailtalk.presentation.home.navigation.homeNavGraph
 import org.sopt.korailtalk.presentation.main.component.MainBottomBar
 import org.sopt.korailtalk.presentation.others.navigation.productNavGraph
 import org.sopt.korailtalk.presentation.others.navigation.saleNavGraph
 import org.sopt.korailtalk.presentation.others.navigation.ticketNavGraph
+import org.sopt.korailtalk.presentation.reservation.navigation.reservationNavGraph
 
 @Composable
 fun MainScreen(
@@ -34,7 +36,20 @@ fun MainScreen(
             startDestination = navigator.startDestination
         ) {
             homeNavGraph(
-                paddingValues = paddingValues
+                paddingValues = paddingValues,
+                navigateToReservation = navigator::navigateToReservation
+            )
+            
+            reservationNavGraph(
+                paddingValues = paddingValues,
+                navigateToCheckout = navigator::navigateToCheckout,
+                navigateUp = navigator::navigateUp
+            )
+
+            checkoutNavGraph(
+                paddingValues = paddingValues,
+                navigateToHome = navigator::navigateToHome,
+                navigateUp = navigator::navigateUp
             )
 
             // dummy

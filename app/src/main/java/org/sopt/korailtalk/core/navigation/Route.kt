@@ -1,3 +1,11 @@
 package org.sopt.korailtalk.core.navigation
 
-interface Route
+import kotlinx.serialization.Serializable
+
+interface Route {
+    @Serializable
+    data object Checkout : Route
+
+    @Serializable
+    data object Reservation : Route
+}

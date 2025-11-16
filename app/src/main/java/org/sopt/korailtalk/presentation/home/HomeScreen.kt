@@ -9,19 +9,23 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import org.sopt.korailtalk.core.common.util.extension.noRippleClickable
 import org.sopt.korailtalk.core.common.util.preview.DefaultPreview
 
 @Composable
 fun HomeRoute(
-    paddingValues: PaddingValues
+    paddingValues: PaddingValues,
+    navigateToReservation: () -> Unit
 ) {
     HomeScreen(
-        modifier = Modifier.padding(paddingValues)
+        modifier = Modifier.padding(paddingValues),
+        onReservationClick = navigateToReservation
     )
 }
 
 @Composable
 fun HomeScreen(
+    onReservationClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -30,7 +34,10 @@ fun HomeScreen(
         modifier = modifier.fillMaxSize()
     ) {
         Text(
-            "Home"
+            "Home",
+            modifier = Modifier.noRippleClickable(
+                onClick = onReservationClick
+            )
         )
     }
 }
@@ -38,5 +45,7 @@ fun HomeScreen(
 @DefaultPreview
 @Composable
 private fun HomeScreenPreview() {
-    HomeScreen()
+    HomeScreen(
+        onReservationClick = {}
+    )
 }

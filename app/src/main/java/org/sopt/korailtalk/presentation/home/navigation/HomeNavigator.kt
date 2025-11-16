@@ -13,11 +13,13 @@ fun NavController.navigateToHome(navOptions: NavOptions) {
 }
 
 fun NavGraphBuilder.homeNavGraph(
-    paddingValues: PaddingValues
+    paddingValues: PaddingValues,
+    navigateToReservation: () -> Unit // TODO: 에약 정보 전달
 ) {
     composable<MainTabRoute.Home> {
         HomeRoute(
-            paddingValues = paddingValues
+            paddingValues = paddingValues,
+            navigateToReservation = navigateToReservation
         )
     }
 }
