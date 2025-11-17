@@ -18,6 +18,9 @@ import org.sopt.korailtalk.R
 import org.sopt.korailtalk.core.common.util.extension.noRippleClickable
 import org.sopt.korailtalk.core.designsystem.theme.KorailTalkTheme
 
+/**
+ * 스택이 쌓이는 화면에서 사용 (Reservation, Checkout)
+ */
 @Composable
 fun BackTopAppBar(
     onBackClick: () -> Unit,
