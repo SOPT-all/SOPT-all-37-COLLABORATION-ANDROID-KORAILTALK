@@ -5,9 +5,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideOut
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,16 +25,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
 import org.sopt.korailtalk.core.common.util.extension.noRippleClickable
+import org.sopt.korailtalk.core.designsystem.theme.KORAILTALKTheme
 import org.sopt.korailtalk.core.designsystem.theme.KorailTalkTheme
 import org.sopt.korailtalk.presentation.main.MainTab
 
@@ -93,16 +88,12 @@ private fun RowScope.MainBottomBarItem(
             imageVector = ImageVector.vectorResource(tab.iconResId),
             modifier = Modifier.size(28.dp),
             contentDescription = tab.label,
-            tint = if (selected) Color.Black else Color.Gray // TODO: 디자인 시스템 color 적용
+            tint = if (selected) KorailTalkTheme.colors.black else KorailTalkTheme.colors.gray200
         )
-        Text( // TODO: 디자인 시스템 color, typo 적용
+        Text(
             text = tab.label,
-            color = if (selected) Color.Black else Color.Gray,
-            fontSize = 12.sp,
-            style = TextStyle(
-                fontWeight = FontWeight.Medium,
-                textAlign = TextAlign.Center
-            )
+            color = if (selected) KorailTalkTheme.colors.black else KorailTalkTheme.colors.gray200,
+            style = KorailTalkTheme.typography.cap.cap1M12
         )
     }
 }
@@ -110,7 +101,7 @@ private fun RowScope.MainBottomBarItem(
 @Preview(showBackground = false)
 @Composable
 private fun MainBottomBarPreview() {
-    KorailTalkTheme {
+    KORAILTALKTheme {
         Column(modifier = Modifier) {
             MainBottomBar(
                 visible = true,
