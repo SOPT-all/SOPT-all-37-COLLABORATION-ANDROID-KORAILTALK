@@ -29,6 +29,7 @@ class MainNavigator(
 ) {
     val startDestination = Home
 
+    // NavController의 Flow를 관찰하여 현재 Destination을 StateFlow로 변환
     private val currentDestination = navController.currentBackStackEntryFlow
         .map { it.destination }
         .stateIn(
@@ -37,6 +38,7 @@ class MainNavigator(
             initialValue = null
         )
 
+    // derived state를 Composable 종속성 없이 StateFlow로 생성
     val currentTab: StateFlow<MainTab?> = currentDestination
         .map { destination ->
             MainTab.find { tab ->
@@ -49,6 +51,7 @@ class MainNavigator(
             initialValue = null
         )
 
+    // MainTab 소속인지를 확인하며 바텀바 노출 여부 체크
     val isBottomBarVisible: StateFlow<Boolean> = currentDestination
         .map { destination ->
             MainTab.contains { tab ->
