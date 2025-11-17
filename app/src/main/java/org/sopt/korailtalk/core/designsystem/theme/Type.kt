@@ -97,7 +97,7 @@ val defaultKorailTalkTypography = KorailTalkTypography(
             fontSize = 18.sp
         ),
         head5R18 = KorailTalkTextStyle(
-            fontFamily = PretendardFont.Medium,
+            fontFamily = PretendardFont.Regular,
             fontSize = 18.sp
         )
     ),
@@ -145,7 +145,7 @@ val defaultKorailTalkTypography = KorailTalkTypography(
             fontSize = 12.sp
         ),
         cap2R12 = KorailTalkTextStyle(
-            fontFamily = PretendardFont.Medium,
+            fontFamily = PretendardFont.Regular,
             fontSize = 12.sp
         )
     )
