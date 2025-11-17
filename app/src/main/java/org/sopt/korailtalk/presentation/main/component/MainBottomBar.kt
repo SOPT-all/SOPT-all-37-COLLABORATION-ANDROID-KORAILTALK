@@ -7,6 +7,7 @@ import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -22,15 +23,18 @@ import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
 import org.sopt.korailtalk.core.common.util.extension.noRippleClickable
+import org.sopt.korailtalk.core.common.util.preview.DefaultPreview
 import org.sopt.korailtalk.core.designsystem.theme.KORAILTALKTheme
 import org.sopt.korailtalk.core.designsystem.theme.KorailTalkTheme
 import org.sopt.korailtalk.presentation.main.MainTab
@@ -47,23 +51,36 @@ internal fun MainBottomBar(
         enter = fadeIn() + slideIn { IntOffset(0, it.height) },
         exit = fadeOut() + slideOut { IntOffset(0, it.height) }
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceAround,
+        Box(
             modifier = Modifier
-                .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
-                .background(Color.White)
-                .padding(12.dp)
                 .navigationBarsPadding()
                 .fillMaxWidth()
-        ) {
-            tabs.forEach { tab ->
-                key(tab.route) {
-                    MainBottomBarItem(
-                        tab = tab,
-                        selected = (tab == currentTab),
-                        onClick = { onTabSelected(tab) }
+                .padding(top = 1.dp)
+                .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
+                .dropShadow(
+                    shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
+                    shadow = Shadow(
+                        radius = 12.dp,
+                        color = Color.Black,
+                        alpha = 0.05f,
+                        offset = DpOffset(x = 0.dp, y = (-0.5).dp),
                     )
+                )
+                .background(KorailTalkTheme.colors.white)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp)
+            ) {
+                tabs.forEach { tab ->
+                    key(tab.route) {
+                        MainBottomBarItem(
+                            tab = tab,
+                            selected = (tab == currentTab),
+                            onClick = { onTabSelected(tab) }
+                        )
+                    }
                 }
             }
         }
@@ -80,9 +97,8 @@ private fun RowScope.MainBottomBarItem(
         modifier = Modifier
             .noRippleClickable(onClick = onClick)
             .weight(1f)
-            .padding(vertical = 6.dp),
+            .padding(vertical = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(tab.iconResId),
@@ -98,7 +114,7 @@ private fun RowScope.MainBottomBarItem(
     }
 }
 
-@Preview(showBackground = false)
+@DefaultPreview
 @Composable
 private fun MainBottomBarPreview() {
     KORAILTALKTheme {
