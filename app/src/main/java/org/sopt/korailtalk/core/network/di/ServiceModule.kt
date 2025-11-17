@@ -10,6 +10,9 @@ import retrofit2.Retrofit
 import javax.inject.Named
 import javax.inject.Singleton
 
+/**
+ * 의존성 주입 자동화를 위해 Module 생성
+ */
 @Module
 @InstallIn(SingletonComponent::class)
 object ServiceModule {

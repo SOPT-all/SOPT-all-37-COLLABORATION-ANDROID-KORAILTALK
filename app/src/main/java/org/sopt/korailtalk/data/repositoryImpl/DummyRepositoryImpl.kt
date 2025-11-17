@@ -11,6 +11,7 @@ class DummyRepositoryImpl @Inject constructor(
     private val dummyService: DummyService
 ) : DummyRepository{
     override suspend fun dummy(requestDto: DummyRequestDto): Result<DummyModel> = runCatching{
+        // .toModel()이라는 화장함수를 이용해서 타입변환 시켜주기
         dummyService.sampleService(requestDto).data.toModel()
     }
 }
