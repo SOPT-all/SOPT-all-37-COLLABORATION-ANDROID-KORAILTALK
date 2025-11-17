@@ -31,69 +31,70 @@ val gray_100 = Color(0xFFF0F0F0)
 val gray_50 = Color(0xFFFAFAFA)
 
 //black_and_white
-val black = Color(0xFF000000)
-val white = Color(0xFFFFFFFF)
+val black_ = Color(0xFF000000)
+val white_ = Color(0xFFFFFFFF)
 
 
 @Immutable
 data class KorailTalkColors(
     //primary Color
-    val Primary_700: Color = primary_700,
-    val Primary_500: Color = primary_500,
-    val Primary_400: Color = primary_400,
-    val Primary_300: Color = primary_300,
-    val Primary_200: Color = primary_200,
+    val primary700: Color = primary_700,
+    val primary500: Color = primary_500,
+    val primary400: Color = primary_400,
+    val primary300: Color = primary_300,
+    val primary200: Color = primary_200,
 
-   //secondary Color
-    val Secondary_p_400: Color = secondary_p_400,
-    val Secondary_p_200: Color = secondary_p_200,
-    val Secondary_m_400: Color = secondary_m_400,
-    val Secondary_m_200: Color = secondary_m_200,
-
-
-   //point
-    val Point_red: Color = point_red,
-    val Point_orange: Color = point_orange,
-
-   //grayscale
-    val Gray_500: Color = gray_500,
-    val Gray_400: Color = gray_400,
-    val Gray_300: Color = gray_300,
-    val Gray_200: Color = gray_200,
-    val Gray_150: Color = gray_150,
-    val Gray_100: Color = gray_100,
-    val Gray_50: Color = gray_50,
-
-   //black_and_white
-    val Black: Color = black,
-    val White: Color = white
-)
-val defaultKorailTalkColors=KorailTalkColors(
-    //primary Color
-    Primary_700=primary_700,
-    Primary_500=primary_500,
-    Primary_400=primary_400,
-    Primary_300=primary_300,
-    Primary_200=primary_200,
     //secondary Color
-    Secondary_p_400=secondary_p_400,
-    Secondary_p_200=secondary_p_200,
-    Secondary_m_400=secondary_m_400,
-    Secondary_m_200=secondary_m_200,
+    val secondaryP400: Color = secondary_p_400,
+    val secondaryP200: Color = secondary_p_200,
+    val secondaryM400: Color = secondary_m_400,
+    val secondaryM200: Color = secondary_m_200,
+
+
     //point
-    Point_red=point_red,
-    Point_orange=point_orange,
+    val pointRed: Color = point_red,
+    val pointOrange: Color = point_orange,
+
     //grayscale
-    Gray_500=gray_500,
-    Gray_400=gray_400,
-    Gray_300=gray_300,
-    Gray_200=gray_200,
-    Gray_150=gray_150,
-    Gray_100=gray_100,
-    Gray_50=gray_50,
+    val gray500: Color = gray_500,
+    val gray400: Color = gray_400,
+    val gray300: Color = gray_300,
+    val gray200: Color = gray_200,
+    val gray150: Color = gray_150,
+    val gray100: Color = gray_100,
+    val gray50: Color = gray_50,
+
     //black_and_white
-    Black=black,
-    White=white
+    val black: Color = black_,
+    val white: Color = white_
+)
+
+val defaultKorailTalkColors = KorailTalkColors(
+    //primary Color
+    primary700 = primary_700,
+    primary500 = primary_500,
+    primary400 = primary_400,
+    primary300 = primary_300,
+    primary200 = primary_200,
+    //secondary Color
+    secondaryP400 = secondary_p_400,
+    secondaryP200 = secondary_p_200,
+    secondaryM400 = secondary_m_400,
+    secondaryM200 = secondary_m_200,
+    //point
+    pointRed = point_red,
+    pointOrange = point_orange,
+    //grayscale
+    gray500 = gray_500,
+    gray400 = gray_400,
+    gray300 = gray_300,
+    gray200 = gray_200,
+    gray150 = gray_150,
+    gray100 = gray_100,
+    gray50 = gray_50,
+    //black_and_white
+    black = black_,
+    white = white_
 )
 
 val LocalKorailTalkColorsProvider = staticCompositionLocalOf { defaultKorailTalkColors }

@@ -5,6 +5,9 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import org.sopt.korailtalk.R
 
@@ -15,37 +18,52 @@ object PretendardFont {
 
 }
 
+private fun KorailTalkTextStyle(
+    fontFamily: FontFamily,
+    fontSize: TextUnit,
+    lineHeight: TextUnit = 1.3.em,
+    letterSpacing: TextUnit = (-1.5).sp
+): TextStyle = TextStyle(
+    fontFamily = fontFamily,
+    fontSize = fontSize,
+    lineHeight = lineHeight,
+    letterSpacing = letterSpacing,
+    lineHeightStyle = LineHeightStyle(
+        alignment = LineHeightStyle.Alignment.Center,
+        trim = LineHeightStyle.Trim.None
+    )
+)
 
 sealed interface TypographyTokens {
     @Immutable
     data class Headline(
-        val head1_m_30: TextStyle,
-        val head2_m_20: TextStyle,
-        val head3_sb_18: TextStyle,
-        val head4_m_18: TextStyle,
-        val head5_r_18: TextStyle
+        val head1M30: TextStyle,
+        val head2M20: TextStyle,
+        val head3Sb18: TextStyle,
+        val head4M18: TextStyle,
+        val head5R18: TextStyle
     )
 
     @Immutable
     data class Subtitle(
-        val sub1_m_17: TextStyle,
-        val sub2_r_17: TextStyle,
-        val sub3_m_16: TextStyle
+        val sub1M17: TextStyle,
+        val sub2R17: TextStyle,
+        val sub3M16: TextStyle
     )
 
     @Immutable
     data class Body(
-        val body1_r_16: TextStyle,
-        val body2_m_15: TextStyle,
-        val body3_r_15: TextStyle,
-        val body4_m_14: TextStyle,
-        val body5_r_13: TextStyle
+        val body1R16: TextStyle,
+        val body2M15: TextStyle,
+        val body3R15: TextStyle,
+        val body4M14: TextStyle,
+        val body5R13: TextStyle
     )
 
     @Immutable
     data class Cap(
-        val cap1_m_12: TextStyle,
-        val cap2_r_12: TextStyle
+        val cap1M12: TextStyle,
+        val cap2R12: TextStyle
     )
 }
 
@@ -60,101 +78,75 @@ data class KorailTalkTypography(
 
 val defaultKorailTalkTypography = KorailTalkTypography(
     headline = TypographyTokens.Headline(
-        head1_m_30 = TextStyle(
+        head1M30 = KorailTalkTextStyle(
             fontFamily = PretendardFont.Medium,
-            fontSize = 30.sp,
-            lineHeight = 39.sp, //130%
-            letterSpacing = (-1.5).sp
+            fontSize = 30.sp
         ),
-        head2_m_20 = TextStyle(
+        head2M20 = KorailTalkTextStyle(
             fontFamily = PretendardFont.Medium,
-            fontSize = 20.sp,
-            lineHeight = 26.sp, //130%
-            letterSpacing = (-1.5).sp
+            fontSize = 20.sp
         ),
-        head3_sb_18 = TextStyle(
+
+        head3Sb18 = KorailTalkTextStyle(
             fontFamily = PretendardFont.SemiBold,
-            fontSize = 18.sp,
-            lineHeight = 23.sp, //130%
-            letterSpacing = (-1.5).sp
+            fontSize = 18.sp
         ),
-        head4_m_18 = TextStyle(
+
+        head4M18 = KorailTalkTextStyle(
             fontFamily = PretendardFont.Medium,
-            fontSize = 18.sp,
-            lineHeight = 23.sp, //130%
-            letterSpacing = (-1.5).sp
+            fontSize = 18.sp
         ),
-        head5_r_18 = TextStyle(
-            fontFamily = PretendardFont.Regular,
-            fontSize = 18.sp,
-            lineHeight = 23.sp, //130%
-            letterSpacing = (-1.5).sp
+        head5R18 = KorailTalkTextStyle(
+            fontFamily = PretendardFont.Medium,
+            fontSize = 18.sp
         )
     ),
     subtitle = TypographyTokens.Subtitle(
-        sub1_m_17 = TextStyle(
+        sub1M17 = KorailTalkTextStyle(
             fontFamily = PretendardFont.Medium,
-            fontSize = 17.sp,
-            lineHeight = 22.sp, //130%
-            letterSpacing = (-1.5).sp
+            fontSize = 17.sp
         ),
-        sub2_r_17 = TextStyle(
+        sub2R17 = KorailTalkTextStyle(
             fontFamily = PretendardFont.Regular,
-            fontSize = 17.sp,
-            lineHeight = 22.sp, //130%
-            letterSpacing = (-1.5).sp
+            fontSize = 17.sp
         ),
-        sub3_m_16 = TextStyle(
+
+        sub3M16 = KorailTalkTextStyle(
             fontFamily = PretendardFont.Medium,
-            fontSize = 16.sp,
-            lineHeight = 21.sp, //130%
-            letterSpacing = (-1.5).sp
-        )
+            fontSize = 16.sp
+        ),
     ),
     body = TypographyTokens.Body(
-        body1_r_16 = TextStyle(
+        body1R16 = KorailTalkTextStyle(
             fontFamily = PretendardFont.Regular,
-            fontSize = 16.sp,
-            lineHeight = 21.sp, //130%
-            letterSpacing = (-1.5).sp
+            fontSize = 16.sp
         ),
-        body2_m_15 = TextStyle(
+
+        body2M15 = KorailTalkTextStyle(
             fontFamily = PretendardFont.Medium,
-            fontSize = 15.sp,
-            lineHeight = 19.sp, //130%
-            letterSpacing = (-1.5).sp
+            fontSize = 15.sp
         ),
-        body3_r_15 = TextStyle(
+        body3R15 = KorailTalkTextStyle(
             fontFamily = PretendardFont.Regular,
-            fontSize = 15.sp,
-            lineHeight = 19.sp, //130%
-            letterSpacing = (-1.5).sp
+            fontSize = 15.sp
         ),
-        body4_m_14 = TextStyle(
+        body4M14 = KorailTalkTextStyle(
             fontFamily = PretendardFont.Medium,
-            fontSize = 14.sp,
-            lineHeight = 18.sp, //130%
-            letterSpacing = (-1.5).sp
+            fontSize = 14.sp
         ),
-        body5_r_13 = TextStyle(
+        body5R13 = KorailTalkTextStyle(
             fontFamily = PretendardFont.Regular,
-            fontSize = 13.sp,
-            lineHeight = 17.sp, //130%
-            letterSpacing = (-1.5).sp
-        )
+            fontSize = 13.sp
+        ),
     ),
     cap = TypographyTokens.Cap(
-        cap1_m_12 = TextStyle(
+        cap1M12 = KorailTalkTextStyle(
             fontFamily = PretendardFont.Medium,
-            fontSize = 12.sp,
-            lineHeight = 16.sp, //130%
-            letterSpacing = (-1.5).sp
+            fontSize = 12.sp
         ),
-        cap2_r_12 = TextStyle(
-            fontFamily = PretendardFont.Regular,
-            fontSize = 12.sp,
-            lineHeight = 16.sp, //130%
-            letterSpacing = (-1.5).sp
+        cap2R12 = KorailTalkTextStyle(
+            fontFamily = PretendardFont.Medium,
+            fontSize = 12.sp
         )
     )
 )
