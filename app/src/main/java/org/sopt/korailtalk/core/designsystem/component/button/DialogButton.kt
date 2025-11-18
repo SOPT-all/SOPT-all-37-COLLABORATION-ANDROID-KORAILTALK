@@ -1,4 +1,4 @@
-package org.sopt.korailtalk.core.component.button
+package org.sopt.korailtalk.core.designsystem.component.button
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

@@ -1,4 +1,4 @@
-package org.sopt.korailtalk.core.component.dialog
+package org.sopt.korailtalk.core.designsystem.component.dialog
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -24,7 +24,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import org.sopt.korailtalk.core.common.util.extension.noRippleClickable
-import org.sopt.korailtalk.core.designsystem.theme.KORAILTALKTheme
 import org.sopt.korailtalk.core.designsystem.theme.KorailTalkTheme
 
 @Composable
