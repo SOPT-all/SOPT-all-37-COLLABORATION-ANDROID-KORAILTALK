@@ -12,14 +12,13 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import org.sopt.korailtalk.core.common.util.extension.pressedClickable
 import org.sopt.korailtalk.core.designsystem.theme.KorailTalkTheme
-import org.sopt.korailtalk.core.util.pressedClickable
 
 @Composable
-fun KorailTalkCommonButton(
+fun KorailTalkBasicButton(
     buttonText: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -29,7 +28,6 @@ fun KorailTalkCommonButton(
 
     Box(
         modifier = modifier
-            .height(48.dp)
             .background(
                 color = if (!enabled) {
                     KorailTalkTheme.colors.gray200
@@ -62,8 +60,8 @@ fun KorailTalkCommonButton(
 
 @Preview
 @Composable
-private fun KorailTalkCommonButtonPreview() {
-    KorailTalkCommonButton(
+private fun KorailTalkBasicButtonPreview() {
+    KorailTalkBasicButton(
         buttonText = "Text in button",
         onClick = {}
     )

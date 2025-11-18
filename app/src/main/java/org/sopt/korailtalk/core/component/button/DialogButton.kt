@@ -16,17 +16,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import org.sopt.korailtalk.core.common.util.extension.pressedClickable
 import org.sopt.korailtalk.core.designsystem.theme.KorailTalkTheme
-import org.sopt.korailtalk.core.util.pressedClickable
 
 /**
  * 버튼이 하나만 있는 Dialog 에서 사용
  * */
 @Composable
 fun DialogSingleButton(
-    modifier: Modifier = Modifier,
     buttonText: String,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Box(
         modifier = modifier
@@ -38,12 +38,7 @@ fun DialogSingleButton(
             .clip(RoundedCornerShape(8.dp))
             .padding(horizontal = 16.dp, vertical = 10.dp)
             .pressedClickable(
-                changePressed = {
-                    // Pressed 상태가 없음
-                },
-                onClick = {
-                    onClick()
-                }
+                onClick = onClick
             ),
         contentAlignment = Alignment.Center
     ) {
@@ -60,26 +55,17 @@ fun DialogSingleButton(
  * */
 @Composable
 fun DialogConfirmButton(
-    modifier: Modifier = Modifier,
     buttonText: String,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Box(
         modifier = modifier
-            .height(40.dp)
-            .background(
-                color = KorailTalkTheme.colors.pointRed,
-                shape = RoundedCornerShape(8.dp)
-            )
             .clip(RoundedCornerShape(8.dp))
+            .background(color = KorailTalkTheme.colors.pointRed)
             .padding(horizontal = 16.dp, vertical = 10.dp)
             .pressedClickable(
-                changePressed = {
-                    // Pressed 상태가 없음
-                },
-                onClick = {
-                    onClick()
-                }
+                onClick = onClick
             ),
         contentAlignment = Alignment.Center
     ) {
@@ -96,9 +82,9 @@ fun DialogConfirmButton(
  * */
 @Composable
 fun DialogCancelButton(
-    modifier: Modifier = Modifier,
     buttonText: String,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Box(
         modifier = modifier
@@ -130,13 +116,13 @@ fun DialogCancelButton(
 
 @Preview
 @Composable
-fun DialogSingleButtonPreview() {
+private fun DialogSingleButtonPreview() {
     DialogSingleButton(buttonText = "내용 내용 내용", onClick = {})
 }
 
 @Preview
 @Composable
-fun DialogButtonPreview() {
+private fun DialogButtonPreview() {
     Row(
         modifier = Modifier.fillMaxWidth()
     ) {

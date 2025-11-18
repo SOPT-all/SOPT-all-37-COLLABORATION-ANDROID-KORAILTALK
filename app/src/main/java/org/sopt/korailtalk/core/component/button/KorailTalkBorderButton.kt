@@ -14,8 +14,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import org.sopt.korailtalk.core.common.util.extension.pressedClickable
 import org.sopt.korailtalk.core.designsystem.theme.KorailTalkTheme
-import org.sopt.korailtalk.core.util.pressedClickable
 
 @Composable
 fun KorailTalkBorderButton(
@@ -27,21 +27,12 @@ fun KorailTalkBorderButton(
 ) {
     Box(
         modifier = modifier
-            .height(48.dp)
-            .background(
-                color = backgroundColor,
-                shape = RoundedCornerShape(8.dp)
-            )
-            .border(width = 1.dp, color = borderColor, shape = RoundedCornerShape(8.dp))
             .clip(RoundedCornerShape(8.dp))
+            .background(color = backgroundColor)
+            .border(width = 1.dp, color = borderColor, shape = RoundedCornerShape(8.dp))
             .padding(horizontal = 16.dp, vertical = 12.dp)
             .pressedClickable(
-                changePressed = {
-                    // Pressed 상태가 없음
-                },
-                onClick = {
-                    onClick()
-                }
+                onClick = onClick
             ),
         contentAlignment = Alignment.Center
     ) {
@@ -55,7 +46,7 @@ fun KorailTalkBorderButton(
 
 @Preview
 @Composable
-fun KorailTalkBorderButtonPreview() {
+private fun KorailTalkBorderButtonPreview() {
     KorailTalkBorderButton(buttonText = "Text in Button", onClick = {})
 }
 
