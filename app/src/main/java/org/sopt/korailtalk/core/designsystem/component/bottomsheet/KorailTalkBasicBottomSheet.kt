@@ -104,9 +104,9 @@ private fun KorailTalkBasicBottomSheetPreview() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun KorailTalkBasicBottomSheet(
-    modifier: Modifier = Modifier,
     isVisible: Boolean,
     onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState()
