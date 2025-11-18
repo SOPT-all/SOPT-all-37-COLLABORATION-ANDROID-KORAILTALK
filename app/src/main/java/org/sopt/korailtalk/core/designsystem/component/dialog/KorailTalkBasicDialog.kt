@@ -43,7 +43,7 @@ fun KorailTalkBasicDialog(
         KorailTalkBasicDialogContent(
             message = message,
             buttons = buttons,
-            modifier = Modifier
+            modifier = modifier
         )
     }
 }
