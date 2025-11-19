@@ -21,6 +21,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.sopt.korailtalk.core.designsystem.theme.KORAILTALKTheme
+import org.sopt.korailtalk.core.designsystem.theme.KorailTalkTheme
 
 @Composable
 fun CheckboxBasicRow(
@@ -34,6 +35,8 @@ fun CheckboxBasicRow(
     ) {
         Text(
             text = title,
+            color = KorailTalkTheme.colors.black,
+            style = KorailTalkTheme.typography.subtitle.sub3M16,
             modifier = Modifier.width(96.dp)
         )
         Row(
