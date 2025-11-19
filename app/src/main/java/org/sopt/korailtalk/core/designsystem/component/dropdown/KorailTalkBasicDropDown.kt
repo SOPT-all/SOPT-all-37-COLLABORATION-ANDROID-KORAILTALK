@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,6 +32,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import org.sopt.korailtalk.core.common.util.extension.noRippleClickable
 import org.sopt.korailtalk.core.designsystem.theme.KorailTalkTheme
 
 
@@ -50,13 +52,12 @@ fun KorailTalkDropdown(
     )
 
     Box(
-        Modifier
+        modifier
             .width(68.dp)
             .zIndex(1f)
     ) {
         Column(
             Modifier
-                .width(68.dp)
                 .background(
                     color = KorailTalkTheme.colors.white,
                     shape = RoundedCornerShape(size = 4.dp)
@@ -66,19 +67,18 @@ fun KorailTalkDropdown(
                     color = KorailTalkTheme.colors.gray200,
                     shape = RoundedCornerShape(size = 4.dp)
                 )
-                .padding(bottom = if (expanded) 4.dp else 0.dp)
-        ) {
+        ) { //상단 선택된 아이템
             Row(
-                modifier = modifier
+                Modifier
                     .fillMaxWidth()
                     .height(36.dp)
                     .clickable { expanded = !expanded }
-                    .padding(start = 8.dp, top = 5.dp, end = 2.dp, bottom = 5.dp),
+                    .padding(horizontal = 8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = selectedItem,
+                    text = if (expanded) items[0] else selectedItem,
                     color = KorailTalkTheme.colors.gray500,
                     style = KorailTalkTheme.typography.body.body2M15,
 
@@ -86,36 +86,44 @@ fun KorailTalkDropdown(
                 Icon(
                     imageVector = Icons.Default.ArrowDropDown,
                     contentDescription = "Dropdown Arrow",
-                    modifier = modifier
+                    modifier = Modifier
                         .size(24.dp)
-                        .rotate(rotateAngle),
+                        .rotate(rotateAngle)
+                        .padding(1.dp),
                     tint = KorailTalkTheme.colors.gray500
                 )
             }
 
             // 펼쳐졌을 때 나오는 리스트 영역
             if (expanded) {
-                Spacer(
-                    modifier = modifier
+                val itemsToShow = items.drop(1)
+                HorizontalDivider(
+                    Modifier
                         .fillMaxWidth()
-                        .height(1.dp)
-                        .background(KorailTalkTheme.colors.gray100)
+                        .padding(horizontal = 8.dp),
+                    thickness = 1.dp,
+                    color = KorailTalkTheme.colors.gray100
                 )
 
-                val otherItems = items.filter { it != selectedItem }
-
-                otherItems.forEachIndexed { index, item ->
+                itemsToShow.forEachIndexed { index, item ->
                     DropdownItem(
                         item = item,
                         onItemClick = {
                             onItemSelected(item)
                             expanded = false
-                        },
-                        isLastItem = index == otherItems.lastIndex
+                        }
                     )
-                }
+                    if (index != items.lastIndex) {
+                        HorizontalDivider(
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 8.dp),
+                            thickness = 1.dp,
+                            color = KorailTalkTheme.colors.gray100
+                        )
 
-                Spacer(modifier = Modifier.height(4.dp))
+                    }
+                }
             }
         }
     }
@@ -125,18 +133,20 @@ fun KorailTalkDropdown(
 fun DropdownItem(
     item: String,
     onItemClick: () -> Unit,
-    isLastItem: Boolean,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .clickable { onItemClick() }
+            .noRippleClickable(
+                onClick = onItemClick
+            )
     ) {
         Row(
             modifier = modifier
+                .fillMaxWidth()
                 .height(36.dp)
-                .padding(start = 8.dp, top = 5.dp, end = 2.dp, bottom = 5.dp),
+                .padding(horizontal = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
@@ -145,22 +155,12 @@ fun DropdownItem(
                 style = KorailTalkTheme.typography.body.body2M15
             )
         }
-
-        if (!isLastItem) {
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(KorailTalkTheme.colors.gray100)
-            )
-        }
     }
 }
 
 
 @Preview(showBackground = true)
 @Composable
-
 private fun KorailTalkDropdownPreview() {
     var seatType by remember { mutableStateOf("전체") }
     var routeType by remember { mutableStateOf("직통") }
@@ -184,13 +184,10 @@ private fun KorailTalkDropdownPreview() {
                 selectedItem = routeType,
                 onItemSelected = { routeType = it }
             )
-
         }
         //정상 작동하는지 확인 하기 위한 코드
         Spacer(modifier = Modifier.height(20.dp))
         Text(text = "선택값: $seatType / $routeType")
-
-
     }
 
 }
