@@ -55,7 +55,7 @@ fun KorailTalkDropdown(
 
     Box(
         modifier
-            .width(68.dp)
+            .width(75.dp)
             .zIndex(1f)
     ) {
         Column(
