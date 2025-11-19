@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -105,23 +107,26 @@ fun KorailTalkDropdown(
                     color = KorailTalkTheme.colors.gray100
                 )
 
-                itemsToShow.forEachIndexed { index, item ->
-                    DropdownItem(
-                        item = item,
-                        onItemClick = {
-                            onItemSelected(item)
-                            expanded = false
-                        }
-                    )
-                    if (index != items.lastIndex) {
-                        HorizontalDivider(
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 8.dp),
-                            thickness = 1.dp,
-                            color = KorailTalkTheme.colors.gray100
+                LazyColumn {
+                    itemsIndexed(itemsToShow) { index, item ->
+                        DropdownItem(
+                            item = item,
+                            onItemClick = {
+                                onItemSelected(item)
+                                expanded = false
+                            }
                         )
 
+                        if (index < itemsToShow.lastIndex) {
+                            HorizontalDivider(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 8.dp),
+                                thickness = 1.dp,
+                                color = KorailTalkTheme.colors.gray100
+                            )
+
+                        }
                     }
                 }
             }
@@ -157,7 +162,6 @@ fun DropdownItem(
         }
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable
