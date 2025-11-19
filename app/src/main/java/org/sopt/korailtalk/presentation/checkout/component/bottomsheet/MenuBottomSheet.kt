@@ -31,7 +31,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
@@ -45,8 +47,9 @@ import org.sopt.korailtalk.core.designsystem.component.bottomsheet.KorailTalkBas
 import org.sopt.korailtalk.core.designsystem.theme.KorailTalkTheme
 import org.sopt.korailtalk.presentation.checkout.data.CouponData
 
-enum class MenuBottomSheetType {
-    Coupon, Person
+enum class MenuBottomSheetType(val titleText: String, val emptyText: String) {
+    Coupon(titleText = "적용할 쿠폰 선택", emptyText = "적용 가능한 쿠폰이 없습니다."),
+    Person(titleText = "적용할 승객 선택", emptyText = "적용 가능한 승객이 없습니다.")
 }
 
 
@@ -69,11 +72,6 @@ fun MenuBottomSheet(
     val menuList = when (type) {
         MenuBottomSheetType.Coupon -> couponList
         MenuBottomSheetType.Person -> personList
-    }
-
-    val titleText = when (type) {
-        MenuBottomSheetType.Coupon -> "적용할 쿠폰 선택"
-        MenuBottomSheetType.Person -> "적용할 승객 선택"
     }
 
     val titleViewBottomRadius = if(menuList.isEmpty()) 8.dp else 0.dp
@@ -112,7 +110,7 @@ fun MenuBottomSheet(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = titleText,
+                            text = type.titleText,
                             style = KorailTalkTheme.typography.body.body1R16,
                             color = KorailTalkTheme.colors.gray400
                         )
@@ -120,7 +118,7 @@ fun MenuBottomSheet(
                         Spacer(Modifier.weight(1f))
 
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_up),
+                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_up),
                             contentDescription = null,
                             tint = KorailTalkTheme.colors.gray200,
                             modifier = Modifier.size(24.dp)
@@ -155,11 +153,6 @@ fun MenuBottomSheet(
                 item {
                     // 아무 아이템 없을시 Empty View
                     if(menuList.isEmpty()) {
-                        val emptyTextTitle = when(type) {
-                            MenuBottomSheetType.Coupon -> "적용 가능한 쿠폰이 없습니다."
-                            MenuBottomSheetType.Person -> "적용 가능한 승객이 없습니다."
-                        }
-
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -167,7 +160,7 @@ fun MenuBottomSheet(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = emptyTextTitle,
+                                text = type.emptyText,
                                 style = KorailTalkTheme.typography.body.body1R16,
                                 color = KorailTalkTheme.colors.black,
                             )
