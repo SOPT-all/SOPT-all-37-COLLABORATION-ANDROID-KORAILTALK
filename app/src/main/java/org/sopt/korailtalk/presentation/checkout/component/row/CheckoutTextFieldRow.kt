@@ -1,5 +1,6 @@
 package org.sopt.korailtalk.presentation.checkout.component.row
 
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import org.sopt.korailtalk.core.designsystem.component.textfield.KorailTalkBasicTextField
@@ -10,7 +11,8 @@ fun CheckboxTextFieldRow(
     placeholder: String,
     value: String,
     onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
 ) {
     CheckboxBasicRow(
         title = title,
@@ -19,7 +21,8 @@ fun CheckboxTextFieldRow(
             KorailTalkBasicTextField(
                 placeholder = placeholder,
                 value = value,
-                onValueChange = onValueChange
+                onValueChange = onValueChange,
+                keyboardOptions = keyboardOptions
             )
         }
     )
