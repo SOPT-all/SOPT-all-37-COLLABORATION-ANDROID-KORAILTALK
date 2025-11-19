@@ -1,0 +1,26 @@
+package org.sopt.korailtalk.presentation.checkout.component.row
+
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import org.sopt.korailtalk.core.designsystem.component.textfield.KorailTalkBasicTextField
+
+@Composable
+fun CheckboxTextFieldRow(
+    title: String,
+    placeholder: String,
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    CheckboxBasicRow(
+        title = title,
+        modifier = modifier,
+        content = {
+            KorailTalkBasicTextField(
+                placeholder = placeholder,
+                value = value,
+                onValueChange = onValueChange
+            )
+        }
+    )
+}
