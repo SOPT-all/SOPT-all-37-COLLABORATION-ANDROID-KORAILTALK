@@ -24,15 +24,6 @@ import org.sopt.korailtalk.core.designsystem.theme.primary_700
 import org.sopt.korailtalk.core.designsystem.theme.secondary_m_400
 import org.sopt.korailtalk.core.designsystem.theme.secondary_p_400
 
-/*
- *
- * 1. 추후 하위 열차 종류 관리에 대해
- *    - KTX 내 산천, 청룡 등의 세부 타입 관리
- *    - domain/model/TrainType.kt로 이동 (Sealed Class 활용)
- *    - 예: sealed class TrainType { object KTX, object KTX_SANCHEON, ... }
- * 등으로 추후에 로직을 나눠 볼 것 같습니다 !!
- *
- */
 
 enum class TrainType(val displayName: String, val enabledColor: Color) {
     KTX("KTX", primary_700),
