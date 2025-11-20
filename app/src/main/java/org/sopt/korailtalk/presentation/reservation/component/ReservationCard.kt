@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.sopt.korailtalk.core.designsystem.theme.LocalKorailTalkColorsProvider
 import org.sopt.korailtalk.core.designsystem.theme.LocalKorailTalkTypographyProvider
+import org.sopt.korailtalk.domain.type.TrainType
 
 // 서버 연동 시에는 매핑 레이어에서 변환예정.
 data class ReservationInfo(
