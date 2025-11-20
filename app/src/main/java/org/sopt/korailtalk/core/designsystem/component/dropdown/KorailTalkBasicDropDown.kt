@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -30,6 +31,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFontFamilyResolver
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.TextMeasurer
+import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -45,6 +52,15 @@ fun KorailTalkDropdown(
     modifier: Modifier = Modifier
 ) {
     var expanded by remember { mutableStateOf(false) }
+    val measurer = rememberTextMeasurer()
+
+    val textWidth = LocalDensity.current.run {
+        measurer.measure(
+            text = selectedItem,
+            style = KorailTalkTheme.typography.body.body2M15
+        ).size.width.toDp() + 36.dp
+    }
+
 
     // 화살표
     val rotateAngle by animateFloatAsState(
@@ -58,6 +74,7 @@ fun KorailTalkDropdown(
     ) {
         Column(
             Modifier
+                .width(textWidth)
                 .background(
                     color = KorailTalkTheme.colors.white,
                     shape = RoundedCornerShape(size = 4.dp)
@@ -70,8 +87,12 @@ fun KorailTalkDropdown(
         ) { //상단 선택된 아이템
             Row(
                 Modifier
+                    .fillMaxWidth()
                     .height(36.dp)
-                    .clickable { expanded = !expanded }
+                    .clickable {
+                        expanded = !expanded
+                        onItemSelected(items.first())
+                    }
                     .padding(horizontal = 8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
@@ -96,15 +117,19 @@ fun KorailTalkDropdown(
             // 펼쳐졌을 때 나오는 리스트 영역
             if (expanded) {
                 val itemsToShow = items.drop(1)
-                HorizontalDivider(
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
-                    thickness = 1.dp,
-                    color = KorailTalkTheme.colors.gray100
-                )
 
-                LazyColumn {
+                LazyColumn(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    item {
+                        HorizontalDivider(
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 8.dp),
+                            thickness = 1.dp,
+                            color = KorailTalkTheme.colors.gray100
+                        )
+                    }
                     itemsIndexed(itemsToShow) { index, item ->
                         DropdownItem(
                             item = item,
@@ -154,15 +179,30 @@ fun DropdownItem(
             Text(
                 text = item,
                 color = KorailTalkTheme.colors.gray500,
-                style = KorailTalkTheme.typography.body.body2M15
+                style = KorailTalkTheme.typography.body.body2M15,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis // 영역 벗어났을 때 처리
             )
         }
+    }
+}
+
+@Composable
+fun rememberTextMeasurer(): TextMeasurer {
+    val fontFamilyResolver = LocalFontFamilyResolver.current
+    val density = LocalDensity.current
+    val layoutDirection = LocalLayoutDirection.current
+
+    return remember(fontFamilyResolver, density, layoutDirection) {
+        TextMeasurer(fontFamilyResolver, density, layoutDirection)
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun KorailTalkDropdownPreview() {
+    val seatList = listOf("전체", "일반실", "특실")
+    val routeList = listOf("직통어쩌고", "환승저쩌고")
     var seatType by remember { mutableStateOf("전체") }
     var routeType by remember { mutableStateOf("직통") }
     Column(
@@ -175,13 +215,13 @@ private fun KorailTalkDropdownPreview() {
         ) {
             // 좌석 등급 드롭다운
             KorailTalkDropdown(
-                items = listOf("전체", "일반실", "특실"),
+                items = seatList,
                 selectedItem = seatType,
                 onItemSelected = { seatType = it }
             )
             // 운행 종류 드롭다운
             KorailTalkDropdown(
-                items = listOf("직통", "환승"),
+                items = routeList,
                 selectedItem = routeType,
                 onItemSelected = { routeType = it }
             )
