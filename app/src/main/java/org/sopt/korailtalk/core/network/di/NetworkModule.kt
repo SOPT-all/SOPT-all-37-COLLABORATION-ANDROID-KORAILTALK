@@ -49,14 +49,12 @@ object NetworkModule {
     @Singleton
     fun providesOkHttpClient(
         loggingInterceptor: HttpLoggingInterceptor,
-        authorizationInterceptor: okhttp3.Interceptor
     ): OkHttpClient =
         OkHttpClient.Builder().apply {
             connectTimeout(10, TimeUnit.SECONDS)
             writeTimeout(10, TimeUnit.SECONDS)
             readTimeout(10, TimeUnit.SECONDS)
             addInterceptor(loggingInterceptor)
-            addInterceptor(authorizationInterceptor)
             addInterceptor { chain ->
                 //TODO 나중에 custom 헤더 추가되면 여기로
                 val request = chain.request().newBuilder()
