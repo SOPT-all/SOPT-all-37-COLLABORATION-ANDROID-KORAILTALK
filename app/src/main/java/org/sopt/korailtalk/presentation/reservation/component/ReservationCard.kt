@@ -1,18 +1,173 @@
 package org.sopt.korailtalk.presentation.reservation.component
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import org.sopt.korailtalk.core.designsystem.theme.LocalKorailTalkColorsProvider
+import org.sopt.korailtalk.core.designsystem.theme.LocalKorailTalkTypographyProvider
 
+// 서버 연동 시에는 매핑 레이어에서 변환예정.
+data class ReservationInfo(
+    val trainType: TrainType,
+    val trainNumber: String,
+    val departureTime: String,
+    val arrivalTime: String,
+    val duration: String,
+    val seatTypes: List<SeatInfo> = emptyList(),
+    val isSoldOut: Boolean = false
+)
+
+data class SeatInfo(
+    val type: String,
+    val status: String,
+    val isUrgent: Boolean = false
+)
 
 @Composable
-fun ReservationCard()
-{
+fun ReservationCard(
+    reservationInfo: ReservationInfo,
+    modifier: Modifier = Modifier
+) {
+    val colors = LocalKorailTalkColorsProvider.current
+    val typography = LocalKorailTalkTypographyProvider.current
 
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(
+                color = if (reservationInfo.isSoldOut) colors.gray100 else colors.white,
+                shape = RoundedCornerShape(12.dp)
+            )
+            .border(
+                width = 1.dp,
+                color = colors.gray150,
+                shape = RoundedCornerShape(12.dp)
+            )
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        // 열차 정보
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            TrainTypeLabel(
+                trainType = reservationInfo.trainType,
+                isEnabled = !reservationInfo.isSoldOut
+            )
+            Text(
+                text = reservationInfo.trainNumber,
+                style = typography.body.body4M14.copy(
+                    letterSpacing = (-0.21).sp
+                ),
+                color = colors.black
+            )
+        }
+
+        // 시간 정보
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = reservationInfo.departureTime,
+                    style = typography.headline.head2M20.copy(
+                        letterSpacing = (-0.3).sp
+                    ),
+                    color = colors.black
+                )
+                Text(
+                    text = "→",
+                    style = typography.headline.head2M20.copy(
+                        letterSpacing = (-0.3).sp
+                    ),
+                    color = colors.gray300
+                )
+                Text(
+                    text = reservationInfo.arrivalTime,
+                    style = typography.headline.head2M20.copy(
+                        letterSpacing = (-0.3).sp
+                    ),
+                    color = colors.black
+                )
+            }
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                text = reservationInfo.duration,
+                style = typography.body.body4M14.copy(
+                    letterSpacing = (-0.21).sp
+                ),
+                color = colors.gray400
+            )
+        }
+
+        // 좌석 정보
+        if (!reservationInfo.isSoldOut && reservationInfo.seatTypes.isNotEmpty()) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                reservationInfo.seatTypes.forEach { seatInfo ->
+                    SeatTypeItem(
+                        seatType = seatInfo.type,
+                        status = seatInfo.status,
+                        isUrgent = seatInfo.isUrgent
+                    )
+                }
+            }
+        }
+    }
 }
 
-@Composable
 @Preview(showBackground = true)
-fun ReservationCardPreview()
-{
-    ReservationCard()
+@Composable
+fun ReservationCardPreview() {
+    Column(
+        modifier = Modifier.padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        // 일반 예약 카드
+        ReservationCard(
+            reservationInfo = ReservationInfo(
+                trainType = TrainType.KTX,
+                trainNumber = "001",
+                departureTime = "05:13",
+                arrivalTime = "07:50",
+                duration = "1시간 22분",
+                seatTypes = listOf(
+                    SeatInfo("일반", "예매가능"),
+                    SeatInfo("특", "매진임박", isUrgent = true)
+                )
+            )
+        )
+
+        // 매진 예약 카드
+        ReservationCard(
+            reservationInfo = ReservationInfo(
+                trainType = TrainType.KTX,
+                trainNumber = "001",
+                departureTime = "05:13",
+                arrivalTime = "07:50",
+                duration = "1시간 22분",
+                seatTypes = emptyList(),
+                isSoldOut = true
+            )
+        )
+    }
 }
