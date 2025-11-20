@@ -1,5 +1,6 @@
 package org.sopt.korailtalk.data.mapper
 
+import org.sopt.korailtalk.data.dto.base.BaseResponse
 import org.sopt.korailtalk.data.dto.request.TrainInfoRequestDto
 import org.sopt.korailtalk.data.dto.response.TrainInfoResponseDto
 import org.sopt.korailtalk.domain.model.DomainTrainInfo
@@ -13,14 +14,17 @@ fun DomainTrainInfoRequest.toDto() : TrainInfoRequestDto {
     )
 }
 
-fun TrainInfoResponseDto.toModel() : DomainTrainInfo {
-    return DomainTrainInfo(
-        startAt = this.startAt,
-        arriveAt = this.arriveAt,
-        type = TrainType.valueOf(this.type),
-        trainNumber = this.trainNumber,
-        seatType = SeatType.valueOf(this.seatType),
-        price = this.price,
-        reservationId = this.reservationId,
-    )
+fun Result<BaseResponse<TrainInfoResponseDto>>.toModel() : Result<DomainTrainInfo> {
+    return this.mapCatching { baseResponse ->
+        val dto = baseResponse.data
+
+        DomainTrainInfo(
+            startAt = dto.startAt,
+            arriveAt = dto.arriveAt,
+            type = TrainType.valueOf(dto.type),
+            trainNumber = dto.trainNumber,
+            price = dto.price,
+            reservationId = dto.reservationId,
+        )
+    }
 }

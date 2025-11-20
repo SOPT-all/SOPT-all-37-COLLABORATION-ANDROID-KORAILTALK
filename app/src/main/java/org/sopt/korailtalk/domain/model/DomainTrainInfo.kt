@@ -12,7 +12,6 @@ data class DomainTrainInfo(
     val arriveAt: String,
     val type: TrainType,
     val trainNumber: Int,
-    val seatType: SeatType,
     val price: Int,
     val reservationId: Long
 )
