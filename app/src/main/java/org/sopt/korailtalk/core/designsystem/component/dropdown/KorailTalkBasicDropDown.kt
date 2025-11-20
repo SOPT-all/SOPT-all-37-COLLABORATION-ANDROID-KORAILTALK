@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -55,7 +54,6 @@ fun KorailTalkDropdown(
 
     Box(
         modifier
-            .width(75.dp)
             .zIndex(1f)
     ) {
         Column(
@@ -72,7 +70,6 @@ fun KorailTalkDropdown(
         ) { //상단 선택된 아이템
             Row(
                 Modifier
-                    .fillMaxWidth()
                     .height(36.dp)
                     .clickable { expanded = !expanded }
                     .padding(horizontal = 8.dp),
