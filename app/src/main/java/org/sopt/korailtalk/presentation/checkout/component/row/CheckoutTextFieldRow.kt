@@ -1,5 +1,6 @@
 package org.sopt.korailtalk.presentation.checkout.component.row
 
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -13,6 +14,7 @@ fun CheckoutTextFieldRow(
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default
 ) {
     CheckoutBasicRow(
         title = title,
@@ -22,7 +24,8 @@ fun CheckoutTextFieldRow(
                 placeholder = placeholder,
                 value = value,
                 onValueChange = onValueChange,
-                keyboardOptions = keyboardOptions
+                keyboardOptions = keyboardOptions,
+                keyboardActions = keyboardActions
             )
         }
     )

@@ -50,7 +50,6 @@ fun KorailTalkBasicTextField(
 
     Box(
         modifier = modifier
-            .fillMaxWidth()
             .height(height)
             .clip(RoundedCornerShape(8.dp))
             .background(KorailTalkTheme.colors.white)
