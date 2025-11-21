@@ -24,7 +24,7 @@ import org.sopt.korailtalk.core.designsystem.component.textfield.KorailTalkBasic
 import org.sopt.korailtalk.core.designsystem.theme.KORAILTALKTheme
 
 @Composable
-fun KorailTalkTextDropdown(
+fun KorailTalkTextDropDown(
     onClick: () -> Unit,
     placeholder: String,
     modifier: Modifier = Modifier,
@@ -50,7 +50,7 @@ fun KorailTalkTextDropdown(
 
 @Preview(showBackground = true)
 @Composable
-private fun TextDropdownPreview() {
+private fun TextDropDownPreview() {
     KORAILTALKTheme {
         var selectedText by remember { mutableStateOf("") }
 
@@ -60,7 +60,7 @@ private fun TextDropdownPreview() {
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            KorailTalkTextDropdown(
+            KorailTalkTextDropDown(
                 onClick = {},
                 placeholder = "선택해주세요",
                 selected = selectedText,

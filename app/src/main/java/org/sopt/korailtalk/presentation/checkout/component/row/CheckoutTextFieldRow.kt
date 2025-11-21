@@ -6,7 +6,7 @@ import androidx.compose.ui.Modifier
 import org.sopt.korailtalk.core.designsystem.component.textfield.KorailTalkBasicTextField
 
 @Composable
-fun CheckboxTextFieldRow(
+fun CheckoutTextFieldRow(
     title: String,
     placeholder: String,
     value: String,
@@ -14,7 +14,7 @@ fun CheckboxTextFieldRow(
     modifier: Modifier = Modifier,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
 ) {
-    CheckboxBasicRow(
+    CheckoutBasicRow(
         title = title,
         modifier = modifier,
         content = {

@@ -24,7 +24,7 @@ import org.sopt.korailtalk.core.designsystem.theme.KORAILTALKTheme
 import org.sopt.korailtalk.core.designsystem.theme.KorailTalkTheme
 
 @Composable
-fun CheckboxBasicRow(
+fun CheckoutBasicRow(
     title: String,
     content: @Composable () -> Unit,
     modifier: Modifier = Modifier
@@ -49,7 +49,7 @@ fun CheckboxBasicRow(
 
 @Preview(showBackground = true)
 @Composable
-private fun CheckboxRowPreview() {
+private fun CheckoutRowPreview() {
     KORAILTALKTheme {
         var couponText by remember { mutableStateOf("") }
         var numberText by remember { mutableStateOf("") }
@@ -60,7 +60,7 @@ private fun CheckboxRowPreview() {
                 .fillMaxSize()
                 .padding(vertical = 12.dp, horizontal = 16.dp)
         ) {
-            CheckboxDropDownRow(
+            CheckoutDropDownRow(
                 title = "할인 쿠폰",
                 onClick = {}, // 바텀시트 노출 등 작업
                 placeholder = "적용할 쿠폰 선택",
@@ -87,7 +87,7 @@ private fun CheckboxRowPreview() {
                 )
             }
 
-            CheckboxTextFieldRow(
+            CheckoutTextFieldRow(
                 title = "보훈 번호",
                 placeholder = "보훈 번호 9자리",
                 value = numberText,
