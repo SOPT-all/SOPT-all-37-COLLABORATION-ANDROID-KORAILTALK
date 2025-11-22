@@ -57,7 +57,7 @@ private fun CheckoutScreen(
         }
 
         LazyColumn(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.weight(1f)
         ) {
             item { // @kimjw2003
                 CheckoutTopView() // 상단 ~ 할인쿠폰 적용
