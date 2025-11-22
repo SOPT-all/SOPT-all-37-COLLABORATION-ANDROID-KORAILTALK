@@ -7,11 +7,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import org.sopt.korailtalk.core.common.util.extension.noRippleClickable
 import org.sopt.korailtalk.core.common.util.preview.DefaultPreview
+import org.sopt.korailtalk.presentation.checkout.view.CheckoutBottomView
+import org.sopt.korailtalk.presentation.checkout.view.CheckoutTopView
 
 @Composable
 fun CheckoutRoute(
@@ -35,7 +38,7 @@ private fun CheckoutScreen(
     Column(
         modifier = modifier.fillMaxSize()
     ) {
-        Row(
+        Row( //TODO: TopAppBar로 수정 (@kimjw2003)
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -52,6 +55,19 @@ private fun CheckoutScreen(
                 )
             )
         }
+
+        LazyColumn(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            item { // @kimjw2003
+                CheckoutTopView() // 상단 ~ 할인쿠폰 적용
+            }
+            item { // @nahy-512
+                CheckoutBottomView() // 국가유공자 할인 ~ 하단
+            }
+        }
+
+        // TODO: 하단 Fixed 영역 작업 (@nahy-512)
     }
 }
 
