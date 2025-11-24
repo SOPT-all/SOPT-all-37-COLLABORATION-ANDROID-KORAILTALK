@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -73,9 +74,7 @@ fun ReservationCard(
             )
             Text(
                 text = reservationInfo.trainNumber,
-                style = typography.body.body4M14.copy(
-                    letterSpacing = (-0.21).sp
-                ),
+                style = typography.body.body4M14,
                 color = colors.black
             )
         }
@@ -91,32 +90,24 @@ fun ReservationCard(
             ) {
                 Text(
                     text = reservationInfo.departureTime,
-                    style = typography.headline.head2M20.copy(
-                        letterSpacing = (-0.3).sp
-                    ),
+                    style = typography.headline.head2M20,
                     color = colors.black
                 )
                 Text(
                     text = "→",
-                    style = typography.headline.head2M20.copy(
-                        letterSpacing = (-0.3).sp
-                    ),
+                    style = typography.headline.head2M20,
                     color = colors.gray300
                 )
                 Text(
                     text = reservationInfo.arrivalTime,
-                    style = typography.headline.head2M20.copy(
-                        letterSpacing = (-0.3).sp
-                    ),
+                    style = typography.headline.head2M20,
                     color = colors.black
                 )
             }
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.width(16.dp))
             Text(
                 text = reservationInfo.duration,
-                style = typography.body.body4M14.copy(
-                    letterSpacing = (-0.21).sp
-                ),
+                style = typography.body.body4M14,
                 color = colors.gray400
             )
         }
@@ -127,10 +118,9 @@ fun ReservationCard(
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 reservationInfo.seatTypes.forEach { seatInfo ->
-                    SeatTypeItem(
+                    SeatTypeStateItem(
                         seatType = seatInfo.type,
                         status = seatInfo.status,
-                        isUrgent = seatInfo.isUrgent
                     )
                 }
             }

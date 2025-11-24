@@ -23,10 +23,9 @@ import org.sopt.korailtalk.domain.type.SeatType
 
 
 @Composable
-fun SeatTypeItem(
+fun SeatTypeStateItem(
     seatType: SeatType,
     status: SeatStatusType,
-    isUrgent: Boolean = false,
 ) {
 
     Row(
@@ -49,7 +48,7 @@ fun SeatTypeItem(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = when (seatType) { //
+                text = when (seatType) {
                     SeatType.NORMAL -> "일반"
                     SeatType.PREMIUM -> "특"
                 },
@@ -65,41 +64,37 @@ fun SeatTypeItem(
                     SeatStatusType.SOLD_OUT -> "매진"
                 },
                 style = typography.cap.cap1M12,
-                color = if (isUrgent) colors.pointRed
-                            else colors.gray400
+                color = if (status.isUrgent) colors.pointRed
+                        else colors.gray400
             )
         }
     }
 
 @Composable
 @Preview(showBackground = true)
-private fun SeatTypeItemPreview() {
+private fun SeatTypeStateItemPreview() {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier.padding(16.dp)
     ) {
-        SeatTypeItem(
+        SeatTypeStateItem(
             seatType = SeatType.NORMAL,
             status = SeatStatusType.AVAILABLE,
-            isUrgent = false
         )
 
-        SeatTypeItem(
+        SeatTypeStateItem(
             seatType = SeatType.PREMIUM,
             status = SeatStatusType.AVAILABLE,
-            isUrgent = false
         )
 
-        SeatTypeItem(
+        SeatTypeStateItem(
             seatType = SeatType.NORMAL,
             status = SeatStatusType.ALMOST_SOLD_OUT,
-            isUrgent = true
         )
 
-        SeatTypeItem(
+        SeatTypeStateItem(
             seatType = SeatType.PREMIUM,
             status = SeatStatusType.SOLD_OUT,
-            isUrgent = true
         )
     }
 }

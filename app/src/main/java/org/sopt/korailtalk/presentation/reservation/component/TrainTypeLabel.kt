@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import org.sopt.korailtalk.core.designsystem.theme.LocalKorailTalkColorsProvider
 import org.sopt.korailtalk.core.designsystem.theme.LocalKorailTalkTypographyProvider
 import org.sopt.korailtalk.domain.type.TrainType
@@ -47,9 +46,7 @@ fun TrainTypeLabel(
     ) {
         Text(
             text = trainType.displayName,
-            style = typography.body.body4M14.copy(
-                letterSpacing = (-0.21).sp
-            ),
+            style = typography.body.body4M14,
             color = colors.white,
             textAlign = TextAlign.Center
         )
