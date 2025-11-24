@@ -45,6 +45,9 @@ fun CheckoutBottomView(
 
         // 중증보호자 할인
         SevereGuardianSection()
+
+        // 현역병 할인
+        ActiveDutySoldierSection()
     }
 }
 
@@ -149,6 +152,22 @@ private fun SevereGuardianSection() {
             )
         }
     )
+}
+
+@Composable
+private fun ActiveDutySoldierSection() {
+    Column {
+        CheckoutSectionRow(
+            title = "현역병 할인"
+        )
+
+        CheckoutDropDownRow(
+            title = "적용 대상",
+            placeholder = "적용할 승객 선택",
+            onClick = {},
+            modifier = Modifier.padding(16.dp)
+        )
+    }
 }
 
 
