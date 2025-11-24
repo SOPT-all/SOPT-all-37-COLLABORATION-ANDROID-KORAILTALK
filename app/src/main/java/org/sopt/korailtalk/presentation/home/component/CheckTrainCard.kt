@@ -1,6 +1,5 @@
 package org.sopt.korailtalk.presentation.home.component
 
-import android.R.attr.onClick
 import org.sopt.korailtalk.R
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -18,7 +17,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,7 +39,7 @@ fun CheckTrainCard(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        Modifier
+        modifier=modifier
             .shadow(
                 elevation = 12.dp,
                 spotColor = KorailTalkTheme.colors.black,
@@ -106,9 +104,7 @@ private fun DepartureArrivalItem(
     Box(
         Modifier.fillMaxWidth()
     ) {
-        Column(
-
-        ) {
+        Column{
 
             // 1. 출발 (Start)
             Row(
@@ -215,7 +211,7 @@ private fun CheckTrainItem(
         }
         if (showDivider) {
             Spacer(modifier = Modifier.height(16.dp))
-            Divider(
+            HorizontalDivider(
                 color = KorailTalkTheme.colors.gray100, // 연한 회색 구분선
                 thickness = 1.dp
             )
