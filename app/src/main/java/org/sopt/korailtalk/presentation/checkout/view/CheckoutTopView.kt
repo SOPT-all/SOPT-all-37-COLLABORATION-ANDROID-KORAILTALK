@@ -195,7 +195,7 @@ fun CheckoutTopView(
                 Spacer(Modifier.weight(1f))
 
                 Text(
-                    text = "{${formatter.format(trainInfo.price - 48000)}} 원",
+                    text = "${formatter.format(trainInfo.price - 48000)} 원",
                     style = KorailTalkTheme.typography.body.body1R16,
                     color = KorailTalkTheme.colors.gray400
                 )
