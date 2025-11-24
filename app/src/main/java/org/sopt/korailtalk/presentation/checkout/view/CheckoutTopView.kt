@@ -163,15 +163,14 @@ fun CheckoutTopView(
 
             // 운임
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
                     text = "운임",
                     style = KorailTalkTheme.typography.body.body1R16,
                     color = KorailTalkTheme.colors.gray400
                 )
-
-                Spacer(Modifier.weight(1f))
 
                 Text(
                     text = "${formatter.format(trainInfo.price)} 원",
@@ -184,15 +183,14 @@ fun CheckoutTopView(
 
             // 요금
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
                     text = "요금",
                     style = KorailTalkTheme.typography.body.body1R16,
                     color = KorailTalkTheme.colors.gray400
                 )
-
-                Spacer(Modifier.weight(1f))
 
                 Text(
                     text = "${formatter.format(trainInfo.price - 48000)} 원",
@@ -205,15 +203,14 @@ fun CheckoutTopView(
 
             // 운임 할인
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
                     text = "운임할인",
                     style = KorailTalkTheme.typography.body.body1R16,
                     color = KorailTalkTheme.colors.gray400
                 )
-
-                Spacer(Modifier.weight(1f))
 
                 Text(
                     text = "0 원",
@@ -226,15 +223,14 @@ fun CheckoutTopView(
 
             // 요금 할인
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
                     text = "요금할인",
                     style = KorailTalkTheme.typography.body.body1R16,
                     color = KorailTalkTheme.colors.gray400
                 )
-
-                Spacer(Modifier.weight(1f))
 
                 Text(
                     text = "${formatter.format(discountFee)} 원",
@@ -247,15 +243,14 @@ fun CheckoutTopView(
 
             // 결제 금액
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
                     text = "결제금액",
                     style = KorailTalkTheme.typography.headline.head2M20,
                     color = KorailTalkTheme.colors.black
                 )
-
-                Spacer(Modifier.weight(1f))
 
                 Text(
                     text = "${formatter.format(trainInfo.price - discountFee)} 원",
