@@ -86,8 +86,7 @@ fun CheckTrainCard(
             Modifier
                 .align(Alignment.CenterHorizontally)
                 .noRippleClickable(onClick = onReservationClick)
-                .width(288.dp)
-                .height(48.dp)
+                .fillMaxWidth()
         )
 
     }
@@ -152,11 +151,12 @@ private fun DepartureArrivalItem(
             HorizontalDivider(color = KorailTalkTheme.colors.gray100, thickness = 1.dp) // 구분선
 
         }
+
         Box(
             modifier = Modifier
                 .align(Alignment.CenterEnd)
                 .size(40.dp)
-                .offset(y = (-8).dp)
+                .offset(x=(-10).dp,y = (-8).dp)
                 .background(
                     color = KorailTalkTheme.colors.white,
                     shape = CircleShape
@@ -175,6 +175,8 @@ private fun DepartureArrivalItem(
                 modifier = Modifier.size(24.dp) // 내부 아이콘 크기
             )
         }
+
+
     }
 }
 

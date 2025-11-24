@@ -11,17 +11,19 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-):ViewModel() {
+) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
     // 역 위치를 서로 바꾸는 로직
     fun swapStations() {
         _uiState.update { currentState ->
+            val temp = currentState.startStation
             currentState.copy(
                 startStation = currentState.endStation,
-                endStation = currentState.startStation
+                endStation = temp
             )
         }
     }
 }
+
