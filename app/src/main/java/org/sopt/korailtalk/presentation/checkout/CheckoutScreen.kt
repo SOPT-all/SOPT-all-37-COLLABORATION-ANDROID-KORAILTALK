@@ -77,15 +77,21 @@ private fun CheckoutScreen(
         ) {
             BackTopAppBar(
                 modifier = Modifier.fillMaxWidth(),
-                onBackClick = {},
+                onBackClick = {
+                    onBackClick()
+                },
                 title = "결제",
                 actions = {
                     Image(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_cancel),
                         contentDescription = null,
-                        modifier = Modifier.size(44.dp)
+                        modifier = Modifier
+                            .size(44.dp)
+                            .noRippleClickable {
+                                onCloseClick()
+                            }
                     )
-                }
+                },
             )
         }
 
