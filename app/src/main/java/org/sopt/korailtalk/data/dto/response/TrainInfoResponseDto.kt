@@ -5,6 +5,14 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class TrainInfoResponseDto(
+    @SerialName("trainInfo")
+    val trainInfo: TrainInfoDto,
+    @SerialName("coupons")
+    val coupons: List<CouponDataDto>
+)
+
+@Serializable
+data class TrainInfoDto(
     @SerialName("startAt")
     val startAt: String,
     @SerialName("arriveAt")
@@ -18,5 +26,13 @@ data class TrainInfoResponseDto(
     @SerialName("price")
     val price: Int,
     @SerialName("reservationId")
-    val reservationId: Long
+    val reservationId: Long,
+)
+
+@Serializable
+data class CouponDataDto(
+    @SerialName("name")
+    val name: String,
+    @SerialName("discountRate")
+    val discountRate: Int
 )
