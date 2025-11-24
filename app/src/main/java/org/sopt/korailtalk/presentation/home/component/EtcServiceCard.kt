@@ -105,7 +105,7 @@ fun GridItemView(item: GridItemData) {
 
 @Preview(showBackground = true)
 @Composable
-fun GridPreview() {
+private fun GridPreview() {
     val previewItems = items
     IconGridScreen(items = previewItems)
 }
