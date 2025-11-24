@@ -35,6 +35,9 @@ import org.sopt.korailtalk.core.designsystem.theme.KorailTalkTheme
 
 @Composable
 fun CheckTrainCard(
+    startStation: String,       // ViewModel에서 받아올 값
+    endStation: String,         // ViewModel에서 받아올 값
+    onSwapClick: () -> Unit,    // ViewModel의 함수를 실행할 이벤트
     onReservationClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -56,16 +59,15 @@ fun CheckTrainCard(
     ) {
         // 1. 출발/도착 (노선 전환 아이콘 포함)
         DepartureArrivalItem(
-            startTitle = "출발",
-            startValue = "서울",
-            endTitle = "도착",
-            endValue = "부산"
+            startValue = startStation,
+            endValue = endStation,
+            onSwapClick = onSwapClick
         )
 
         // 2. 날짜 및 시간
         CheckTrainItem(
             iconId = R.drawable.ic_calender,
-            title = "11.10  (월)  ·  14시 이후",
+            title = "12. 1  (월)  ·  14시 이후",
             showDivider = true
         )
 
@@ -96,10 +98,9 @@ fun CheckTrainCard(
 // 출발/도착 항목 컴포저블
 @Composable
 private fun DepartureArrivalItem(
-    startTitle: String,
     startValue: String,
-    endTitle: String,
-    endValue: String
+    endValue: String,
+    onSwapClick:()->Unit
 ) {
     Box(
         Modifier.fillMaxWidth()
@@ -111,17 +112,17 @@ private fun DepartureArrivalItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = startTitle,
+                    text = "출발",
                     style = KorailTalkTheme.typography.body.body2M15,
                     color = KorailTalkTheme.colors.gray400,
-                    modifier = Modifier.width(36.dp) // 제목(출발/도착)의 너비 고정
+                    modifier = Modifier.width(36.dp) 
                 )
                 Spacer(modifier = Modifier.width(24.dp))
                 Text(
                     text = startValue,
                     style = KorailTalkTheme.typography.headline.head2M20,
                     color = KorailTalkTheme.colors.black,
-                    modifier = Modifier.weight(1f) // 남은 공간 차지
+                    modifier = Modifier.weight(1f)
                 )
 
             }
@@ -135,7 +136,7 @@ private fun DepartureArrivalItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = endTitle,
+                    text = "도착",
                     style = KorailTalkTheme.typography.body.body2M15,
                     color = KorailTalkTheme.colors.gray400,
                     modifier = Modifier.width(36.dp)
@@ -154,19 +155,19 @@ private fun DepartureArrivalItem(
         }
         Box(
             modifier = Modifier
-                .align(Alignment.CenterEnd) // 상하 대칭이므로 정확히 중앙선(Divider)에 위치
-                .size(40.dp) // 버튼 터치 영역 크기
+                .align(Alignment.CenterEnd)
+                .size(40.dp)
                 .offset(y = (-8).dp)
                 .background(
-                    color = KorailTalkTheme.colors.white, // 배경색 (선 가림용)
+                    color = KorailTalkTheme.colors.white,
                     shape = CircleShape
                 )
                 .border(
                     width = 1.dp,
-                    color = KorailTalkTheme.colors.gray100, // 테두리 색상
+                    color = KorailTalkTheme.colors.gray150, // 테두리 색상
                     shape = CircleShape
                 )
-                .noRippleClickable { /* 전환 클릭 이벤트 */ },
+                .noRippleClickable {onSwapClick() },
             contentAlignment = Alignment.Center
         ) {
             Image(
@@ -230,7 +231,11 @@ private fun CheckTrainCardPreview() {
                 .padding(horizontal = 16.dp, vertical = 20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            CheckTrainCard(onReservationClick = {})
+            CheckTrainCard(
+                startStation = "서울",
+                endStation = "부산",
+                onSwapClick = {},
+                onReservationClick = {})
         }
     }
 }
