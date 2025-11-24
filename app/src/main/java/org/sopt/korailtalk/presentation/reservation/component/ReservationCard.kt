@@ -140,7 +140,7 @@ fun ReservationCard(
 
 @Preview(showBackground = true)
 @Composable
-fun ReservationCardPreview() {
+private fun ReservationCardPreview() {
     Column(
         modifier = Modifier.padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)

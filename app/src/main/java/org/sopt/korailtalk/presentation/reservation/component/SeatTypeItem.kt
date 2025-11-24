@@ -16,8 +16,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import org.sopt.korailtalk.core.designsystem.theme.LocalKorailTalkColorsProvider
-import org.sopt.korailtalk.core.designsystem.theme.LocalKorailTalkTypographyProvider
+import org.sopt.korailtalk.core.designsystem.theme.KorailTalkTheme.colors
+import org.sopt.korailtalk.core.designsystem.theme.KorailTalkTheme.typography
 import org.sopt.korailtalk.domain.type.SeatStatusType
 import org.sopt.korailtalk.domain.type.SeatType
 
@@ -28,8 +28,6 @@ fun SeatTypeItem(
     status: SeatStatusType,
     isUrgent: Boolean = false,
 ) {
-    val colors = LocalKorailTalkColorsProvider.current
-    val typography = LocalKorailTalkTypographyProvider.current
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -67,14 +65,15 @@ fun SeatTypeItem(
                     SeatStatusType.SOLD_OUT -> "매진"
                 },
                 style = typography.cap.cap1M12,
-                color = if (isUrgent) colors.pointRed else colors.gray400
+                color = if (isUrgent) colors.pointRed
+                            else colors.gray400
             )
         }
     }
 
 @Composable
 @Preview(showBackground = true)
-fun SeatTypeItemPreview() {
+private fun SeatTypeItemPreview() {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier.padding(16.dp)
