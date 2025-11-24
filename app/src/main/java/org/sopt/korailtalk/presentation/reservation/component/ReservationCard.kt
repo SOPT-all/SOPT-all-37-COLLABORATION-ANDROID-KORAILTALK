@@ -18,6 +18,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.sopt.korailtalk.core.designsystem.theme.LocalKorailTalkColorsProvider
 import org.sopt.korailtalk.core.designsystem.theme.LocalKorailTalkTypographyProvider
+import org.sopt.korailtalk.domain.type.SeatStatusType
+import org.sopt.korailtalk.domain.type.SeatType
 import org.sopt.korailtalk.domain.type.TrainType
 
 // 서버 연동 시에는 매핑 레이어에서 변환예정.
@@ -32,8 +34,8 @@ data class ReservationInfo(
 )
 
 data class SeatInfo(
-    val type: String,
-    val status: String,
+    val type: SeatType,
+    val status: SeatStatusType,
     val isUrgent: Boolean = false
 )
 
@@ -152,8 +154,8 @@ fun ReservationCardPreview() {
                 arrivalTime = "07:50",
                 duration = "1시간 22분",
                 seatTypes = listOf(
-                    SeatInfo("일반", "예매가능"),
-                    SeatInfo("특", "매진임박", isUrgent = true)
+                    SeatInfo(SeatType.NORMAL, SeatStatusType.AVAILABLE),
+                    SeatInfo(SeatType.PREMIUM, SeatStatusType.ALMOST_SOLD_OUT, isUrgent = true)
                 )
             )
         )
