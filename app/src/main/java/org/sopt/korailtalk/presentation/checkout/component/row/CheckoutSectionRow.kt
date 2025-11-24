@@ -1,7 +1,8 @@
 package org.sopt.korailtalk.presentation.checkout.component.row
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -16,10 +17,13 @@ import org.sopt.korailtalk.core.designsystem.theme.KorailTalkTheme
 
 @Composable
 fun CheckoutSectionRow(
-    sectionTitle: String,
-    modifier: Modifier = Modifier
+    title: String,
+    modifier: Modifier = Modifier,
+    rightContent: @Composable () -> Unit = {}
 ) {
-    Box(
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .background(KorailTalkTheme.colors.gray50)
             .fillMaxWidth()
@@ -27,11 +31,12 @@ fun CheckoutSectionRow(
             .height(44.dp)
     ) {
         Text(
-            text = sectionTitle,
+            text = title,
             style = KorailTalkTheme.typography.subtitle.sub3M16,
             color = KorailTalkTheme.colors.black,
-            modifier = Modifier.align(Alignment.CenterStart)
+            modifier = Modifier.weight(1f)
         )
+        rightContent()
     }
 }
 

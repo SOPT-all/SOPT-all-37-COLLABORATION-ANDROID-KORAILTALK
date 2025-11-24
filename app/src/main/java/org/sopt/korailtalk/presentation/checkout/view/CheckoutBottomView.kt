@@ -40,6 +40,11 @@ fun CheckoutBottomView(
     ) {
         // 국가유공자 할인
         NationalMeritSection()
+
+        Spacer(Modifier.height(8.dp))
+
+        // 중증보호자 할인
+        SevereGuardianSection()
     }
 }
 
@@ -51,7 +56,7 @@ private fun NationalMeritSection() {
     var isChecked by remember { mutableStateOf(false) }
 
     CheckoutSectionRow(
-        sectionTitle = "국가 유공자 할인"
+        title = "국가 유공자 할인"
     )
 
     Spacer(Modifier.height(16.dp))
@@ -130,6 +135,20 @@ private fun NationalMeritSection() {
             color = KorailTalkTheme.colors.black
         )
     }
+}
+
+@Composable
+private fun SevereGuardianSection() {
+    CheckoutSectionRow(
+        title = "중증 보호자 할인",
+        rightContent = {
+            Text(
+                text = "적용대상 없음",
+                style = KorailTalkTheme.typography.body.body5R13,
+                color = KorailTalkTheme.colors.pointRed
+            )
+        }
+    )
 }
 
 
