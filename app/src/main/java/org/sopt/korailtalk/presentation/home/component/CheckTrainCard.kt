@@ -48,7 +48,6 @@ fun CheckTrainCard(
                 spotColor = KorailTalkTheme.colors.black,
                 ambientColor = KorailTalkTheme.colors.black
             )
-            .width(328.dp)
             .background(
                 color = KorailTalkTheme.colors.white,
                 shape = RoundedCornerShape(size = 10.dp)
@@ -115,7 +114,7 @@ private fun DepartureArrivalItem(
                     text = "출발",
                     style = KorailTalkTheme.typography.body.body2M15,
                     color = KorailTalkTheme.colors.gray400,
-                    modifier = Modifier.width(36.dp) 
+                    modifier = Modifier.width(36.dp)
                 )
                 Spacer(modifier = Modifier.width(24.dp))
                 Text(
