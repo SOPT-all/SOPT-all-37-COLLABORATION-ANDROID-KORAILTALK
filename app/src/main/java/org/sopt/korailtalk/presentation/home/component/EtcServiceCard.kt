@@ -1,0 +1,109 @@
+package org.sopt.korailtalk.presentation.home.component
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import org.sopt.korailtalk.R
+import org.sopt.korailtalk.core.designsystem.theme.KorailTalkTheme
+
+data class GridItemData(
+    val iconId: Int,
+    val title: String
+)
+
+val items = listOf(
+    GridItemData(R.drawable.ic_navigation, "길안내"),
+    GridItemData(R.drawable.ic_location, "열차위치"),
+    GridItemData(R.drawable.ic_parking, "주차"),
+    GridItemData(R.drawable.ic_bus, "공항버스"),
+    GridItemData(R.drawable.ic_car, "렌터카"),
+    GridItemData(R.drawable.ic_car_sharing, "카셰어링"),
+    GridItemData(R.drawable.ic_carrier, "짐배송"),
+    GridItemData(R.drawable.ic_bakery, "카페&빵"),
+    GridItemData(R.drawable.ic_ticket, "레저이용권"),
+    GridItemData(R.drawable.ic_taxi, "관광택시")
+)
+
+@Composable
+fun IconGridScreen(items: List<GridItemData>) {
+    Surface(
+        modifier = Modifier
+            .border(
+                width = 1.dp,
+                color = KorailTalkTheme.colors.gray100,
+                shape = RoundedCornerShape(size = 10.dp)
+            )
+            .background(
+                color = KorailTalkTheme.colors.white,
+                shape = RoundedCornerShape(size = 10.dp)
+            )
+            .padding(start = 12.dp, top = 24.dp, end = 12.dp, bottom = 24.dp),
+    ) {
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(4),
+            verticalArrangement = Arrangement.spacedBy(28.dp)
+        ) {
+            items(items) { item ->
+                GridItemView(item = item)
+            }
+        }
+
+    }
+}
+
+// 개별 아이콘 항목 컴포저블
+@Composable
+fun GridItemView(item: GridItemData) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+    ) {
+        Icon(
+            painter = painterResource(id = item.iconId),
+            contentDescription = item.title,
+            modifier = Modifier
+                .size(24.dp),
+            tint = KorailTalkTheme.colors.primary400
+        )
+
+        Spacer(modifier = Modifier.height(7.dp))
+        Text(
+            text = item.title,
+            style = KorailTalkTheme.typography.body.body3R15,
+            color = KorailTalkTheme.colors.black,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(horizontal = 4.dp)
+        )
+    }
+
+}
+
+@Preview(showBackground = true)
+@Composable
+fun GridPreview() {
+    val previewItems = items
+    IconGridScreen(items = previewItems)
+}
