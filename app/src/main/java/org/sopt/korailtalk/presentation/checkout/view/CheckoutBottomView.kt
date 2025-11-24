@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,6 +30,8 @@ import org.sopt.korailtalk.core.designsystem.component.checkbox.KorailTalkBasicC
 import org.sopt.korailtalk.core.designsystem.component.textfield.KorailTalkBasicTextField
 import org.sopt.korailtalk.core.designsystem.theme.KORAILTALKTheme
 import org.sopt.korailtalk.core.designsystem.theme.KorailTalkTheme
+import org.sopt.korailtalk.presentation.checkout.component.bottomsheet.MenuBottomSheet
+import org.sopt.korailtalk.presentation.checkout.component.bottomsheet.MenuBottomSheetType
 import org.sopt.korailtalk.presentation.checkout.component.row.CheckoutBasicRow
 import org.sopt.korailtalk.presentation.checkout.component.row.CheckoutDropDownRow
 import org.sopt.korailtalk.presentation.checkout.component.row.CheckoutSectionRow
@@ -56,12 +60,22 @@ fun CheckoutBottomView(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun NationalMeritSection() {
     var nationalIdText by remember { mutableStateOf("") }
     var passwordText by remember { mutableStateOf("") }
     var birthDateText by remember { mutableStateOf("") }
     var isChecked by remember { mutableStateOf(false) }
+
+    val sheetState = rememberModalBottomSheetState()
+    var isSheetVisible by remember { mutableStateOf(false) }
+
+    val personList = listOf(
+        "어른 - 1호차 12A / 48,800원",
+    )
+
+    var selectedPersonItem by remember { mutableStateOf("") }
 
     CheckoutSectionRow(
         title = "국가 유공자 할인"
@@ -132,7 +146,10 @@ private fun NationalMeritSection() {
         CheckoutDropDownRow(
             title = "적용 대상",
             placeholder = "적용할 승객 선택",
-            onClick = {}, // 바텀시트 노출 등 작업
+            selected = selectedPersonItem,
+            onClick = {
+                isSheetVisible = true
+            },
         )
     }
 
@@ -152,6 +169,19 @@ private fun NationalMeritSection() {
             text = "개인정보 수집 및 이용 동의",
             style = KorailTalkTheme.typography.body.body1R16,
             color = KorailTalkTheme.colors.black
+        )
+    }
+
+    if (isSheetVisible) {
+        MenuBottomSheet(
+            sheetState = sheetState,
+            type = MenuBottomSheetType.Person,
+            onDismiss = { isSheetVisible = false },
+            personList = personList,
+            selectedPersonItem = selectedPersonItem,
+            onPersonClick = {
+                selectedPersonItem = it
+            }
         )
     }
 }
