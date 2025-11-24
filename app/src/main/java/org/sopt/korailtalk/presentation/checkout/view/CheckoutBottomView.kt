@@ -77,7 +77,9 @@ private fun NationalMeritSection() {
             title = "보훈 번호",
             placeholder = "보훈 번호 9자리",
             value = nationalIdText,
-            onValueChange = { nationalIdText = it },
+            onValueChange = {
+                if (it.length <= 9) nationalIdText = it
+            },
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number
@@ -88,7 +90,9 @@ private fun NationalMeritSection() {
             title = "비밀 번호",
             placeholder = "숫자 4자리",
             value = passwordText,
-            onValueChange = { passwordText = it },
+            onValueChange = {
+                if (it.length <= 4) passwordText = it
+            },
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number
@@ -105,13 +109,20 @@ private fun NationalMeritSection() {
                     KorailTalkBasicTextField(
                         placeholder = "생년월일 6자리",
                         value = birthDateText,
-                        onValueChange = { birthDateText = it },
+                        onValueChange = {
+                            if (it.length <= 6) birthDateText = it
+                        },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number
                         ),
                         modifier = Modifier.weight(1f)
                     )
                     OkButton(
+                        enabled = checkButtonEnabled(
+                            nationalIdText = nationalIdText,
+                            passwordText = passwordText,
+                            birthDateText = birthDateText
+                        ),
                         onClick = {}
                     )
                 }
@@ -199,6 +210,16 @@ private fun GuideContent() {
     }
 }
 
+// TODO: 뷰모델 로직으로 추가
+private fun checkButtonEnabled(
+    nationalIdText: String,
+    passwordText: String,
+    birthDateText: String
+): Boolean {
+    return nationalIdText.length == 9 &&
+            passwordText.length == 4 &&
+            birthDateText.length == 6
+}
 
 @Preview(showBackground = true)
 @Composable
