@@ -2,6 +2,7 @@ package org.sopt.korailtalk.presentation.checkout.view
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -21,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import org.sopt.korailtalk.core.designsystem.component.button.OkButton
 import org.sopt.korailtalk.core.designsystem.component.checkbox.KorailTalkBasicCheckBox
 import org.sopt.korailtalk.core.designsystem.component.textfield.KorailTalkBasicTextField
@@ -48,6 +50,9 @@ fun CheckoutBottomView(
 
         // 현역병 할인
         ActiveDutySoldierSection()
+
+        // 설명
+        GuideContent()
     }
 }
 
@@ -166,6 +171,30 @@ private fun ActiveDutySoldierSection() {
             placeholder = "적용할 승객 선택",
             onClick = {},
             modifier = Modifier.padding(16.dp)
+        )
+    }
+}
+
+@Composable
+private fun GuideContent() {
+    Box(
+        modifier = Modifier
+            .background(KorailTalkTheme.colors.gray50)
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 24.dp)
+    ) {
+        Text(
+            text = "· 추가로 할인 가능한 항목이 있으신 경우 할인을 적용해주세요.\n" +
+                    "· 추가 할인은 어른/청소년 기준, 예매한 매수만큼 적용할 수 있습니다.\n" +
+                    "· 할인승차권 이용시에는 관련 신분증 또는 증명서를 소지하셔야 합니다.\n" +
+                    "· 할인 승차권의 할인율은 별도의 공지 없이 변경될 수 있습니다.\n" +
+                    "· 할인은 운임에만 적용하고 요금은 미적용(특실/우등실은 운임과 요금으로 구분)되며, 최저운임 이하로 할인하지 않습니다.\n\n" +
+                    "· 경증: 장애의 정도가 심하지 않은 장애인 (구 4-6급)\n" +
+                    "· 중증: 장애의 정도가 심한 장애인 (구 1-3급)",
+            style = KorailTalkTheme.typography.cap.cap2R12.copy(
+                lineHeight = 1.5.em
+            ),
+            color = KorailTalkTheme.colors.gray400
         )
     }
 }
