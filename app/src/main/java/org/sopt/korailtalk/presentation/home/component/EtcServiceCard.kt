@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -61,6 +60,7 @@ fun IconGridScreen(items: List<GridItemData>) {
             .padding(start = 12.dp, top = 24.dp, end = 12.dp, bottom = 24.dp),
     ) {
         LazyVerticalGrid(
+            modifier = Modifier.background(KorailTalkTheme.colors.white ),
             columns = GridCells.Fixed(4),
             verticalArrangement = Arrangement.spacedBy(28.dp)
         ) {
