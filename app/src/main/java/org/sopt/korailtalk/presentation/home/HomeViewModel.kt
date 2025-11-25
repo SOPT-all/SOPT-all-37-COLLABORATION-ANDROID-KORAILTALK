@@ -1,19 +1,56 @@
 package org.sopt.korailtalk.presentation.home
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import org.sopt.korailtalk.domain.repository.KorailTalkRepository
 import javax.inject.Inject
 
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
+    private val korailTalkRepository: KorailTalkRepository
 ) : ViewModel() {
+    //상태 관리
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
+    private val _sideEffect = MutableSharedFlow<HomeSideEffect>()
+    val sideEffect: SharedFlow<HomeSideEffect> = _sideEffect.asSharedFlow()
+
+
+    //실제 서버 통신
+    fun getHomeBasicInfo() {
+        viewModelScope.launch {
+            korailTalkRepository.getHomeBasicInfo()
+                .onSuccess { response ->
+                    Log.d("HomeViewModel", "성공! 데이터: ${response}")
+                    //성공하면 받아온 데이터로 상태 교체
+                    _uiState.update { currentState ->
+                        currentState.copy(
+                            startStation = response.origin,
+                            endStation = response.destination
+                        )
+                    }
+                    _sideEffect.emit(HomeSideEffect.ShowToast("서버 통신 성공"))
+
+                }
+                .onFailure { error ->
+                    Log.e("HomeViewModel", "실패 : ${error.message}")
+                    //실패 시
+                    _sideEffect.emit(HomeSideEffect.ShowToast("에러 발생: ${error.message}"))
+                }
+
+        }
+    }
 
     // 역 위치를 서로 바꾸는 로직
     fun swapStations() {
@@ -25,5 +62,9 @@ class HomeViewModel @Inject constructor(
             )
         }
     }
+
 }
 
+sealed interface HomeSideEffect {
+    data class ShowToast(val message: String) : HomeSideEffect
+}
