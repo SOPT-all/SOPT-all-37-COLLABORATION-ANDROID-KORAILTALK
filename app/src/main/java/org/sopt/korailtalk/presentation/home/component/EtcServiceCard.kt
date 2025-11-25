@@ -23,31 +23,20 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import org.sopt.korailtalk.R
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toPersistentList
 import org.sopt.korailtalk.core.designsystem.theme.KorailTalkTheme
+import org.sopt.korailtalk.domain.model.GridItemData
+import org.sopt.korailtalk.domain.model.items
 
-data class GridItemData(
-    val iconId: Int,
-    val title: String
-)
-
-val items = listOf(
-    GridItemData(R.drawable.ic_navigation, "길안내"),
-    GridItemData(R.drawable.ic_location, "열차위치"),
-    GridItemData(R.drawable.ic_parking, "주차"),
-    GridItemData(R.drawable.ic_bus, "공항버스"),
-    GridItemData(R.drawable.ic_car, "렌터카"),
-    GridItemData(R.drawable.ic_car_sharing, "카셰어링"),
-    GridItemData(R.drawable.ic_carrier, "짐배송"),
-    GridItemData(R.drawable.ic_bakery, "카페&빵"),
-    GridItemData(R.drawable.ic_ticket, "레저이용권"),
-    GridItemData(R.drawable.ic_taxi, "관광택시")
-)
 
 @Composable
-fun IconGridScreen(items: List<GridItemData>) {
+fun EtcGridCards(
+    items: ImmutableList<GridItemData>,
+    modifier: Modifier= Modifier
+) {
     Surface(
-        modifier = Modifier
+        modifier = modifier
             .border(
                 width = 1.dp,
                 color = KorailTalkTheme.colors.gray100,
@@ -63,7 +52,7 @@ fun IconGridScreen(items: List<GridItemData>) {
         LazyVerticalGrid(
             modifier = Modifier.background(KorailTalkTheme.colors.white),
             columns = GridCells.Fixed(4),
-            verticalArrangement = Arrangement.spacedBy(7.dp)
+            verticalArrangement = Arrangement.spacedBy(28.dp)
         ) {
             items(items) { item ->
                 GridItemView(item = item)
@@ -105,6 +94,6 @@ fun GridItemView(item: GridItemData) {
 @Preview(showBackground = true)
 @Composable
 private fun GridPreview() {
-    val previewItems = items
-    IconGridScreen(items = previewItems)
+    val previewItems = items.toPersistentList()
+    EtcGridCards(items = previewItems)
 }

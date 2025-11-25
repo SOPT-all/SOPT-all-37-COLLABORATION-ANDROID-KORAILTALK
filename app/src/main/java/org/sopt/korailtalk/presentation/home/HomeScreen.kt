@@ -22,12 +22,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import kotlinx.collections.immutable.toPersistentList
 import org.sopt.korailtalk.core.common.util.preview.DefaultPreview
 import org.sopt.korailtalk.core.designsystem.component.topappbar.KorailTalkBasicTopAppBar
 import org.sopt.korailtalk.core.designsystem.theme.KorailTalkTheme
+import org.sopt.korailtalk.domain.model.items
 import org.sopt.korailtalk.presentation.home.component.CheckTrainCard
-import org.sopt.korailtalk.presentation.home.component.GridItemData
-import org.sopt.korailtalk.presentation.home.component.IconGridScreen
+import org.sopt.korailtalk.presentation.home.component.EtcGridCards
 
 @Composable
 fun HomeRoute(
@@ -41,24 +42,11 @@ fun HomeRoute(
     )
 }
 
-val items = listOf(
-    GridItemData(R.drawable.ic_navigation, "길안내"),
-    GridItemData(R.drawable.ic_location, "열차위치"),
-    GridItemData(R.drawable.ic_parking, "주차"),
-    GridItemData(R.drawable.ic_bus, "공항버스"),
-    GridItemData(R.drawable.ic_car, "렌터카"),
-    GridItemData(R.drawable.ic_car_sharing, "카셰어링"),
-    GridItemData(R.drawable.ic_carrier, "짐배송"),
-    GridItemData(R.drawable.ic_bakery, "카페&빵"),
-    GridItemData(R.drawable.ic_ticket, "레저이용권"),
-    GridItemData(R.drawable.ic_taxi, "관광택시")
-)
-
 @Composable
 private fun HomeScreenContent(
+    navigateToReservation: (String, String) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: HomeViewModel = hiltViewModel(),
-    navigateToReservation: (String, String) -> Unit
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -114,7 +102,7 @@ private fun HomeScreenContent(
             CheckTrainCard(
                 startStation = uiState.startStation,
                 endStation = uiState.endStation,
-                onSwapClick = { viewModel.swapStations() }, // 뷰모델의 함수 호출
+                onSwapClick = { viewModel.swapStations() },
                 onReservationClick = {
                     navigateToReservation(
                         uiState.startStation,
@@ -123,15 +111,9 @@ private fun HomeScreenContent(
                 }
             )
         }
-        Spacer(Modifier.height(16.dp))
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            IconGridScreen(items = items)
-        }
+        Spacer(Modifier.height(24.dp))
+        val items = items.toPersistentList()
+        EtcGridCards(items = items)
 
     }
 }

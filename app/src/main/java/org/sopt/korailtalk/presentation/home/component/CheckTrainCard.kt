@@ -22,11 +22,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import org.sopt.korailtalk.core.common.util.extension.noRippleClickable
 import org.sopt.korailtalk.core.designsystem.component.button.KorailTalkBasicButton
 import org.sopt.korailtalk.core.designsystem.theme.KORAILTALKTheme
@@ -42,7 +44,7 @@ fun CheckTrainCard(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier=modifier
+        modifier = modifier
             .shadow(
                 elevation = 12.dp,
                 spotColor = KorailTalkTheme.colors.black,
@@ -74,7 +76,7 @@ fun CheckTrainCard(
         CheckTrainItem(
             iconId = R.drawable.ic_person,
             title = "어른 1명",
-            showDivider=false
+            showDivider = false
         )
 
         Spacer(Modifier.height(32.dp)) // 인원과 버튼 사이 간격
@@ -98,16 +100,17 @@ fun CheckTrainCard(
 private fun DepartureArrivalItem(
     startValue: String,
     endValue: String,
-    onSwapClick:()->Unit
+    onSwapClick: () -> Unit
 ) {
     Box(
         Modifier.fillMaxWidth()
     ) {
-        Column{
+        Column {
 
             // 1. 출발 (Start)
             Row(
                 verticalAlignment = Alignment.CenterVertically
+
             ) {
                 Text(
                     text = "출발",
@@ -155,18 +158,19 @@ private fun DepartureArrivalItem(
         Box(
             modifier = Modifier
                 .align(Alignment.CenterEnd)
+                .zIndex(1f)
+                .offset( x=(-10).dp,y = (-8).dp)
                 .size(40.dp)
-                .offset(x=(-10).dp,y = (-8).dp)
                 .background(
                     color = KorailTalkTheme.colors.white,
                     shape = CircleShape
                 )
                 .border(
                     width = 1.dp,
-                    color = KorailTalkTheme.colors.gray150, // 테두리 색상
+                    color = KorailTalkTheme.colors.gray150,
                     shape = CircleShape
                 )
-                .noRippleClickable {onSwapClick() },
+                .noRippleClickable { onSwapClick() },
             contentAlignment = Alignment.Center
         ) {
             Image(
@@ -200,7 +204,7 @@ private fun CheckTrainItem(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Image(
-                imageVector = ImageVector.vectorResource(id =iconId),
+                imageVector = ImageVector.vectorResource(id = iconId),
                 contentDescription = null,
                 modifier = Modifier.size(24.dp)
             )
