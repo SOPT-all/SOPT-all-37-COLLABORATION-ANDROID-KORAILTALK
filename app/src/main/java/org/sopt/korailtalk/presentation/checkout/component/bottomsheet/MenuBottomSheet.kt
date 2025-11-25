@@ -2,9 +2,7 @@ package org.sopt.korailtalk.presentation.checkout.component.bottomsheet
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,7 +13,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -32,7 +29,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -42,10 +38,9 @@ import org.sopt.korailtalk.core.common.util.extension.bottomBorder
 import org.sopt.korailtalk.core.common.util.extension.noRippleClickable
 import org.sopt.korailtalk.core.common.util.extension.pressedClickable
 import org.sopt.korailtalk.core.common.util.extension.sideBorder
-import org.sopt.korailtalk.core.common.util.extension.topBorder
 import org.sopt.korailtalk.core.designsystem.component.bottomsheet.KorailTalkBasicBottomSheet
 import org.sopt.korailtalk.core.designsystem.theme.KorailTalkTheme
-import org.sopt.korailtalk.presentation.checkout.data.CouponData
+import org.sopt.korailtalk.domain.model.DomainCouponData
 
 enum class MenuBottomSheetType(val titleText: String, val emptyText: String) {
     Coupon(titleText = "적용할 쿠폰 선택", emptyText = "적용 가능한 쿠폰이 없습니다."),
@@ -60,11 +55,11 @@ fun MenuBottomSheet(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     sheetState: SheetState = rememberModalBottomSheetState(),
-    selectedCouponItem: CouponData? = null,
+    selectedCouponItem: DomainCouponData? = null,
     selectedPersonItem: String? = null,
-    couponList: List<CouponData> = emptyList(),
+    couponList: List<DomainCouponData> = emptyList(),
     personList: List<String> = emptyList(),
-    onCouponClick: (CouponData) -> Unit = {},
+    onCouponClick: (DomainCouponData) -> Unit = {},
     onPersonClick: (String) -> Unit = {},
 ) {
     val scope = rememberCoroutineScope()
@@ -177,11 +172,11 @@ private fun MenuBottomSheetItem(
     itemIndex: Int,
     itemCount: Int,
     itemType: MenuBottomSheetType,
-    couponData: CouponData? = null,
+    couponData: DomainCouponData? = null,
     personData: String? = null,
-    selectedCouponItem: CouponData? = null,
+    selectedCouponItem: DomainCouponData? = null,
     selectedPersonItem: String? = null,
-    onCouponClick: (CouponData) -> Unit = {},
+    onCouponClick: (DomainCouponData) -> Unit = {},
     onPersonClick: (String) -> Unit = {},
 ) {
     var isPressed by remember { mutableStateOf(false) }
@@ -189,7 +184,7 @@ private fun MenuBottomSheetItem(
     val itemViewBottomRadius = if(itemIndex + 1 == itemCount) 8.dp else 0.dp
 
     val itemTitle = when (itemType) {
-        MenuBottomSheetType.Coupon -> couponData?.couponName ?: ""
+        MenuBottomSheetType.Coupon -> couponData?.name ?: ""
         MenuBottomSheetType.Person -> personData ?: ""
     }
 
@@ -242,7 +237,7 @@ private fun MenuBottomSheetItem(
                 onClick = {
                     if (isEnabled) {
                         when(itemType) {
-                            MenuBottomSheetType.Coupon -> onCouponClick(menuItem as CouponData)
+                            MenuBottomSheetType.Coupon -> onCouponClick(menuItem as DomainCouponData)
                             MenuBottomSheetType.Person -> onPersonClick(menuItem as String)
                         }
                     }
@@ -268,13 +263,13 @@ private fun MenuBottomSheetPreview() {
     var showSheet by remember { mutableStateOf(false) }
 
     val couponList = listOf(
-        CouponData(
-            couponName = "운임의 10% 할인",
-            salePercentage = 10
+        DomainCouponData(
+            name = "운임의 10% 할인",
+            discountRate = 10
         ),
-        CouponData(
-            couponName = "운임의 30% 할인",
-            salePercentage = 30
+        DomainCouponData(
+            name = "운임의 30% 할인",
+            discountRate = 30
         ),
     )
 
@@ -283,7 +278,7 @@ private fun MenuBottomSheetPreview() {
         "어른 - 1호차 12B / 48,800원"
     )
 
-    var selectedCouponItem: CouponData? = null
+    var selectedCouponItem: DomainCouponData? = null
     var selectedPersonItem: String? = null
 
 

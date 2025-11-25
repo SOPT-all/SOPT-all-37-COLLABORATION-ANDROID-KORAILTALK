@@ -91,7 +91,7 @@ class MainNavigator(
         )
     }
 
-    fun navigateToReservation() {
+    fun navigateToReservation(startStation: String, endStation: String,) {
         navController.navigateToReservation()
     }
 
