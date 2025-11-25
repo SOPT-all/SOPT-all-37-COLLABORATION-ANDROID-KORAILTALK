@@ -51,9 +51,9 @@ fun CheckoutRoute(
 
     val checkoutUiState by viewModel.checkoutUiState.collectAsStateWithLifecycle()
 
-    when(checkoutUiState.loadState) {
-        is UiState.Success -> {
-            val trainInfo = (checkoutUiState.trainInfoLoadState as UiState.Success).data
+    when(checkoutUiState) {
+        is CheckoutUiState.Success -> {
+            val trainInfo = (checkoutUiState as CheckoutUiState.Success).domainTrainInfo
 
             CheckoutScreen(
                 trainInfo = trainInfo,
@@ -62,7 +62,7 @@ fun CheckoutRoute(
                 onCloseClick = navigateToHome
             )
         }
-        is UiState.Failure -> {
+        is CheckoutUiState.Failure -> {
             //TODO 에러처리
         }
         else -> {}

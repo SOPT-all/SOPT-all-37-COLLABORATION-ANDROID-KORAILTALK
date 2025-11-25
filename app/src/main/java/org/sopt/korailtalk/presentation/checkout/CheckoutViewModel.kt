@@ -6,6 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -22,27 +23,16 @@ class CheckoutViewModel @Inject constructor(
     private val korailTalkRepository: KorailTalkRepository
 ) : ViewModel() {
 
-    private val _trainInfo = MutableStateFlow<UiState<DomainTrainInfo>>(UiState.Init)
+    private val _checkoutUiState = MutableStateFlow<CheckoutUiState>(CheckoutUiState.Init)
+    val checkoutUiState = _checkoutUiState.asStateFlow()
 
-    val checkoutUiState: StateFlow<CheckoutUiState> =
-        combine(_trainInfo) { loadState ->
-            CheckoutUiState(
-                trainInfoLoadState = loadState[0]
-            )
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = CheckoutUiState(
-                trainInfoLoadState = UiState.Init
-            )
-        )
 
     fun getTrainInfo(seatType: SeatType, trainId: Long) = viewModelScope.launch {
         val result = korailTalkRepository.getTrainInfo(DomainTrainInfoRequest(seatType), trainId)
 
         result.fold(
             onSuccess = {
-                _trainInfo.emit(UiState.Success(it))
+                _checkoutUiState.emit(CheckoutUiState.Success(it))
             },
             onFailure = {
 
