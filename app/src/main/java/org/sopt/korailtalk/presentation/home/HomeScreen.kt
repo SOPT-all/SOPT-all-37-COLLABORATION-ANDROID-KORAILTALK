@@ -107,7 +107,6 @@ private fun HomeScreen(
             Modifier.padding(horizontal = 16.dp, vertical = 20.dp)
 
         )
-        Spacer(Modifier.height(24.dp))
         val items = items.toPersistentList()
         EtcGridCards(items = items,
             Modifier.padding(horizontal = 16.dp)
