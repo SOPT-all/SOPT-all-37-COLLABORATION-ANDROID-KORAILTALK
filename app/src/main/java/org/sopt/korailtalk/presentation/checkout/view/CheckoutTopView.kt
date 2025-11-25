@@ -275,13 +275,14 @@ fun CheckoutTopView(
 
         // 할인쿠폰 적용
         Column(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             CheckoutSectionRow(
                 title = "할인쿠폰 적용"
             )
-
-            Spacer(Modifier.height(16.dp))
 
             CheckoutDropDownRow(
                 title = "할인 쿠폰",
@@ -293,8 +294,6 @@ fun CheckoutTopView(
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
 
-            Spacer(Modifier.height(16.dp))
-
             CheckoutDropDownRow(
                 title = "적용 대상",
                 onClick = {
@@ -304,8 +303,6 @@ fun CheckoutTopView(
                 selected = selectedPerson ?: "",
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
-
-            Spacer(Modifier.height(16.dp))
         }
     }
 
