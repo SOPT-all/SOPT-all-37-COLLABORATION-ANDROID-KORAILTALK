@@ -26,13 +26,13 @@ import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
 import org.sopt.korailtalk.core.designsystem.theme.KorailTalkTheme
-import org.sopt.korailtalk.domain.model.GridItemData
+import org.sopt.korailtalk.domain.model.EtcGridItemData
 import org.sopt.korailtalk.domain.model.items
 
 
 @Composable
 fun EtcGridCards(
-    items: ImmutableList<GridItemData>,
+    items: ImmutableList<EtcGridItemData>,
     modifier: Modifier= Modifier
 ) {
     Surface(
@@ -64,7 +64,7 @@ fun EtcGridCards(
 
 // 개별 아이콘 항목 컴포저블
 @Composable
-fun GridItemView(item: GridItemData) {
+fun GridItemView(item: EtcGridItemData) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier

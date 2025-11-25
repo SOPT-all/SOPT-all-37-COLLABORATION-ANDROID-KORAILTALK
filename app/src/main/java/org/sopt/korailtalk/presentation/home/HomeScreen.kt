@@ -19,7 +19,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.collections.immutable.toPersistentList
@@ -35,7 +36,7 @@ fun HomeRoute(
     paddingValues: PaddingValues,
     navigateToReservation: (String, String) -> Unit
 ) {
-    HomeScreenContent(
+    HomeScreen(
         modifier = Modifier.padding(paddingValues),
         navigateToReservation = navigateToReservation
 
@@ -43,7 +44,7 @@ fun HomeRoute(
 }
 
 @Composable
-private fun HomeScreenContent(
+private fun HomeScreen(
     navigateToReservation: (String, String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
@@ -61,19 +62,20 @@ private fun HomeScreenContent(
         KorailTalkBasicTopAppBar(
             navigationIcon = {
                 Icon(
-                    painter = painterResource(id = R.drawable.img_korail_logo),
-                    contentDescription = null,
+                    imageVector = ImageVector.vectorResource(id = R.drawable.img_korail_logo),
+                    contentDescription = "코레일 로고",
                     tint = KorailTalkTheme.colors.white
+
                 )
             },
             actions = {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_translate),
+                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_translate),
                     contentDescription = null,
                     tint = KorailTalkTheme.colors.white
                 )
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_hamburger),
+                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_hamburger),
                     contentDescription = null,
                     tint = KorailTalkTheme.colors.white
                 )
@@ -122,7 +124,7 @@ private fun HomeScreenContent(
 @DefaultPreview
 @Composable
 private fun HomeScreenPreview() {
-    HomeScreenContent(
+    HomeScreen(
         navigateToReservation = { _, _ -> }
     )
 }
