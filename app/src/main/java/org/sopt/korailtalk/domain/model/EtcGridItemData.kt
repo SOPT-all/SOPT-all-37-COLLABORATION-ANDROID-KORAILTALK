@@ -1,4 +1,5 @@
 package org.sopt.korailtalk.domain.model
+import kotlinx.collections.immutable.persistentListOf
 import org.sopt.korailtalk.R
 
 data class EtcGridItemData(
@@ -6,7 +7,7 @@ data class EtcGridItemData(
     val title: String
 )
 
-val items = listOf(
+val items = persistentListOf(
     EtcGridItemData(R.drawable.ic_navigation, "길안내"),
     EtcGridItemData(R.drawable.ic_location, "열차위치"),
     EtcGridItemData(R.drawable.ic_parking, "주차"),
