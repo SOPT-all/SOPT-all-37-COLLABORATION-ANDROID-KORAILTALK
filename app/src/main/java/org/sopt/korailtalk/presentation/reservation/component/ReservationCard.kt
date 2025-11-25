@@ -38,7 +38,7 @@ fun ReservationCard(
 
     Column(
         modifier = modifier
-            .fillMaxWidth()ㅍ
+            .fillMaxWidth()
             .background(
                 color = if (isSoldOut) colors.gray100 else colors.white,
                 shape = RoundedCornerShape(12.dp)
