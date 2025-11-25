@@ -1,4 +1,4 @@
-package org.sopt.korailtalk.presentation.reservation
+package org.sopt.korailtalk.presentation.reservation.screen
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column

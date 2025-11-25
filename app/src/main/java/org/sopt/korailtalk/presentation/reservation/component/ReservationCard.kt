@@ -18,40 +18,29 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.sopt.korailtalk.core.designsystem.theme.LocalKorailTalkColorsProvider
 import org.sopt.korailtalk.core.designsystem.theme.LocalKorailTalkTypographyProvider
+import org.sopt.korailtalk.domain.model.DomainTrainItem
+import org.sopt.korailtalk.domain.model.SeatInfo
 import org.sopt.korailtalk.domain.type.SeatStatusType
 import org.sopt.korailtalk.domain.type.SeatType
 import org.sopt.korailtalk.domain.type.TrainType
 
-// 서버 연동 시에는 매핑 레이어에서 변환예정.
-data class ReservationInfo(
-    val trainType: TrainType,
-    val trainNumber: String,
-    val departureTime: String,
-    val arrivalTime: String,
-    val duration: String,
-    val seatTypes: List<SeatInfo> = emptyList(),
-    val isSoldOut: Boolean = false
-)
-
-data class SeatInfo(
-    val type: SeatType,
-    val status: SeatStatusType,
-    val isUrgent: Boolean = false
-)
-
 @Composable
 fun ReservationCard(
-    reservationInfo: ReservationInfo,
+    trainItem: DomainTrainItem,  // ReservationInfo -> DomainTrainItem
     modifier: Modifier = Modifier
 ) {
     val colors = LocalKorailTalkColorsProvider.current
     val typography = LocalKorailTalkTypographyProvider.current
 
+    // 매진 여부 계산
+    val isSoldOut = trainItem.normalSeat.status == SeatStatusType.SOLD_OUT &&
+            (trainItem.premiumSeat?.status == SeatStatusType.SOLD_OUT || trainItem.premiumSeat == null)
+
     Column(
         modifier = modifier
-            .fillMaxWidth()
+            .fillMaxWidth()ㅍ
             .background(
-                color = if (reservationInfo.isSoldOut) colors.gray100 else colors.white,
+                color = if (isSoldOut) colors.gray100 else colors.white,
                 shape = RoundedCornerShape(12.dp)
             )
             .border(
@@ -68,11 +57,11 @@ fun ReservationCard(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             TrainTypeLabel(
-                trainType = reservationInfo.trainType,
-                isEnabled = !reservationInfo.isSoldOut
+                trainType = trainItem.type,
+                isEnabled = !isSoldOut
             )
             Text(
-                text = reservationInfo.trainNumber,
+                text = trainItem.trainNumber,
                 style = typography.body.body4M14,
                 color = colors.black
             )
@@ -88,7 +77,7 @@ fun ReservationCard(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    text = reservationInfo.departureTime,
+                    text = trainItem.departureTime,
                     style = typography.headline.head2M20,
                     color = colors.black
                 )
@@ -98,28 +87,35 @@ fun ReservationCard(
                     color = colors.gray300
                 )
                 Text(
-                    text = reservationInfo.arrivalTime,
+                    text = trainItem.arrivalTime,
                     style = typography.headline.head2M20,
                     color = colors.black
                 )
             }
             Spacer(modifier = Modifier.width(16.dp))
             Text(
-                text = reservationInfo.duration,
+                text = "${trainItem.durationMinutes}분",  // Int를 문자열로 변환
                 style = typography.body.body4M14,
                 color = colors.gray400
             )
         }
 
         // 좌석 정보
-        if (!reservationInfo.isSoldOut && reservationInfo.seatTypes.isNotEmpty()) {
+        if (!isSoldOut) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                reservationInfo.seatTypes.forEach { seatInfo ->
+                // 일반석은 항상 표시
+                SeatTypeStateItem(
+                    seatType = trainItem.normalSeat.type,
+                    status = trainItem.normalSeat.status,
+                )
+
+                // 특실이 있으면 표시
+                trainItem.premiumSeat?.let { premium ->
                     SeatTypeStateItem(
-                        seatType = seatInfo.type,
-                        status = seatInfo.status,
+                        seatType = premium.type,
+                        status = premium.status,
                     )
                 }
             }
@@ -136,29 +132,27 @@ private fun ReservationCardPreview() {
     ) {
         // 일반 예약 카드
         ReservationCard(
-            reservationInfo = ReservationInfo(
-                trainType = TrainType.KTX,
+            trainItem = DomainTrainItem(
+                type = TrainType.KTX,
                 trainNumber = "001",
                 departureTime = "05:13",
                 arrivalTime = "07:50",
-                duration = "1시간 22분",
-                seatTypes = listOf(
-                    SeatInfo(SeatType.NORMAL, SeatStatusType.AVAILABLE),
-                    SeatInfo(SeatType.PREMIUM, SeatStatusType.ALMOST_SOLD_OUT, isUrgent = true)
-                )
+                durationMinutes = 82,
+                normalSeat = SeatInfo(SeatType.NORMAL, SeatStatusType.AVAILABLE, 59000),
+                premiumSeat = SeatInfo(SeatType.PREMIUM, SeatStatusType.ALMOST_SOLD_OUT, 83000)
             )
         )
 
         // 매진 예약 카드
         ReservationCard(
-            reservationInfo = ReservationInfo(
-                trainType = TrainType.KTX,
-                trainNumber = "001",
-                departureTime = "05:13",
-                arrivalTime = "07:50",
-                duration = "1시간 22분",
-                seatTypes = emptyList(),
-                isSoldOut = true
+            trainItem = DomainTrainItem(
+                type = TrainType.KTX,
+                trainNumber = "002",
+                departureTime = "06:00",
+                arrivalTime = "08:37",
+                durationMinutes = 82,
+                normalSeat = SeatInfo(SeatType.NORMAL, SeatStatusType.SOLD_OUT, 59000),
+                premiumSeat = SeatInfo(SeatType.PREMIUM, SeatStatusType.SOLD_OUT, 83000)
             )
         )
     }
