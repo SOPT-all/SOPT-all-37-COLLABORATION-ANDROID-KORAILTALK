@@ -13,5 +13,12 @@ data class DomainTrainInfo(
     val type: TrainType,
     val trainNumber: Int,
     val price: Int,
-    val reservationId: Long
+    val seatType: SeatType,
+    val reservationId: Long,
+    val coupons: List<DomainCouponData>
+)
+
+data class DomainCouponData(
+    val name: String,
+    val discountRate: Int
 )
