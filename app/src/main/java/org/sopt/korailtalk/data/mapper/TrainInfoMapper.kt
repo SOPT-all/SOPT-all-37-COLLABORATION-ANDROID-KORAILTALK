@@ -3,6 +3,7 @@ package org.sopt.korailtalk.data.mapper
 import org.sopt.korailtalk.data.dto.base.BaseResponse
 import org.sopt.korailtalk.data.dto.request.TrainInfoRequestDto
 import org.sopt.korailtalk.data.dto.response.TrainInfoResponseDto
+import org.sopt.korailtalk.domain.model.DomainCouponData
 import org.sopt.korailtalk.domain.model.DomainTrainInfo
 import org.sopt.korailtalk.domain.model.DomainTrainInfoRequest
 import org.sopt.korailtalk.domain.type.SeatType
@@ -19,12 +20,19 @@ fun Result<BaseResponse<TrainInfoResponseDto>>.toModel() : Result<DomainTrainInf
         val dto = baseResponse.data
 
         DomainTrainInfo(
-            startAt = dto.startAt,
-            arriveAt = dto.arriveAt,
-            type = TrainType.valueOf(dto.type),
-            trainNumber = dto.trainNumber,
-            price = dto.price,
-            reservationId = dto.reservationId,
+            startAt = dto.trainInfo.startAt,
+            arriveAt = dto.trainInfo.arriveAt,
+            type = TrainType.valueOf(dto.trainInfo.type),
+            trainNumber = dto.trainInfo.trainNumber,
+            price = dto.trainInfo.price,
+            seatType = SeatType.valueOf(dto.trainInfo.seatType),
+            reservationId = dto.trainInfo.reservationId,
+            coupons = dto.coupons.map {
+                DomainCouponData(
+                    name = it.name,
+                    discountRate = it.discountRate
+                )
+            },
         )
     }
 }
