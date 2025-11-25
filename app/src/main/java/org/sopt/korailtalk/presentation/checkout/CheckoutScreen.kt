@@ -12,11 +12,19 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.sopt.korailtalk.R
+import org.sopt.korailtalk.core.common.state.UiState
 import org.sopt.korailtalk.core.common.util.extension.noRippleClickable
 import org.sopt.korailtalk.core.common.util.preview.DefaultPreview
 import org.sopt.korailtalk.core.designsystem.component.topappbar.BackTopAppBar
@@ -24,6 +32,7 @@ import org.sopt.korailtalk.domain.model.DomainCouponData
 import org.sopt.korailtalk.domain.model.DomainTrainInfo
 import org.sopt.korailtalk.domain.type.SeatType
 import org.sopt.korailtalk.domain.type.TrainType
+import org.sopt.korailtalk.presentation.checkout.state.CheckoutUiState
 import org.sopt.korailtalk.presentation.checkout.view.CheckoutBottomView
 import org.sopt.korailtalk.presentation.checkout.view.CheckoutTopView
 
@@ -31,34 +40,33 @@ import org.sopt.korailtalk.presentation.checkout.view.CheckoutTopView
 fun CheckoutRoute(
     paddingValues: PaddingValues,
     navigateToHome: () -> Unit,
-    navigateUp: () -> Unit
+    navigateUp: () -> Unit,
+    seatType: SeatType = SeatType.NORMAL,
+    trainId: Long = 0,
+    viewModel: CheckoutViewModel = hiltViewModel()
 ) {
-    val trainInfo = DomainTrainInfo(
-        startAt = "",
-        arriveAt = "",
-        type = TrainType.KTX,
-        trainNumber = 404,
-        price = 48000,
-        reservationId = 1,
-        seatType = SeatType.NORMAL,
-        coupons = listOf(
-            DomainCouponData(
-                name = "coupon1",
-                discountRate = 10
-            ),
-            DomainCouponData(
-                name = "coupon2",
-                discountRate = 20
-            ),
-        )
-    )
+    LaunchedEffect(Unit) {
+        viewModel.getTrainInfo(seatType, trainId)
+    }
 
-    CheckoutScreen(
-        trainInfo = trainInfo,
-        modifier = Modifier.padding(paddingValues),
-        onBackClick = navigateUp,
-        onCloseClick = navigateToHome
-    )
+    val checkoutUiState by viewModel.checkoutUiState.collectAsStateWithLifecycle()
+
+    when(checkoutUiState.loadState) {
+        is UiState.Success -> {
+            val trainInfo = (checkoutUiState.trainInfoLoadState as UiState.Success).data
+
+            CheckoutScreen(
+                trainInfo = trainInfo,
+                modifier = Modifier.padding(paddingValues),
+                onBackClick = navigateUp,
+                onCloseClick = navigateToHome
+            )
+        }
+        is UiState.Failure -> {
+            //TODO 에러처리
+        }
+        else -> {}
+    }
 }
 
 @Composable
