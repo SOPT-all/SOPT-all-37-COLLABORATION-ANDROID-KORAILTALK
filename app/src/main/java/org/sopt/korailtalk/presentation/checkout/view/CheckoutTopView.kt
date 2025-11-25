@@ -29,6 +29,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.sopt.korailtalk.R
+import org.sopt.korailtalk.core.common.util.format.priceFormat
 import org.sopt.korailtalk.core.designsystem.theme.KorailTalkTheme
 import org.sopt.korailtalk.domain.model.DomainCouponData
 import org.sopt.korailtalk.domain.model.DomainTrainInfo
@@ -48,8 +49,6 @@ fun CheckoutTopView(
     viewEnteredTime: Long = System.currentTimeMillis(),
     finalPriceCallback: (Int) -> Unit = {},
 ) {
-    val formatter = java.text.DecimalFormat("#,###")
-
     val targetPayTime = viewEnteredTime + 600000
 
     var selectedCoupon: DomainCouponData? = null
@@ -173,7 +172,7 @@ fun CheckoutTopView(
                 )
 
                 Text(
-                    text = "${formatter.format(trainInfo.price)} 원",
+                    text = "${trainInfo.price.priceFormat()} 원",
                     style = KorailTalkTheme.typography.body.body1R16,
                     color = KorailTalkTheme.colors.gray400
                 )
@@ -193,7 +192,7 @@ fun CheckoutTopView(
                 )
 
                 Text(
-                    text = "${formatter.format(trainInfo.price - 48000)} 원",
+                    text = "${(trainInfo.price - 48000).priceFormat()} 원",
                     style = KorailTalkTheme.typography.body.body1R16,
                     color = KorailTalkTheme.colors.gray400
                 )
@@ -233,7 +232,7 @@ fun CheckoutTopView(
                 )
 
                 Text(
-                    text = "${formatter.format(discountFee)} 원",
+                    text = "${discountFee.priceFormat()} 원",
                     style = KorailTalkTheme.typography.body.body1R16,
                     color = KorailTalkTheme.colors.gray400
                 )
@@ -253,7 +252,7 @@ fun CheckoutTopView(
                 )
 
                 Text(
-                    text = "${formatter.format(trainInfo.price - discountFee)} 원",
+                    text = "${(trainInfo.price - discountFee).priceFormat()} 원",
                     style = KorailTalkTheme.typography.headline.head2M20,
                     color = KorailTalkTheme.colors.black
                 )
