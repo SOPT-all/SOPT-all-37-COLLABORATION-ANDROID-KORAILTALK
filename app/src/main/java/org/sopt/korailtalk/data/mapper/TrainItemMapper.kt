@@ -47,7 +47,7 @@ fun TrainDataResponseDto.toDomain(): TrainSearchResult {
 }
 
 // Result<BaseResponse>를 Result<Domain>으로 변환
-fun Result<BaseResponse<TrainDataResponseDto>>.toDomain(): Result<TrainSearchResult> {
+fun Result<BaseResponse<TrainDataResponseDto>>.toModel(): Result<TrainSearchResult> {  // toDomain() -> toModel()
     return this.mapCatching { baseResponse ->
         baseResponse.data.toDomain()
     }
