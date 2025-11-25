@@ -13,7 +13,8 @@ interface KorailTalkApiService {
     @POST("/api/v1/trains/{trainId}")
     suspend fun getTrainInfo(@Body trainInfoRequestDto: TrainInfoRequestDto): Result<BaseResponse<TrainInfoResponseDto>>
 
-    @GET("/api/v1/trains/{home}")
-    suspend fun getHomeBasicInfo(): Result<BaseResponse<HomeBasicInfoResponseDto>>
+    @GET("/api/v1/trains/home")
+    suspend fun getHomeBasicInfo(): BaseResponse<HomeBasicInfoResponseDto>
 
 }
+

@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 
 @Serializable
-data class HomeBasicInfoResponseDto (
+data class HomeBasicInfoResponseDto(
     @SerialName("origin")
     val origin: String,
     @SerialName("destination")

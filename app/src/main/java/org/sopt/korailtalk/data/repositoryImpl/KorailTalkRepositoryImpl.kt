@@ -18,8 +18,10 @@ class KorailTalkRepositoryImpl @Inject constructor(
             return korailTalkService.getTrainInfo(domainTrainInfoRequest.toDto()).toModel()
         }
 
-    override suspend fun getHomeBasicInfo(): Result<DomainHomeBasicInfo> = safeApiCall {
-        return korailTalkService.getHomeBasicInfo().toModel()
+    override suspend fun getHomeBasicInfo(): Result<DomainHomeBasicInfo> {
+        return safeApiCall {
+            korailTalkService.getHomeBasicInfo()
+        }.toModel()
     }
 
 }
