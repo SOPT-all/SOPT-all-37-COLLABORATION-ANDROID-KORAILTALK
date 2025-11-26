@@ -47,13 +47,13 @@ class HomeViewModel @Inject constructor(
                             endStation = response.destination
                         )
                     }
-                    _sideEffect.emit(HomeSideEffect.ShowToast("서버 통신 성공"))
+                   // _sideEffect.emit(HomeSideEffect.ShowToast("서버 통신 성공"))
 
                 }
                 .onFailure { error ->
                     Log.e("HomeViewModel", "실패 : ${error.message}")
                     //실패 시
-                    _sideEffect.emit(HomeSideEffect.ShowToast("에러 발생: ${error.message}"))
+                   // _sideEffect.emit(HomeSideEffect.ShowToast("에러 발생: ${error.message}"))
                 }
 
         }
