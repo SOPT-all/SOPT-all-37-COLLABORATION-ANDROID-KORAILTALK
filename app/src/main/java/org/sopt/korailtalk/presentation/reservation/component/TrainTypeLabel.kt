@@ -12,17 +12,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import org.sopt.korailtalk.core.designsystem.theme.LocalKorailTalkColorsProvider
 import org.sopt.korailtalk.core.designsystem.theme.LocalKorailTalkTypographyProvider
-import org.sopt.korailtalk.core.designsystem.theme.point_orange
-import org.sopt.korailtalk.core.designsystem.theme.primary_700
-import org.sopt.korailtalk.core.designsystem.theme.secondary_m_400
-import org.sopt.korailtalk.core.designsystem.theme.secondary_p_400
 import org.sopt.korailtalk.domain.type.TrainType
 
 
@@ -52,9 +46,7 @@ fun TrainTypeLabel(
     ) {
         Text(
             text = trainType.displayName,
-            style = typography.body.body4M14.copy(
-                letterSpacing = (-0.21).sp
-            ),
+            style = typography.body.body4M14,
             color = colors.white,
             textAlign = TextAlign.Center
         )
@@ -63,7 +55,7 @@ fun TrainTypeLabel(
 
 @Preview(showBackground = true)
 @Composable
-fun TrainTypeLabelPreview() {
+private fun TrainTypeLabelPreview() {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier.padding(16.dp)

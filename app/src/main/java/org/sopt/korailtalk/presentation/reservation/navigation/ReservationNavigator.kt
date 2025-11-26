@@ -6,7 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import org.sopt.korailtalk.core.navigation.Route
-import org.sopt.korailtalk.presentation.reservation.ReservationRoute
+import org.sopt.korailtalk.presentation.reservation.screen.ReservationRoute
 
 fun NavController.navigateToReservation(navOptions: NavOptions? = null) {
     navigate(Route.Reservation, navOptions)
