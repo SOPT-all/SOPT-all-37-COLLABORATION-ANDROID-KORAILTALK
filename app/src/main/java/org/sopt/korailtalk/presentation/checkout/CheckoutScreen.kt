@@ -19,6 +19,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -88,6 +91,8 @@ private fun CheckoutScreen(
     premiumSeatPrice: Int? = null,
     modifier: Modifier = Modifier
 ) {
+    var selectedCoupon by remember { mutableStateOf<DomainCouponData?>(null) }
+
     Column(
         modifier = modifier
             .background(KorailTalkTheme.colors.white)
@@ -125,6 +130,10 @@ private fun CheckoutScreen(
                     trainInfo = trainInfo,
                     discountFee = 0,
                     normalSeatPrice = normalSeatPrice,
+                    selectedCoupon = selectedCoupon,
+                    onSelectedCouponChange = ({
+                        selectedCoupon = it
+                    }),
                     premiumSeatPrice = premiumSeatPrice,
                     finalPriceCallback = { finalPrice ->
                         //TODO 할인쿠폰 적용한 결과

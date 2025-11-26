@@ -51,11 +51,12 @@ fun CheckoutTopView(
     viewEnteredTime: Long = System.currentTimeMillis(),
     normalSeatPrice: Int = 0,
     premiumSeatPrice: Int? = null,
+    selectedCoupon: DomainCouponData? = null,
+    onSelectedCouponChange: (DomainCouponData) -> Unit = {},
     finalPriceCallback: (Int) -> Unit = {},
 ) {
     val targetPayTime = viewEnteredTime + 32400000 + 600000 // 한국시간으로 9시간 + 유효기간 10분
 
-    var selectedCoupon by remember { mutableStateOf<DomainCouponData?>(null) }
     var selectedPerson by remember { mutableStateOf<String?>(null) }
 
     var showMenuBottomSheetForCoupon by remember { mutableStateOf(false) }
@@ -321,9 +322,7 @@ fun CheckoutTopView(
             type = MenuBottomSheetType.Coupon,
             couponList = trainInfo.coupons,
             selectedCouponItem = selectedCoupon,
-            onCouponClick = {
-                selectedCoupon = it
-            },
+            onCouponClick = onSelectedCouponChange,
             onDismiss = {
                 showMenuBottomSheetForCoupon = false
             },
