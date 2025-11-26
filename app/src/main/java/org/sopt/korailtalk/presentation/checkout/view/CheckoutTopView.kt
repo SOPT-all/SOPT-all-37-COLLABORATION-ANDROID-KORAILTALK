@@ -1,6 +1,7 @@
 package org.sopt.korailtalk.presentation.checkout.view
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -47,22 +49,27 @@ fun CheckoutTopView(
     discountFee: Int,
     modifier: Modifier = Modifier,
     viewEnteredTime: Long = System.currentTimeMillis(),
+    normalSeatPrice: Int = 0,
+    premiumSeatPrice: Int? = null,
     finalPriceCallback: (Int) -> Unit = {},
 ) {
-    val targetPayTime = viewEnteredTime + 600000
+    val targetPayTime = viewEnteredTime + 32400000 + 600000 // 한국시간으로 9시간 + 유효기간 10분
 
-    var selectedCoupon: DomainCouponData? = null
-    var selectedPerson: String? = null
+    var selectedCoupon by remember { mutableStateOf<DomainCouponData?>(null) }
+    var selectedPerson by remember { mutableStateOf<String?>(null) }
 
     var showMenuBottomSheetForCoupon by remember { mutableStateOf(false) }
     var showMenuBottomSheetForPerson by remember { mutableStateOf(false) }
 
-    var finalPrice by remember { mutableStateOf(trainInfo.price) }
+    var couponSalePrice by remember { mutableIntStateOf(0) }
+    var finalPrice by remember { mutableIntStateOf(trainInfo.price) }
 
 
-    LaunchedEffect(selectedCoupon, selectedPerson) {
+    LaunchedEffect(selectedCoupon, selectedPerson, discountFee) {
         if(selectedCoupon != null && selectedPerson != null) {
-            finalPrice = trainInfo.price - trainInfo.price * (selectedCoupon!!.discountRate * 0.01).toInt()
+            couponSalePrice = (trainInfo.price * (selectedCoupon!!.discountRate * 0.01)).toInt()
+
+            finalPrice = trainInfo.price - discountFee - couponSalePrice
             finalPriceCallback(finalPrice)
         }
     }
@@ -192,7 +199,9 @@ fun CheckoutTopView(
                 )
 
                 Text(
-                    text = "${(trainInfo.price - 48000).priceFormat()} 원",
+                    text = "${
+                        if(trainInfo.seatType == SeatType.NORMAL) 0
+                        else (trainInfo.price - (premiumSeatPrice ?: 0)).priceFormat()} 원",
                     style = KorailTalkTheme.typography.body.body1R16,
                     color = KorailTalkTheme.colors.gray400
                 )
@@ -212,7 +221,7 @@ fun CheckoutTopView(
                 )
 
                 Text(
-                    text = "0 원",
+                    text = "$couponSalePrice 원",
                     style = KorailTalkTheme.typography.body.body1R16,
                     color = KorailTalkTheme.colors.gray400
                 )
@@ -252,7 +261,7 @@ fun CheckoutTopView(
                 )
 
                 Text(
-                    text = "${(trainInfo.price - discountFee).priceFormat()} 원",
+                    text = "${(finalPrice).priceFormat()} 원",
                     style = KorailTalkTheme.typography.headline.head2M20,
                     color = KorailTalkTheme.colors.black
                 )
@@ -297,7 +306,7 @@ fun CheckoutTopView(
             CheckoutDropDownRow(
                 title = "적용 대상",
                 onClick = {
-                    showMenuBottomSheetForCoupon = true
+                    showMenuBottomSheetForPerson = true
                 },
                 placeholder = "적용할 승객 선택",
                 selected = selectedPerson ?: "",

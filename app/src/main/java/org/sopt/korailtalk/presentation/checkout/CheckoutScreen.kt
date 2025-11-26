@@ -48,7 +48,9 @@ fun CheckoutRoute(
     navigateToHome: () -> Unit,
     navigateUp: () -> Unit,
     seatType: SeatType = SeatType.NORMAL,
-    trainId: Long = 0,
+    trainId: Long = 1,
+    normalSeatPrice: Int = 48000, // FIXME sample
+    premiumSeatPrice: Int? = 20000, // FIXME sample
     viewModel: CheckoutViewModel = hiltViewModel()
 ) {
     LaunchedEffect(Unit) {
@@ -65,7 +67,9 @@ fun CheckoutRoute(
                 trainInfo = trainInfo,
                 modifier = Modifier.padding(paddingValues),
                 onBackClick = navigateUp,
-                onCloseClick = navigateToHome
+                onCloseClick = navigateToHome,
+                normalSeatPrice = normalSeatPrice,
+                premiumSeatPrice = premiumSeatPrice
             )
         }
         is CheckoutUiState.Failure -> {
@@ -80,13 +84,14 @@ private fun CheckoutScreen(
     trainInfo: DomainTrainInfo,
     onBackClick: () -> Unit,
     onCloseClick: () -> Unit,
+    normalSeatPrice: Int = 0,
+    premiumSeatPrice: Int? = null,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
             .background(KorailTalkTheme.colors.white)
             .fillMaxSize()
-            .systemBarsPadding()
     ) {
         Row( //TODO: TopAppBar로 수정 (@kimjw2003)
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -119,6 +124,8 @@ private fun CheckoutScreen(
                 CheckoutTopView(
                     trainInfo = trainInfo,
                     discountFee = 0,
+                    normalSeatPrice = normalSeatPrice,
+                    premiumSeatPrice = premiumSeatPrice,
                     finalPriceCallback = { finalPrice ->
                         //TODO 할인쿠폰 적용한 결과
                     }

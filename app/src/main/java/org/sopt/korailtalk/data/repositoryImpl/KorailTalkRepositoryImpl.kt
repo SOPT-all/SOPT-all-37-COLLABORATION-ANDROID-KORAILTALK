@@ -15,8 +15,10 @@ import javax.inject.Inject
 class KorailTalkRepositoryImpl @Inject constructor(
     private val korailTalkService: KorailTalkApiService
 ) : KorailTalkRepository {
-    override suspend fun getTrainInfo(domainTrainInfoRequest: DomainTrainInfoRequest, trainId: Long): Result<DomainTrainInfo> = safeApiCall {
-        return korailTalkService.getTrainInfo(domainTrainInfoRequest.toDto(), trainId).toModel()
+    override suspend fun getTrainInfo(domainTrainInfoRequest: DomainTrainInfoRequest, trainId: Long): Result<DomainTrainInfo> {
+        return safeApiCall {
+            korailTalkService.getTrainInfo(domainTrainInfoRequest.toDto(), trainId)
+        }.toModel()
     }
 
     override suspend fun getHomeBasicInfo(): Result<DomainHomeBasicInfo> {

@@ -14,7 +14,7 @@ import retrofit2.http.Query
 interface KorailTalkApiService {
 
     @POST("/api/v1/trains/{trainId}")
-    suspend fun getTrainInfo(@Body trainInfoRequestDto: TrainInfoRequestDto, @Path("trainId") trainId: Long): Result<BaseResponse<TrainInfoResponseDto>>
+    suspend fun getTrainInfo(@Body trainInfoRequestDto: TrainInfoRequestDto, @Path("trainId") trainId: Long): BaseResponse<TrainInfoResponseDto>
 
     @GET("/api/v1/trains/home")
     suspend fun getHomeBasicInfo(): BaseResponse<HomeBasicInfoResponseDto>
