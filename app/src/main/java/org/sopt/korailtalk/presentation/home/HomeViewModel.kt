@@ -4,11 +4,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -23,8 +20,6 @@ class HomeViewModel @Inject constructor(
     //상태 관리
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
-    private val _sideEffect = MutableSharedFlow<HomeSideEffect>()
-    val sideEffect: SharedFlow<HomeSideEffect> = _sideEffect.asSharedFlow()
 
     //서버 로드 되지 않았으니까 api를 호출함
     private var isDataLoaded = false
@@ -47,13 +42,11 @@ class HomeViewModel @Inject constructor(
                             endStation = response.destination
                         )
                     }
-                   // _sideEffect.emit(HomeSideEffect.ShowToast("서버 통신 성공"))
 
                 }
                 .onFailure { error ->
                     Log.e("HomeViewModel", "실패 : ${error.message}")
                     //실패 시
-                   // _sideEffect.emit(HomeSideEffect.ShowToast("에러 발생: ${error.message}"))
                 }
 
         }
@@ -70,8 +63,4 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-}
-
-sealed interface HomeSideEffect {
-    data class ShowToast(val message: String) : HomeSideEffect
 }

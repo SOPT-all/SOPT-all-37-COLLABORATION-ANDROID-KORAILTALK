@@ -38,17 +38,7 @@ fun HomeRoute(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val context = LocalContext.current
 
-//    LaunchedEffect(viewModel.sideEffect) {
-//        viewModel.sideEffect.collectLatest { effect ->
-//            when (effect) {
-//                is HomeSideEffect.ShowToast -> {
-//                    Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
-//                }
-//            }
-//        }
-//    }
     LaunchedEffect(Unit) {
         viewModel.getHomeBasicInfo()
     }
