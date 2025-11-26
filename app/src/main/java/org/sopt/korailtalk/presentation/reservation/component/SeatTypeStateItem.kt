@@ -16,18 +16,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import org.sopt.korailtalk.core.designsystem.theme.LocalKorailTalkColorsProvider
-import org.sopt.korailtalk.core.designsystem.theme.LocalKorailTalkTypographyProvider
+import org.sopt.korailtalk.core.designsystem.theme.KorailTalkTheme.colors
+import org.sopt.korailtalk.core.designsystem.theme.KorailTalkTheme.typography
+import org.sopt.korailtalk.domain.type.SeatStatusType
+import org.sopt.korailtalk.domain.type.SeatType
 
 
 @Composable
-fun SeatTypeItem(
-    seatType: String,
-    status: String? = null,
-    isUrgent: Boolean = false,
+fun SeatTypeStateItem(
+    seatType: SeatType,
+    status: SeatStatusType,
 ) {
-    val colors = LocalKorailTalkColorsProvider.current
-    val typography = LocalKorailTalkTypographyProvider.current
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -49,51 +48,53 @@ fun SeatTypeItem(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = seatType,
+                text = when (seatType) {
+                    SeatType.NORMAL -> "일반"
+                    SeatType.PREMIUM -> "특"
+                },
                 style = typography.cap.cap2R12,
                 color = colors.black
             )
         }
 
-        if (status != null) {
             Text(
-                text = status,
+                text = when (status){
+                    SeatStatusType.ALMOST_SOLD_OUT -> "매진임박"
+                    SeatStatusType.AVAILABLE -> "예매가능"
+                    SeatStatusType.SOLD_OUT -> "매진"
+                },
                 style = typography.cap.cap1M12,
-                color = if (isUrgent) colors.pointRed else colors.gray400
+                color = if (status.isUrgent) colors.pointRed
+                        else colors.gray400
             )
         }
     }
-}
 
 @Composable
 @Preview(showBackground = true)
-fun SeatTypeItemPreview() {
+private fun SeatTypeStateItemPreview() {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier.padding(16.dp)
     ) {
-        SeatTypeItem(
-            seatType = "일반",
-            status = "예매가능",
-            isUrgent = false
+        SeatTypeStateItem(
+            seatType = SeatType.NORMAL,
+            status = SeatStatusType.AVAILABLE,
         )
 
-        SeatTypeItem(
-            seatType = "특",
-            status = "예매가능",
-            isUrgent = false
+        SeatTypeStateItem(
+            seatType = SeatType.PREMIUM,
+            status = SeatStatusType.AVAILABLE,
         )
 
-        SeatTypeItem(
-            seatType = "일반",
-            status = "매진임박",
-            isUrgent = true
+        SeatTypeStateItem(
+            seatType = SeatType.NORMAL,
+            status = SeatStatusType.ALMOST_SOLD_OUT,
         )
 
-        SeatTypeItem(
-            seatType = "특",
-            status = "매진임박",
-            isUrgent = true
+        SeatTypeStateItem(
+            seatType = SeatType.PREMIUM,
+            status = SeatStatusType.SOLD_OUT,
         )
     }
 }

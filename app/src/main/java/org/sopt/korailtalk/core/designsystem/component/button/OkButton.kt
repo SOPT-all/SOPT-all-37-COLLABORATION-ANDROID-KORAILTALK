@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import org.sopt.korailtalk.core.common.util.extension.pressedClickable
+import org.sopt.korailtalk.core.common.util.extension.noRippleClickable
 import org.sopt.korailtalk.core.designsystem.theme.KorailTalkTheme
 
 @Composable
@@ -30,22 +30,16 @@ fun OkButton(
         modifier = modifier
             .clip(RoundedCornerShape(8.dp))
             .background(
-                color = if (!enabled) {
-                    KorailTalkTheme.colors.gray300
-                } else {
+                color = if (enabled) {
                     KorailTalkTheme.colors.primary300
+                } else {
+                    KorailTalkTheme.colors.gray300
                 },
             )
             .height(36.dp)
-            .pressedClickable(
-                changePressed = {
-                    // Pressed 상태가 없음
-                },
-                onClick = {
-                    if (currentEnabled) {
-                        onClick()
-                    }
-                }
+            .noRippleClickable(
+                enabled = currentEnabled,
+                onClick = onClick
             )
             .padding(horizontal = 14.dp),
         contentAlignment = Alignment.Center
