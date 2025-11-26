@@ -27,7 +27,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
 import org.sopt.korailtalk.R
 import org.sopt.korailtalk.core.common.util.extension.noRippleClickable
-import org.sopt.korailtalk.core.common.util.preview.DefaultPreview
 import org.sopt.korailtalk.core.designsystem.component.checkbox.KorailTalkBasicCheckBox
 import org.sopt.korailtalk.core.designsystem.component.dropdown.KorailTalkDropdown
 import org.sopt.korailtalk.core.designsystem.component.topappbar.BackTopAppBar
@@ -57,11 +56,12 @@ fun ReservationRoute(
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(origin, destination) {
         viewModel.searchTrains(
-            origin = "서울",
-            destination = "부산",
-            trainType = "KTX"
+            origin = origin,
+            destination = destination,
+            trainType = TrainType.KTX // <- Postman에서는 400뜨고 여기서는 KTX말고는 다 500떠요 (조회 실패: HTTP 500)
+            // trainType = null         // → 무궁화호 포함 → premiumSeat null 에러 → 500 에러
         )
     }
 
@@ -374,7 +374,11 @@ private fun ReservationContent(
                 .horizontalScroll(rememberScrollState()),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            val trainTypes = listOf("전체", "KTX", "SRT", "무궁화", "ITX-마음/새마을")
+            val trainTypes = buildList {
+                add("전체")
+                addAll(TrainType.entries.map { it.displayName })
+            }
+
             trainTypes.forEach { type ->
                 val isSelected = if (type == "전체") {
                     selectedTrainType == null

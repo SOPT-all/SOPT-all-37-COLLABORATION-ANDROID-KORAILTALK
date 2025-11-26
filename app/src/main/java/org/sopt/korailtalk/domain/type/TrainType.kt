@@ -13,11 +13,13 @@ import org.sopt.korailtalk.core.designsystem.theme.secondary_p_400
  */
 enum class TrainType(
     val displayName: String,
-    val enabledColor: Color
+    val enabledColor: Color,
+    val serverValue: String  // 추가: 서버로 보낼 값
 ) {
-    KTX("KTX", primary_700),                      // KTX 열차
-    SRT("SRT", secondary_p_400),                  // SRT 열차
-    ITX_SAEMAEUL("ITX-새마을", secondary_m_400),  // ITX-새마을 열차
-    MUGUNGHWA("무궁화", point_orange),            // 무궁화호
-    ITX_MAEUM("ITX-마음", secondary_m_400)        // ITX-마음 열차
+    KTX("KTX", primary_700, "KTX"),
+    SRT("SRT", secondary_p_400, "SRT"),
+    ITX_SAEMAEUL("ITX-새마을", secondary_m_400, "ITX-SAEMAEUL"),
+    MUGUNGHWA("무궁화", point_orange, "FLOWER"),  // 서버는 FLOWER로 받음!
+    ITX_MAEUM("ITX-마음", secondary_m_400, "ITX-M");  // 서버는 ITX-M으로 받음!
+
 }

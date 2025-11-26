@@ -33,6 +33,7 @@ class ReservationViewModel @Inject constructor(
     val bottomSheetState: StateFlow<BottomSheetState> = _bottomSheetState.asStateFlow()
 
     private var currentFilters = FilterState()
+    private var isLoadingMore = false
 
     /**
      * 열차 검색
@@ -40,18 +41,25 @@ class ReservationViewModel @Inject constructor(
     fun searchTrains(
         origin: String,
         destination: String,
-        trainType: String? = null,
+        trainType: TrainType? = null,  // ✅ enum으로 받기
         seatType: String? = null,
         isBookAvailable: Boolean? = null,
         cursor: String? = null
     ) {
         viewModelScope.launch {
-            Log.d(TAG, "🚀 [searchTrains] 요청 시작: origin=$origin, destination=$destination, trainType=$trainType, seatType=$seatType, isBookAvailable=$isBookAvailable, cursor=$cursor")
+            Log.d(TAG, "🚀 [searchTrains] 요청 시작: origin=$origin, destination=$destination, trainType=${trainType?.displayName}")
 
             _uiState.value = ReservationUiState.Loading
-            currentFilters = FilterState(trainType, seatType, isBookAvailable)
+            currentFilters = FilterState(trainType, seatType, isBookAvailable)  // ✅ enum 저장
 
-            repository.getTrainList(origin, destination, trainType, seatType, isBookAvailable, cursor)
+            repository.getTrainList(
+                origin,
+                destination,
+                trainType?.serverValue,  // ✅ serverValue로 변환
+                seatType,
+                isBookAvailable,
+                cursor
+            )
                 .onSuccess { result ->
                     Log.d(TAG, "✅ [searchTrains] 조회 성공: totalTrains=${result.totalTrains}, nextCursor=${result.nextCursor}")
                     Log.d(TAG, "✅ [searchTrains] trainList=${result.trains.map { it.trainNumber to it.type }}")
@@ -78,7 +86,7 @@ class ReservationViewModel @Inject constructor(
      * 클라이언트 측 필터 적용
      */
     fun applyClientSideFilter(
-        trainTypeFilter: String? = null,
+        trainTypeFilter: String? = null,  // displayName으로 받음
         seatTypeFilter: String? = null,
         isBookAvailableOnly: Boolean = false
     ) {
@@ -90,8 +98,7 @@ class ReservationViewModel @Inject constructor(
         val filteredTrains = currentState.trains.filter { train ->
             val matchesTrainType = when {
                 trainTypeFilter.isNullOrEmpty() || trainTypeFilter == "전체" -> true
-                trainTypeFilter == "ITX-마음/새마을" -> train.type == TrainType.ITX_MAEUM || train.type == TrainType.ITX_SAEMAEUL
-                else -> train.type.displayName == trainTypeFilter
+                else -> train.type.displayName == trainTypeFilter  // ✅ displayName과 비교
             }
 
             val matchesSeatType = when (seatTypeFilter) {
@@ -124,12 +131,19 @@ class ReservationViewModel @Inject constructor(
             return
         }
 
+        if (isLoadingMore) {
+            Log.d(TAG, "⏳ [loadMoreTrains] 이미 로딩 중")
+            return
+        }
+
+        isLoadingMore = true
+
         viewModelScope.launch {
             Log.d(TAG, "📥 [loadMoreTrains] 요청: nextCursor=${currentState.nextCursor}")
             repository.getTrainList(
                 origin = currentState.origin,
                 destination = currentState.destination,
-                trainType = currentFilters.trainType,
+                trainType = currentFilters.trainType?.serverValue,  // ✅ serverValue 사용
                 seatType = currentFilters.seatType,
                 isBookAvailable = currentFilters.isBookAvailable,
                 cursor = currentState.nextCursor
@@ -143,6 +157,7 @@ class ReservationViewModel @Inject constructor(
             }.onFailure { e ->
                 Log.e(TAG, "❌ [loadMoreTrains] 실패: ${e.message}", e)
             }
+            isLoadingMore = false
         }
     }
 
@@ -172,7 +187,7 @@ class ReservationViewModel @Inject constructor(
             searchTrains(
                 origin = currentState.origin,
                 destination = currentState.destination,
-                trainType = currentFilters.trainType,
+                trainType = currentFilters.trainType,  // ✅ enum 그대로 전달
                 seatType = currentFilters.seatType,
                 isBookAvailable = currentFilters.isBookAvailable
             )
@@ -181,8 +196,9 @@ class ReservationViewModel @Inject constructor(
         }
     }
 
+    //  FilterState 수정
     private data class FilterState(
-        val trainType: String? = null,
+        val trainType: TrainType? = null,  // String → TrainType enum
         val seatType: String? = null,
         val isBookAvailable: Boolean? = null
     )
