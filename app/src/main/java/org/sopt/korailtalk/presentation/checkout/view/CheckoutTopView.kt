@@ -100,7 +100,7 @@ fun CheckoutTopView(
 
             //열차 정보
             Text(
-                text = "${trainInfo.type.name} ${trainInfo.trainNumber} · 1호차 12A",
+                text = "${trainInfo.type.displayName} ${trainInfo.trainNumber} · 1호차 12A",
                 style = KorailTalkTheme.typography.body.body1R16,
                 color = KorailTalkTheme.colors.black
             )
@@ -221,7 +221,7 @@ fun CheckoutTopView(
                 )
 
                 Text(
-                    text = "$couponSalePrice 원",
+                    text = "${couponSalePrice.priceFormat()} 원",
                     style = KorailTalkTheme.typography.body.body1R16,
                     color = KorailTalkTheme.colors.gray400
                 )
@@ -333,7 +333,7 @@ fun CheckoutTopView(
     if(showMenuBottomSheetForPerson) {
         MenuBottomSheet(
             type = MenuBottomSheetType.Person,
-            personList = listOf("어른 - 1호차 12A / ${trainInfo.price}"),
+            personList = listOf("어른 - 1호차 12A / ${trainInfo.price.priceFormat()}"),
             selectedPersonItem = selectedPerson,
             onPersonClick = {
                 selectedPerson = it
