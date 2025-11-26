@@ -26,12 +26,19 @@ class HomeViewModel @Inject constructor(
     private val _sideEffect = MutableSharedFlow<HomeSideEffect>()
     val sideEffect: SharedFlow<HomeSideEffect> = _sideEffect.asSharedFlow()
 
+    //서버 로드 되지 않았으니까 api를 호출함
+    private var isDataLoaded = false
+
 
     //실제 서버 통신
     fun getHomeBasicInfo() {
+        //한번 api가 호출되면 더이상 호출하지 않음!
+        if (isDataLoaded) return
+
         viewModelScope.launch {
             korailTalkRepository.getHomeBasicInfo()
                 .onSuccess { response ->
+                    isDataLoaded = true
                     Log.d("HomeViewModel", "성공! 데이터: ${response}")
                     //성공하면 받아온 데이터로 상태 교체
                     _uiState.update { currentState ->

@@ -34,19 +34,7 @@ import org.sopt.korailtalk.presentation.home.component.EtcGridCards
 @Composable
 fun HomeRoute(
     paddingValues: PaddingValues,
-    navigateToReservation: (String, String) -> Unit
-) {
-    HomeScreen(
-        modifier = Modifier.padding(paddingValues),
-        navigateToReservation = navigateToReservation
-
-    )
-}
-
-@Composable
-private fun HomeScreen(
     navigateToReservation: (String, String) -> Unit,
-    modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -65,9 +53,27 @@ private fun HomeScreen(
         viewModel.getHomeBasicInfo()
     }
 
+    HomeScreen(
+        paddingValues = paddingValues,
+        uiState = uiState,
+        onSwapClick = { viewModel.swapStations() },
+        navigateToReservation = navigateToReservation
+    )
+}
+
+@Composable
+fun HomeScreen(
+    paddingValues: PaddingValues,
+    uiState: HomeUiState,
+    onSwapClick: () -> Unit,
+    navigateToReservation: (String, String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+
 
     Column(
         modifier
+            .padding(paddingValues)
             .background(KorailTalkTheme.colors.gray50)
             .fillMaxSize(),
         horizontalAlignment = Alignment.Start,
@@ -112,7 +118,7 @@ private fun HomeScreen(
         CheckTrainCard(
             startStation = uiState.startStation,
             endStation = uiState.endStation,
-            onSwapClick = { viewModel.swapStations() },
+            onSwapClick = onSwapClick,
             onReservationClick = {
                 navigateToReservation(
                     uiState.startStation,
@@ -135,6 +141,9 @@ private fun HomeScreen(
 @Composable
 private fun HomeScreenPreview() {
     HomeScreen(
+        paddingValues = PaddingValues(),
+        uiState = HomeUiState(startStation = "서울", endStation = "부산"),
+        onSwapClick = {},
         navigateToReservation = { _, _ -> }
     )
 }
