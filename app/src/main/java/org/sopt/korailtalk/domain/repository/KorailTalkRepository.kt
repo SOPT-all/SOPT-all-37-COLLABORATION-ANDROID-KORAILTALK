@@ -10,8 +10,6 @@ interface KorailTalkRepository {
 
     suspend fun getHomeBasicInfo(): Result<DomainHomeBasicInfo>
 
-    suspend fun getTrainInfo(domainTrainInfoRequest: DomainTrainInfoRequest) : Result<DomainTrainInfo>
-
     suspend fun getTrainList(
         origin: String,
         destination: String,
