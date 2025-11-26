@@ -2,6 +2,7 @@ package org.sopt.korailtalk.data.service
 
 import org.sopt.korailtalk.data.dto.base.BaseResponse
 import org.sopt.korailtalk.data.dto.request.TrainInfoRequestDto
+import org.sopt.korailtalk.data.dto.response.HomeBasicInfoResponseDto
 import org.sopt.korailtalk.data.dto.response.TrainDataResponseDto
 import org.sopt.korailtalk.data.dto.response.TrainInfoResponseDto
 import retrofit2.http.Body
@@ -14,6 +15,9 @@ interface KorailTalkApiService {
     @POST("/api/v1/trains/{trainId}")
     suspend fun getTrainInfo(@Body trainInfoRequestDto: TrainInfoRequestDto): Result<BaseResponse<TrainInfoResponseDto>>
 
+    @GET("/api/v1/trains/home")
+    suspend fun getHomeBasicInfo(): BaseResponse<HomeBasicInfoResponseDto>
+
 
     @GET("/api/v1/trains")
     suspend fun getTrains(
@@ -25,3 +29,4 @@ interface KorailTalkApiService {
         @Query("cursor") cursor: String? = null
     ): Result<BaseResponse<TrainDataResponseDto>>  // Result 추가
 }
+
