@@ -22,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,13 +58,13 @@ fun CheckoutTopView(
 ) {
     val targetPayTime = viewEnteredTime + 32400000 + 600000 // 한국시간으로 9시간 + 유효기간 10분
 
-    var selectedPerson by remember { mutableStateOf<String?>(null) }
+    var selectedPerson by rememberSaveable { mutableStateOf<String?>(null) }
 
     var showMenuBottomSheetForCoupon by remember { mutableStateOf(false) }
     var showMenuBottomSheetForPerson by remember { mutableStateOf(false) }
 
-    var couponSalePrice by remember { mutableIntStateOf(0) }
-    var finalPrice by remember { mutableIntStateOf(trainInfo.price) }
+    var couponSalePrice by rememberSaveable { mutableIntStateOf(0) }
+    var finalPrice by rememberSaveable { mutableIntStateOf(trainInfo.price) }
 
 
     LaunchedEffect(selectedCoupon, selectedPerson, discountFee) {
