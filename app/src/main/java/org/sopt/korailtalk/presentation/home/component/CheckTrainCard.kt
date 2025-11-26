@@ -66,14 +66,14 @@ fun CheckTrainCard(
 
         // 2. 날짜 및 시간
         CheckTrainItem(
-            iconId = R.drawable.ic_calender,
+            iconId = R.drawable.ic_home_calender,
             title = "12. 1  (월)  ·  14시 이후",
             showDivider = true
         )
 
         // 3. 인원
         CheckTrainItem(
-            iconId = R.drawable.ic_person,
+            iconId = R.drawable.ic_home_person,
             title = "어른 1명",
             showDivider = false
         )
@@ -174,7 +174,7 @@ private fun DepartureArrivalItem(
             contentAlignment = Alignment.Center
         ) {
             Image(
-                imageVector = ImageVector.vectorResource(id = R.drawable.ic_exchange),
+                imageVector = ImageVector.vectorResource(id = R.drawable.ic_home_exchange),
                 contentDescription = "출발/도착 전환",
                 modifier = Modifier.size(24.dp) // 내부 아이콘 크기
             )
