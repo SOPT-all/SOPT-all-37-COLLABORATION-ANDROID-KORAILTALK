@@ -95,7 +95,13 @@ class MainNavigator(
         navController.navigateToReservation()
     }
 
-    fun navigateToCheckout() {
+    fun navigateToCheckout(seatType: String, trainId: String) {
+        // 일단 받기만 하도록 했음 안그러면 계속 MainScreen에서 이런 오류떠서
+        // - Inapplicable candidate(s): fun navigateToCheckout(): Unit
+        /**
+         * TODO: Checkout 화면 API 연동 시 파라미터 전달 필요
+         *       (현재는 더미 데이터 사용으로 파라미터 미전달)
+         */
         navController.navigateToCheckout()
     }
 

@@ -8,13 +8,17 @@ import androidx.navigation.compose.composable
 import org.sopt.korailtalk.core.navigation.Route
 import org.sopt.korailtalk.presentation.reservation.screen.ReservationRoute
 
+/**
+ * Reservation 화면으로 이동
+ */
+
 fun NavController.navigateToReservation(navOptions: NavOptions? = null) {
     navigate(Route.Reservation, navOptions)
 }
 
 fun NavGraphBuilder.reservationNavGraph(
     paddingValues: PaddingValues,
-    navigateToCheckout: () -> Unit, // TODO: 예약 정보 전달
+    navigateToCheckout: (seatType: String, trainId: String) -> Unit,
     navigateUp: () -> Unit
 ) {
     composable<Route.Reservation> {
@@ -25,3 +29,4 @@ fun NavGraphBuilder.reservationNavGraph(
         )
     }
 }
+

@@ -40,7 +40,7 @@ import org.sopt.korailtalk.presentation.reservation.viewmodel.ReservationViewMod
 @Composable
 fun ReservationRoute(
     paddingValues: PaddingValues,
-    navigateToCheckout: () -> Unit,
+    navigateToCheckout: (String, String) -> Unit,
     navigateUp: () -> Unit,
     viewModel: ReservationViewModel = hiltViewModel()
 ) {
@@ -69,7 +69,7 @@ fun ReservationRoute(
 private fun ReservationScreen(
     uiState: ReservationUiState,
     onBackClick: () -> Unit,
-    onTrainItemClick: () -> Unit,
+    onTrainItemClick: (String, String) -> Unit,
     onSearchTrains: (String, String, String?, String?, Boolean?) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -227,7 +227,7 @@ private fun ReservationContent(
     onRouteTypeSelected: (String) -> Unit,
     isBookAvailableOnly: Boolean,
     onBookAvailableChanged: (Boolean) -> Unit,
-    onTrainItemClick: () -> Unit
+    onTrainItemClick: (String, String) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -401,7 +401,8 @@ private fun ReservationContent(
                 ReservationCard(
                     trainItem = train,
                     modifier = Modifier.noRippleClickable {
-                        onTrainItemClick()
+                        val seatType = "normal"  // TODO: 바텀시트 만들고, 추후 좌석 선택 로직 추가 필요
+                        onTrainItemClick(seatType, train.trainNumber)
                     }
                 )
             }
@@ -439,7 +440,7 @@ private fun ReservationScreenPreview() {
             totalTrains = 24
         ),
         onBackClick = {},
-        onTrainItemClick = {},
+        onTrainItemClick = { _, _ -> },
         onSearchTrains = { _, _, _, _, _ -> }
     )
 }
