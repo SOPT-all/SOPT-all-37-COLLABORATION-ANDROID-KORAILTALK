@@ -20,6 +20,8 @@ fun Result<BaseResponse<TrainInfoResponseDto>>.toModel() : Result<DomainTrainInf
         val dto = baseResponse.data
 
         DomainTrainInfo(
+            origin = dto.trainInfo.origin,
+            destination = dto.trainInfo.destination,
             startAt = dto.trainInfo.startAt,
             arriveAt = dto.trainInfo.arriveAt,
             type = TrainType.valueOf(dto.trainInfo.type),

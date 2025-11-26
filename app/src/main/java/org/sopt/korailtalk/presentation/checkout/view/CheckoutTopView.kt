@@ -114,7 +114,7 @@ fun CheckoutTopView(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "서울",
+                        text = trainInfo.origin,
                         style = KorailTalkTheme.typography.headline.head1M30,
                         color = KorailTalkTheme.colors.primary700
                     )
@@ -143,7 +143,7 @@ fun CheckoutTopView(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "부산",
+                        text = trainInfo.destination,
                         style = KorailTalkTheme.typography.headline.head1M30,
                         color = KorailTalkTheme.colors.primary700
                     )
@@ -348,6 +348,8 @@ fun Long.toHHMM(): String {
 @Composable
 private fun CheckoutTopViewPreview() {
     val trainInfo = DomainTrainInfo(
+        origin = "서울",
+        destination = "부산",
         startAt = "06:48",
         arriveAt = "10:09",
         type = TrainType.KTX,

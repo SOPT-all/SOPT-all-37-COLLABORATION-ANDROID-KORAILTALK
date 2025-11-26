@@ -13,6 +13,10 @@ data class TrainInfoResponseDto(
 
 @Serializable
 data class TrainInfoDto(
+    @SerialName("origin")
+    val origin: String,
+    @SerialName("destination")
+    val destination: String,
     @SerialName("startAt")
     val startAt: String,
     @SerialName("arriveAt")

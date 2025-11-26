@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import org.sopt.korailtalk.core.navigation.MainTabRoute.Home
+import org.sopt.korailtalk.core.navigation.Route
 import org.sopt.korailtalk.presentation.checkout.navigation.navigateToCheckout
 import org.sopt.korailtalk.presentation.home.navigation.navigateToHome
 import org.sopt.korailtalk.presentation.others.navigation.navigateToProduct
@@ -27,7 +28,7 @@ class MainNavigator(
     val navController: NavHostController,
     coroutineScope: CoroutineScope,
 ) {
-    val startDestination = Home
+    val startDestination = Route.Checkout
 
     // NavController의 Flow를 관찰하여 현재 Destination을 StateFlow로 변환
     private val currentDestination = navController.currentBackStackEntryFlow

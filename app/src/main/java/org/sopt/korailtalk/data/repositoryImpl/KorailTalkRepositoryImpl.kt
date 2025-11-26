@@ -17,10 +17,7 @@ class KorailTalkRepositoryImpl @Inject constructor(
 ) : KorailTalkRepository {
     override suspend fun getTrainInfo(domainTrainInfoRequest: DomainTrainInfoRequest, trainId: Long): Result<DomainTrainInfo> = safeApiCall {
         return korailTalkService.getTrainInfo(domainTrainInfoRequest.toDto(), trainId).toModel()
-    override suspend fun getTrainInfo(domainTrainInfoRequest: DomainTrainInfoRequest): Result<DomainTrainInfo> =
-        safeApiCall {
-            return korailTalkService.getTrainInfo(domainTrainInfoRequest.toDto()).toModel()
-        }
+    }
 
     override suspend fun getHomeBasicInfo(): Result<DomainHomeBasicInfo> {
         return safeApiCall {

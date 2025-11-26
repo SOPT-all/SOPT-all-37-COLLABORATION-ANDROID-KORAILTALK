@@ -30,4 +30,3 @@ interface KorailTalkApiService {
         @Query("cursor") cursor: String? = null
     ): Result<BaseResponse<TrainDataResponseDto>>  // Result 추가
 }
-
