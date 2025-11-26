@@ -91,8 +91,11 @@ class MainNavigator(
         )
     }
 
-    fun navigateToReservation(startStation: String, endStation: String,) {
-        navController.navigateToReservation()
+    fun navigateToReservation(startStation: String, endStation: String) {
+        navController.navigateToReservation(
+            origin = startStation,
+            destination = endStation
+        )
     }
 
     fun navigateToCheckout(seatType: String, trainId: String) {

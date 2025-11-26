@@ -7,5 +7,8 @@ interface Route {
     data object Checkout : Route
 
     @Serializable
-    data object Reservation : Route
+    data class Reservation(
+        val origin: String,
+        val destination: String
+    ) : Route
 }

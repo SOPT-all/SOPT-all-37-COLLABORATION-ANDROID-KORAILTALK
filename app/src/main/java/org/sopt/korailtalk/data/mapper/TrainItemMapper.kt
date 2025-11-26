@@ -61,9 +61,9 @@ fun TrainItemResponseDto.toDomain(): DomainTrainItem {
         }
     )
 }
-
 /**
  * TrainDataResponseDto를 TrainSearchResult로 변환
+ * {"status":200,"message":"열차 목록 조회 성공","data":{"origin":"Seoul","destination":"Busan","totalTrains":0,"nextCursor":null,"trainList":[]}}
  */
 fun TrainDataResponseDto.toDomain(): TrainSearchResult {
     return TrainSearchResult(
@@ -71,7 +71,7 @@ fun TrainDataResponseDto.toDomain(): TrainSearchResult {
         destination = destination,
         totalTrains = totalTrains,
         trains = trainList.map { it.toDomain() },
-        nextCursor = nextCursor.takeIf { it.isNotEmpty() }
+        nextCursor = nextCursor?.takeIf { it.isNotEmpty() } // null처리
     )
 }
 

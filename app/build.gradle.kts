@@ -86,4 +86,10 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+
+    // Retrofit Result CallAdapter
+    dependencies {
+        implementation("com.github.skydoves:retrofit-adapters-result:1.0.9")
+    }
+
 }

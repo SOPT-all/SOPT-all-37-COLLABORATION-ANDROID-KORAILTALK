@@ -6,21 +6,25 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.launch
 import org.sopt.korailtalk.R
 import org.sopt.korailtalk.core.common.util.extension.noRippleClickable
 import org.sopt.korailtalk.core.common.util.preview.DefaultPreview
@@ -33,34 +37,77 @@ import org.sopt.korailtalk.domain.model.SeatInfo
 import org.sopt.korailtalk.domain.type.SeatStatusType
 import org.sopt.korailtalk.domain.type.SeatType
 import org.sopt.korailtalk.domain.type.TrainType
+import org.sopt.korailtalk.presentation.reservation.component.ReservationBottomSheet
 import org.sopt.korailtalk.presentation.reservation.component.ReservationCard
 import org.sopt.korailtalk.presentation.reservation.state.ReservationUiState
 import org.sopt.korailtalk.presentation.reservation.viewmodel.ReservationViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReservationRoute(
     paddingValues: PaddingValues,
+    origin: String,  // 추가
+    destination: String,  // 추가
     navigateToCheckout: (String, String) -> Unit,
     navigateUp: () -> Unit,
     viewModel: ReservationViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val bottomSheetState by viewModel.bottomSheetState.collectAsStateWithLifecycle()
+    val sheetState = rememberModalBottomSheetState()
+    val scope = rememberCoroutineScope()
 
-    // 화면 진입 시 데이터 로딩 (임시로 서울-부산)
     LaunchedEffect(Unit) {
         viewModel.searchTrains(
-            origin = "Seoul",
-            destination = "Busan"
+            origin = "서울",
+            destination = "부산",
+            trainType = "KTX"
         )
+    }
+
+// 바텀시트 표시
+    bottomSheetState.selectedTrain?.let { train ->
+        if (bottomSheetState.isVisible) {
+            ReservationBottomSheet(
+                trainItem = train,
+                sheetState = sheetState,
+                onDismiss = {
+                    scope.launch {
+                        sheetState.hide()
+                    }.invokeOnCompletion {
+                        viewModel.hideBottomSheet()
+                    }
+                },
+                onConfirm = { seatType ->
+                    scope.launch {
+                        sheetState.hide()
+                    }.invokeOnCompletion {
+                        viewModel.hideBottomSheet()
+                        navigateToCheckout(
+                            seatType.name.lowercase(),
+                            train.trainNumber
+                        )
+                    }
+                }
+            )
+        }
     }
 
     ReservationScreen(
         uiState = uiState,
         modifier = Modifier.padding(paddingValues),
         onBackClick = navigateUp,
-        onTrainItemClick = navigateToCheckout,
-        onSearchTrains = { origin, destination, trainType, seatType, isBookAvailable ->
-            viewModel.searchTrains(origin, destination, trainType, seatType, isBookAvailable)
+        onTrainItemClick = { train ->
+            viewModel.showBottomSheet(train)
+        },
+        onRefresh = {
+            viewModel.refresh()
+        },
+        onFilterChange = { trainType, seatType, isBookAvailable ->
+            viewModel.applyClientSideFilter(trainType, seatType, isBookAvailable)
+        },
+        onLoadMore = {
+            viewModel.loadMoreTrains()
         }
     )
 }
@@ -69,8 +116,10 @@ fun ReservationRoute(
 private fun ReservationScreen(
     uiState: ReservationUiState,
     onBackClick: () -> Unit,
-    onTrainItemClick: (String, String) -> Unit,
-    onSearchTrains: (String, String, String?, String?, Boolean?) -> Unit,
+    onTrainItemClick: (DomainTrainItem) -> Unit,
+    onRefresh: () -> Unit,
+    onFilterChange: (String?, String, Boolean) -> Unit,
+    onLoadMore: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     // 필터 상태
@@ -93,25 +142,14 @@ private fun ReservationScreen(
                     modifier = Modifier
                         .size(44.dp)
                         .noRippleClickable {
-                            // 현재 필터로 재검색
-                            when (uiState) {
-                                is ReservationUiState.Success -> {
-                                    onSearchTrains(
-                                        uiState.origin,
-                                        uiState.destination,
-                                        selectedTrainType,
-                                        if (selectedSeatType == "전체") null else selectedSeatType,
-                                        isBookAvailableOnly
-                                    )
-                                }
-                                else -> {}
-                            }
+                            onRefresh()
                         }
                 )
                 Image(
                     imageVector = ImageVector.vectorResource(R.drawable.ic_hamburger),
                     contentDescription = "메뉴",
                     modifier = Modifier.size(44.dp)
+                    // 메뉴 버튼은 아이콘 UI만 구현, 기능 구현하지 않음
                 )
             }
         )
@@ -144,46 +182,34 @@ private fun ReservationScreen(
                 ReservationContent(
                     origin = state.origin,
                     destination = state.destination,
-                    totalTrains = state.totalTrains,
-                    trains = state.trains,
+                    date = state.date,
+                    dayOfWeek = state.dayOfWeek,
+                    passengerCount = state.passengerCount,
+                    totalTrains = state.filteredTrains.size,
+                    trains = state.filteredTrains,
+                    hasMoreData = state.nextCursor != null,
                     selectedTrainType = selectedTrainType,
                     onTrainTypeSelected = { type ->
-                        selectedTrainType = if (selectedTrainType == type) null else type
-                        onSearchTrains(
-                            state.origin,
-                            state.destination,
-                            selectedTrainType,
-                            if (selectedSeatType == "전체") null else selectedSeatType,
-                            isBookAvailableOnly
-                        )
+                        selectedTrainType = if (type == "전체") null else type
+                        onFilterChange(selectedTrainType, selectedSeatType, isBookAvailableOnly)
                     },
                     selectedSeatType = selectedSeatType,
                     onSeatTypeSelected = { seat ->
                         selectedSeatType = seat
-                        onSearchTrains(
-                            state.origin,
-                            state.destination,
-                            selectedTrainType,
-                            if (selectedSeatType == "전체") null else selectedSeatType,
-                            isBookAvailableOnly
-                        )
+                        onFilterChange(selectedTrainType, selectedSeatType, isBookAvailableOnly)
                     },
                     selectedRouteType = selectedRouteType,
                     onRouteTypeSelected = { route ->
                         selectedRouteType = route
+                        // 환승은 구현하지 않음
                     },
                     isBookAvailableOnly = isBookAvailableOnly,
                     onBookAvailableChanged = { checked ->
                         isBookAvailableOnly = checked
-                        onSearchTrains(
-                            state.origin,
-                            state.destination,
-                            selectedTrainType,
-                            if (selectedSeatType == "전체") null else selectedSeatType,
-                            isBookAvailableOnly
-                        )
+                        onFilterChange(selectedTrainType, selectedSeatType, isBookAvailableOnly)
                     },
-                    onTrainItemClick = onTrainItemClick
+                    onTrainItemClick = onTrainItemClick,
+                    onLoadMore = onLoadMore
                 )
             }
 
@@ -217,8 +243,12 @@ private fun ReservationScreen(
 private fun ReservationContent(
     origin: String,
     destination: String,
+    date: String,
+    dayOfWeek: String,
+    passengerCount: Int,
     totalTrains: Int,
     trains: List<DomainTrainItem>,
+    hasMoreData: Boolean,
     selectedTrainType: String?,
     onTrainTypeSelected: (String) -> Unit,
     selectedSeatType: String,
@@ -227,8 +257,23 @@ private fun ReservationContent(
     onRouteTypeSelected: (String) -> Unit,
     isBookAvailableOnly: Boolean,
     onBookAvailableChanged: (Boolean) -> Unit,
-    onTrainItemClick: (String, String) -> Unit
+    onTrainItemClick: (DomainTrainItem) -> Unit,
+    onLoadMore: () -> Unit
 ) {
+    val listState = rememberLazyListState()
+
+    // 무한 스크롤 감지
+    LaunchedEffect(listState) {
+        snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
+            .collect { lastVisibleIndex ->
+                if (lastVisibleIndex != null &&
+                    lastVisibleIndex >= trains.size - 3 &&
+                    hasMoreData) {
+                    onLoadMore()
+                }
+            }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -263,7 +308,7 @@ private fun ReservationContent(
                 )
             }
             Text(
-                text = "11월 10일 · 편도 · 어른 1명", // TODO: 실제 데이터로 변경
+                text = "$date · 편도 · 어른 ${passengerCount}명",
                 style = KorailTalkTheme.typography.cap.cap1M12,
                 color = KorailTalkTheme.colors.gray400
             )
@@ -282,6 +327,7 @@ private fun ReservationContent(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
+                // 좌우 화살표는 클릭 불가 (구현하지 않음)
                 Image(
                     imageVector = ImageVector.vectorResource(R.drawable.ic_reservation_arrow),
                     contentDescription = "이전 날짜",
@@ -290,7 +336,7 @@ private fun ReservationContent(
                         .then(Modifier.rotate(180f))
                 )
                 Text(
-                    text = "가는 날 11월 10일 (화)", // TODO: 실제 날짜로 변경
+                    text = "가는 날 $date ($dayOfWeek)",
                     style = KorailTalkTheme.typography.body.body2M15,
                     color = KorailTalkTheme.colors.black
                 )
@@ -330,12 +376,16 @@ private fun ReservationContent(
         ) {
             val trainTypes = listOf("전체", "KTX", "SRT", "무궁화", "ITX-마음/새마을")
             trainTypes.forEach { type ->
-                val isSelected = if (type == "전체") selectedTrainType == null else selectedTrainType == type
+                val isSelected = if (type == "전체") {
+                    selectedTrainType == null
+                } else {
+                    selectedTrainType == type
+                }
 
                 FilterChip(
                     selected = isSelected,
                     onClick = {
-                        onTrainTypeSelected(if (type == "전체") "" else type)
+                        onTrainTypeSelected(type)
                     },
                     label = {
                         Text(
@@ -377,10 +427,11 @@ private fun ReservationContent(
                     selectedItem = selectedSeatType,
                     onItemSelected = onSeatTypeSelected
                 )
+                // 환승 드롭다운은 클릭 불가 (구현하지 않음)
                 KorailTalkDropdown(
                     items = listOf("직통", "환승"),
                     selectedItem = selectedRouteType,
-                    onItemSelected = onRouteTypeSelected
+                    onItemSelected = { /* 환승 구현 안함 */ }
                 )
             }
 
@@ -392,25 +443,68 @@ private fun ReservationContent(
         }
 
         // 열차 목록
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            items(trains) { train ->
-                ReservationCard(
-                    trainItem = train,
-                    modifier = Modifier.noRippleClickable {
-                        val seatType = "normal"  // TODO: 바텀시트 만들고, 추후 좌석 선택 로직 추가 필요
-                        onTrainItemClick(seatType, train.trainNumber)
+        if (trains.isEmpty()) {
+            // 조회 결과 없음
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        "예약 가능한 기차가 없어요",
+                        style = KorailTalkTheme.typography.body.body2M15,
+                        color = KorailTalkTheme.colors.gray400
+                    )
+                }
+            }
+        } else {
+            LazyColumn(
+                state = listState,
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(trains, key = { it.trainNumber + it.departureTime }) { train ->
+                    val isDisabled = train.normalSeat.status == SeatStatusType.SOLD_OUT &&
+                            (train.premiumSeat == null || train.premiumSeat.status == SeatStatusType.SOLD_OUT)
+
+                    ReservationCard(
+                        trainItem = train,
+                        modifier = Modifier.noRippleClickable(
+                            enabled = !isDisabled && !isBookAvailableOnly || !isDisabled
+                        ) {
+                            if (!isDisabled) {
+                                onTrainItemClick(train)
+                            }
+                        }
+                    )
+                }
+
+                // 로딩 인디케이터 (무한 스크롤)
+                if (hasMoreData) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(
+                                color = KorailTalkTheme.colors.primary700,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
                     }
-                )
+                }
             }
         }
     }
 }
 
-@DefaultPreview
+@Preview
 @Composable
 private fun ReservationScreenPreview() {
     ReservationScreen(
@@ -433,14 +527,55 @@ private fun ReservationScreenPreview() {
                     durationMinutes = 170,
                     normalSeat = SeatInfo(SeatType.NORMAL, SeatStatusType.AVAILABLE, 59000),
                     premiumSeat = SeatInfo(SeatType.PREMIUM, SeatStatusType.AVAILABLE, 83000)
+                ),
+                DomainTrainItem(
+                    type = TrainType.MUGUNGHWA,
+                    trainNumber = "456",
+                    departureTime = "06:00",
+                    arrivalTime = "10:30",
+                    durationMinutes = 270,
+                    normalSeat = SeatInfo(SeatType.NORMAL, SeatStatusType.SOLD_OUT, 35000),
+                    premiumSeat = null
                 )
             ),
             origin = "서울",
             destination = "부산",
-            totalTrains = 24
+            totalTrains = 24,
+            filteredTrains = listOf(
+                DomainTrainItem(
+                    type = TrainType.KTX,
+                    trainNumber = "001",
+                    departureTime = "05:13",
+                    arrivalTime = "07:50",
+                    durationMinutes = 157,
+                    normalSeat = SeatInfo(SeatType.NORMAL, SeatStatusType.AVAILABLE, 59000),
+                    premiumSeat = SeatInfo(SeatType.PREMIUM, SeatStatusType.ALMOST_SOLD_OUT, 83000)
+                )
+            )
         ),
         onBackClick = {},
-        onTrainItemClick = { _, _ -> },
-        onSearchTrains = { _, _, _, _, _ -> }
+        onTrainItemClick = { },
+        onRefresh = {},
+        onFilterChange = { _, _, _ -> },
+        onLoadMore = {}
+    )
+}
+
+@Preview
+@Composable
+private fun ReservationScreenEmptyPreview() {
+    ReservationScreen(
+        uiState = ReservationUiState.Success(
+            trains = emptyList(),
+            origin = "서울",
+            destination = "부산",
+            totalTrains = 0,
+            filteredTrains = emptyList()
+        ),
+        onBackClick = {},
+        onTrainItemClick = { },
+        onRefresh = {},
+        onFilterChange = { _, _, _ -> },
+        onLoadMore = {}
     )
 }
