@@ -347,7 +347,7 @@ private fun ReservationContent(
                     )
                     Text(
                         text = "$date ($dayOfWeek)",
-                        style = KorailTalkTheme.typography.body.body4M14,
+                        style = KorailTalkTheme.typography.body.body4R14,
                         color = KorailTalkTheme.colors.black
                     )
                 }
@@ -452,7 +452,7 @@ private fun ReservationContent(
             Text(
                 text = "결과 ($totalTrains)",
                 style = KorailTalkTheme.typography.cap.cap1M12,
-                color = KorailTalkTheme.colors.gray500
+                color = KorailTalkTheme.colors.black
             )
         }
 
