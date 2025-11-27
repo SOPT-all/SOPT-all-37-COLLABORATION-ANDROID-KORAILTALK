@@ -286,7 +286,7 @@ private fun ReservationContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(KorailTalkTheme.colors.white)
-                .padding(horizontal = 20.dp, vertical = 16.dp),
+                .padding(horizontal = 16.dp, vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Row(
@@ -321,13 +321,13 @@ private fun ReservationContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(KorailTalkTheme.colors.white)
-                .padding(horizontal = 20.dp, vertical = 12.dp),
+                .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 // 좌우 화살표는 클릭 불가 (구현하지 않음)
                 Image(
@@ -337,11 +337,20 @@ private fun ReservationContent(
                         .size(24.dp)
                         .then(Modifier.rotate(180f))
                 )
-                Text(
-                    text = "가는 날 $date ($dayOfWeek)",
-                    style = KorailTalkTheme.typography.body.body2M15,
-                    color = KorailTalkTheme.colors.black
-                )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(11.dp)
+                ) {
+                    Text(
+                        text = "가는 날",
+                        style = KorailTalkTheme.typography.body.body3R15,
+                        color = KorailTalkTheme.colors.gray400
+                    )
+                    Text(
+                        text = "$date ($dayOfWeek)",
+                        style = KorailTalkTheme.typography.body.body4M14,
+                        color = KorailTalkTheme.colors.black
+                    )
+                }
                 Image(
                     imageVector = ImageVector.vectorResource(R.drawable.ic_reservation_arrow),
                     contentDescription = "다음 날짜",
@@ -371,8 +380,7 @@ private fun ReservationContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(KorailTalkTheme.colors.white)
-                .padding(horizontal = 20.dp)
-                .padding(bottom = 16.dp)
+                .padding(horizontal = 16.dp, vertical = 8.dp)
                 .horizontalScroll(rememberScrollState()),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -396,7 +404,8 @@ private fun ReservationContent(
                     label = {
                         Text(
                             text = type,
-                            style = KorailTalkTheme.typography.body.body2M15
+                            style = KorailTalkTheme.typography.body.body2M15,
+                            modifier = Modifier.padding(vertical = 8.dp)
                         )
                     },
                     colors = FilterChipDefaults.filterChipColors(
@@ -410,7 +419,7 @@ private fun ReservationContent(
                         selected = isSelected,
                         borderColor = KorailTalkTheme.colors.gray200,
                         selectedBorderColor = KorailTalkTheme.colors.black
-                    )
+                    ),
                 )
             }
         }
@@ -419,7 +428,7 @@ private fun ReservationContent(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp)
+                .padding(horizontal = 16.dp)
                 .padding(vertical = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
@@ -469,7 +478,7 @@ private fun ReservationContent(
             LazyColumn(
                 state = listState,
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(horizontal = 20.dp),
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(trains, key = { it.trainNumber + it.departureTime }) { train ->
