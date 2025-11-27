@@ -19,12 +19,18 @@ internal fun String.toTrainType(): TrainType {
     return when (this.uppercase()) {
         "KTX", "KTX-C", "KTX-S" -> TrainType.KTX
         "SRT" -> TrainType.SRT
-        "ITX-SAEMAEUL", "ITX-새마을" -> TrainType.ITX_SAEMAEUL
-        "MUGUNGHWA", "무궁화", "FLOWER" -> TrainType.MUGUNGHWA
+        "ITX-N" -> TrainType.ITX_SAEMAEUL
+        "FLOWER" -> TrainType.MUGUNGHWA
         "ITX-MAEUM", "ITX-마음", "ITX-M" -> TrainType.ITX_MAEUM
         else -> TrainType.KTX  // 기본값
     }
 }
+//KTX :  KTX
+//KTX-산천 : KTX-S
+//KTX-청룡 : KTX-C
+//ITX-새마을 : ITX-N
+//ITX-마음 : ITX-M
+//무궁화호 : FLOWER
 
 /**
  * 서버 응답 문자열을 SeatStatusType Enum으로 변환
