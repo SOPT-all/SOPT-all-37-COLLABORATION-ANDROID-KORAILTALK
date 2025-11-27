@@ -419,9 +419,8 @@ private fun ReservationContent(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(KorailTalkTheme.colors.white)
                 .padding(horizontal = 20.dp)
-                .padding(bottom = 16.dp),
+                .padding(vertical = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -470,7 +469,7 @@ private fun ReservationContent(
             LazyColumn(
                 state = listState,
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
+                contentPadding = PaddingValues(horizontal = 20.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(trains, key = { it.trainNumber + it.departureTime }) { train ->
