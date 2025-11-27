@@ -5,23 +5,37 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import org.sopt.korailtalk.core.navigation.Route
 import org.sopt.korailtalk.presentation.reservation.screen.ReservationRoute
 
-fun NavController.navigateToReservation(navOptions: NavOptions? = null) {
-    navigate(Route.Reservation, navOptions)
+/**
+ * Reservation 화면으로 이동
+ */
+
+fun NavController.navigateToReservation(
+    origin: String,
+    destination: String,
+    navOptions: NavOptions? = null
+) {
+    navigate(Route.Reservation(origin, destination), navOptions)
 }
 
 fun NavGraphBuilder.reservationNavGraph(
     paddingValues: PaddingValues,
-    navigateToCheckout: () -> Unit, // TODO: 예약 정보 전달
+    navigateToCheckout: (seatType: String, trainId: String, normalSeatPrice: Int, premiumSeatPrice: Int?) -> Unit,
     navigateUp: () -> Unit
 ) {
-    composable<Route.Reservation> {
+    composable<Route.Reservation> { backStackEntry ->
+        val route = backStackEntry.toRoute<Route.Reservation>()
+
         ReservationRoute(
             paddingValues = paddingValues,
+            origin = route.origin,
+            destination = route.destination,
             navigateToCheckout = navigateToCheckout,
             navigateUp = navigateUp
         )
     }
 }
+
