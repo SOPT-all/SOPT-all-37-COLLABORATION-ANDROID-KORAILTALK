@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import org.sopt.korailtalk.core.designsystem.component.button.OkButton
 import org.sopt.korailtalk.core.designsystem.component.checkbox.KorailTalkBasicCheckBox
+import org.sopt.korailtalk.core.designsystem.component.dialog.ConfirmDialog
 import org.sopt.korailtalk.core.designsystem.component.textfield.KorailTalkBasicTextField
 import org.sopt.korailtalk.core.designsystem.theme.KORAILTALKTheme
 import org.sopt.korailtalk.core.designsystem.theme.KorailTalkTheme
@@ -78,6 +79,7 @@ private fun NationalMeritSection(
 
     val sheetState = rememberModalBottomSheetState()
     var isSheetVisible by remember { mutableStateOf(false) }
+    var isDialogVisible by remember { mutableStateOf(false) }
 
     val personList = listOf(
         "어른 - 1호차 12A / 48,800원",
@@ -149,13 +151,18 @@ private fun NationalMeritSection(
                             birthDateText = birthDateText
                         ),
                         onClick = {
-                            onNationalConfirmClick(
-                                DomainNationalVerify(
-                                    nationalId = nationalIdText,
-                                    password = passwordText,
-                                    birthDate = birthDateText
+                            // 개인정보 체크 X
+                            if (!isChecked) {
+                                isDialogVisible = true
+                            } else {
+                                onNationalConfirmClick(
+                                    DomainNationalVerify(
+                                        nationalId = nationalIdText,
+                                        password = passwordText,
+                                        birthDate = birthDateText
+                                    )
                                 )
-                            )
+                            }
                         }
                     )
                 }
@@ -171,6 +178,12 @@ private fun NationalMeritSection(
             },
         )
     }
+
+    ConfirmDialog(
+        isVisible = isDialogVisible,
+        message = "개인정보 수집 및 이용에 동의해주세요.",
+        onDismiss = { isDialogVisible = false }
+    )
 
     Spacer(Modifier.height(8.dp))
 

@@ -103,8 +103,7 @@ fun CheckoutRoute(
         ConfirmDialog(
             isVisible = true,
             message = message,
-            onDismiss = { dialogMessage = null },
-            onConfirm = { dialogMessage = null }
+            onDismiss = { dialogMessage = null }
         )
     }
 

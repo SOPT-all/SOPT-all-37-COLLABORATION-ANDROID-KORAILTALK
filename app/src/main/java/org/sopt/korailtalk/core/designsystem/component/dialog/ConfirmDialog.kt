@@ -10,8 +10,8 @@ fun ConfirmDialog(
     isVisible: Boolean,
     onDismiss: () -> Unit,
     message: String,
-    onConfirm: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onConfirm: () -> Unit = onDismiss
 ) {
     if (isVisible) {
         KorailTalkBasicDialog(
