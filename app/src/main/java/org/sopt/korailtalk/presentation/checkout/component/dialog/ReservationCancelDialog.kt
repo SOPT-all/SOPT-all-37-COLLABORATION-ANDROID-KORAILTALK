@@ -33,10 +33,7 @@ fun ReservationCancelDialog(
                     Spacer(modifier = Modifier.width(8.dp))
                     DialogConfirmButton(
                         buttonText = "예",
-                        onClick = {
-                            onConfirm()
-                            onDismiss()
-                        },
+                        onClick = onConfirm,
                         modifier = Modifier.weight(1f)
                     )
                 }

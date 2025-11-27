@@ -125,7 +125,8 @@ private fun CheckoutScreen(
 ) {
     var selectedCoupon by remember { mutableStateOf<DomainCouponData?>(null) }
     var finalPrice by remember { mutableStateOf(trainInfo.price) }
-    var isCancelDialogVisible by remember { mutableStateOf<Boolean>(false) }
+    var isCancelDialogVisible by remember { mutableStateOf(false) }
+    var isCancelConfirmDialogVisible by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier
@@ -192,10 +193,25 @@ private fun CheckoutScreen(
         )
     }
 
+    // 예약 취소 (아니오/예) 다이얼로그
     ReservationCancelDialog(
         isVisible = isCancelDialogVisible,
         onDismiss = { isCancelDialogVisible = false },
-        onConfirm = { onCancelClick(trainInfo.reservationId) }
+        onConfirm = {
+            isCancelDialogVisible = false
+            isCancelConfirmDialogVisible = true
+            //TODO: 예약 취소 진행
+        }
+    )
+
+    // 예약 취소 확인 다이얼로그
+    ConfirmDialog(
+        isVisible = isCancelConfirmDialogVisible,
+        message = "예약이 취소되었습니다.",
+        onDismiss = {
+            isCancelConfirmDialogVisible = false
+            onCancelClick(trainInfo.reservationId)
+        }
     )
 }
 
