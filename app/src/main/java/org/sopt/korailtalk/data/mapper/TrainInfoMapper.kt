@@ -24,7 +24,7 @@ fun Result<BaseResponse<TrainInfoResponseDto>>.toModel() : Result<DomainTrainInf
             destination = dto.trainInfo.destination,
             startAt = dto.trainInfo.startAt,
             arriveAt = dto.trainInfo.arriveAt,
-            type = TrainType.from(dto.trainInfo.type),
+            type = dto.trainInfo.type.toTrainType(), //TrainItemMapper,kt의 확장함수로 대체
             trainNumber = dto.trainInfo.trainNumber,
             price = dto.trainInfo.price,
             seatType = SeatType.valueOf(dto.trainInfo.seatType),

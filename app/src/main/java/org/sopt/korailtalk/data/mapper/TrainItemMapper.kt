@@ -15,7 +15,7 @@ import org.sopt.korailtalk.domain.type.TrainType
  * @receiver 서버에서 받은 열차 종류 문자열 (예: "KTX", "SRT", "KTX-C")
  * @return 매칭되는 TrainType, 없으면 KTX 반환
  */
-private fun String.toTrainType(): TrainType {
+internal fun String.toTrainType(): TrainType {
     return when (this.uppercase()) {
         "KTX", "KTX-C", "KTX-S" -> TrainType.KTX
         "SRT" -> TrainType.SRT
