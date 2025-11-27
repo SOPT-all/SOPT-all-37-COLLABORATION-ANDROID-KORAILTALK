@@ -54,8 +54,16 @@ class CheckoutViewModel @Inject constructor(
                 )
         }
     }
+
+    fun deleteReservation(reservationId: Long) {
+        //TODO: API 호출 성공 확인
+        viewModelScope.launch {
+            _checkoutSideEffect.emit(CheckoutSideEffect.NavigateToHome)
+        }
+    }
 }
 
 sealed interface CheckoutSideEffect {
+    data object NavigateToHome : CheckoutSideEffect
     data class ShowDialog(val message: String) : CheckoutSideEffect
 }

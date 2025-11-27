@@ -1,6 +1,5 @@
 package org.sopt.korailtalk.presentation.checkout
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -33,7 +32,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.sopt.korailtalk.R
 import org.sopt.korailtalk.core.common.util.extension.noRippleClickable
 import org.sopt.korailtalk.core.common.util.preview.DefaultPreview
-import org.sopt.korailtalk.core.designsystem.component.dialog.ConfirmDialog
+import org.sopt.korailtalk.presentation.checkout.component.dialog.ConfirmDialog
 import org.sopt.korailtalk.core.designsystem.component.topappbar.BackTopAppBar
 import org.sopt.korailtalk.core.designsystem.theme.KorailTalkTheme
 import org.sopt.korailtalk.domain.model.DomainCouponData
@@ -41,6 +40,7 @@ import org.sopt.korailtalk.domain.model.DomainNationalVerify
 import org.sopt.korailtalk.domain.model.DomainTrainInfo
 import org.sopt.korailtalk.domain.type.SeatType
 import org.sopt.korailtalk.domain.type.TrainType
+import org.sopt.korailtalk.presentation.checkout.component.dialog.ReservationCancelDialog
 import org.sopt.korailtalk.presentation.checkout.state.CheckoutUiState
 import org.sopt.korailtalk.presentation.checkout.view.CheckoutBottomView
 import org.sopt.korailtalk.presentation.checkout.view.CheckoutTopView
@@ -60,7 +60,7 @@ fun CheckoutRoute(
 ) {
     val checkoutUiState by viewModel.checkoutUiState.collectAsStateWithLifecycle()
     // 다이얼로그용 상태
-    var dialogMessage by remember { mutableStateOf<String?>(null) }
+    var confirmDialogMessage by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(Unit) {
         viewModel.getTrainInfo(seatType, trainId)
@@ -71,7 +71,10 @@ fun CheckoutRoute(
         viewModel.checkoutSideEffect.collect { sideEffect ->
             when (sideEffect) {
                 is CheckoutSideEffect.ShowDialog -> {
-                    dialogMessage = sideEffect.message
+                    confirmDialogMessage = sideEffect.message
+                }
+                is CheckoutSideEffect.NavigateToHome -> {
+                    navigateToHome()
                 }
                 else -> {}
             }
@@ -89,7 +92,8 @@ fun CheckoutRoute(
                 onCloseClick = navigateToHome,
                 normalSeatPrice = normalSeatPrice,
                 premiumSeatPrice = premiumSeatPrice,
-                onNationalConfirmClick = viewModel::postVerifyNation
+                onNationalConfirmClick = viewModel::postVerifyNation,
+                onCancelClick = viewModel::deleteReservation
             )
         }
         is CheckoutUiState.Failure -> {
@@ -99,14 +103,13 @@ fun CheckoutRoute(
     }
 
     // 실제 다이얼로그 UI는 Composable 트리 안에
-    dialogMessage?.let { message ->
+    confirmDialogMessage?.let { message ->
         ConfirmDialog(
             isVisible = true,
             message = message,
-            onDismiss = { dialogMessage = null }
+            onDismiss = { confirmDialogMessage = null }
         )
     }
-
 }
 
 @Composable
@@ -114,6 +117,7 @@ private fun CheckoutScreen(
     trainInfo: DomainTrainInfo,
     onBackClick: () -> Unit,
     onCloseClick: () -> Unit,
+    onCancelClick: (Long) -> Unit,
     onNationalConfirmClick: (DomainNationalVerify) -> Unit,
     normalSeatPrice: Int = 0,
     premiumSeatPrice: Int? = null,
@@ -121,6 +125,7 @@ private fun CheckoutScreen(
 ) {
     var selectedCoupon by remember { mutableStateOf<DomainCouponData?>(null) }
     var finalPrice by remember { mutableStateOf(trainInfo.price) }
+    var isCancelDialogVisible by remember { mutableStateOf<Boolean>(false) }
 
     Column(
         modifier = modifier
@@ -181,10 +186,16 @@ private fun CheckoutScreen(
         )
 
         BottomFixedButtons( // 예약취소 및 다음 버튼
-            onCancelClick = {},
+            onCancelClick = { isCancelDialogVisible = true },
             onNextClick = {}
         )
     }
+
+    ReservationCancelDialog(
+        isVisible = isCancelDialogVisible,
+        onDismiss = { isCancelDialogVisible = false },
+        onConfirm = { onCancelClick(trainInfo.reservationId) }
+    )
 }
 
 @Composable
@@ -281,6 +292,7 @@ private fun CheckoutScreenPreview() {
         trainInfo = trainInfo,
         onBackClick = {},
         onCloseClick = {},
-        onNationalConfirmClick = {}
+        onNationalConfirmClick = {},
+        onCancelClick = {}
     )
 }

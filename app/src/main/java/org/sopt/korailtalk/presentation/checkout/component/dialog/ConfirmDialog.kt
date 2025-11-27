@@ -1,9 +1,10 @@
-package org.sopt.korailtalk.core.designsystem.component.dialog
+package org.sopt.korailtalk.presentation.checkout.component.dialog
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import org.sopt.korailtalk.core.designsystem.component.button.DialogSingleButton
+import org.sopt.korailtalk.core.designsystem.component.dialog.KorailTalkBasicDialog
 
 @Composable
 fun ConfirmDialog(

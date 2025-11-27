@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
@@ -29,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import org.sopt.korailtalk.core.designsystem.component.button.OkButton
 import org.sopt.korailtalk.core.designsystem.component.checkbox.KorailTalkBasicCheckBox
-import org.sopt.korailtalk.core.designsystem.component.dialog.ConfirmDialog
+import org.sopt.korailtalk.presentation.checkout.component.dialog.ConfirmDialog
 import org.sopt.korailtalk.core.designsystem.component.textfield.KorailTalkBasicTextField
 import org.sopt.korailtalk.core.designsystem.theme.KORAILTALKTheme
 import org.sopt.korailtalk.core.designsystem.theme.KorailTalkTheme
