@@ -7,7 +7,6 @@ import org.sopt.korailtalk.domain.model.DomainCouponData
 import org.sopt.korailtalk.domain.model.DomainTrainInfo
 import org.sopt.korailtalk.domain.model.DomainTrainInfoRequest
 import org.sopt.korailtalk.domain.type.SeatType
-import org.sopt.korailtalk.domain.type.TrainType
 
 fun DomainTrainInfoRequest.toDto() : TrainInfoRequestDto {
     return TrainInfoRequestDto(
