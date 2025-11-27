@@ -98,8 +98,13 @@ class MainNavigator(
         )
     }
 
-    fun navigateToCheckout(seatType: String, trainId: String) {
-        navController.navigateToCheckout(seatType, trainId) //추가
+    fun navigateToCheckout(
+        seatType: String,
+        trainId: String,
+        normalSeatPrice: Int,
+        premiumSeatPrice: Int?
+    ) {
+        navController.navigateToCheckout(seatType, trainId, normalSeatPrice, premiumSeatPrice)
     }
 
     fun navigateUp() {

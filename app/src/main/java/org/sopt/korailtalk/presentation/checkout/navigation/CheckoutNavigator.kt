@@ -15,9 +15,11 @@ import org.sopt.korailtalk.presentation.checkout.CheckoutRoute
 fun NavController.navigateToCheckout(
     seatType: String,
     trainId: String,
+    normalSeatPrice: Int,
+    premiumSeatPrice: Int?,
     navOptions: NavOptions? = null
 ) {
-    navigate(Route.Checkout(seatType, trainId), navOptions)
+    navigate(Route.Checkout(seatType, trainId, normalSeatPrice, premiumSeatPrice), navOptions)
 }
 
 // 2) checkoutNavGraph 함수
@@ -34,7 +36,9 @@ fun NavGraphBuilder.checkoutNavGraph(
             navigateToHome = navigateToHome,
             navigateUp = navigateUp,
             seatType = SeatType.valueOf(route.seatType),
-            trainId = route.trainId.toLong()
+            trainId = route.trainId.toLong(),
+            normalSeatPrice = route.normalSeatPrice,
+            premiumSeatPrice = route.premiumSeatPrice
         )
     }
 }
