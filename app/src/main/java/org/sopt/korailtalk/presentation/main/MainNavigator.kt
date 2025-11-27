@@ -28,7 +28,7 @@ class MainNavigator(
     val navController: NavHostController,
     coroutineScope: CoroutineScope,
 ) {
-    val startDestination = Home
+    val startDestination = Route.Checkout
 
     // NavController의 Flow를 관찰하여 현재 Destination을 StateFlow로 변환
     private val currentDestination = navController.currentBackStackEntryFlow

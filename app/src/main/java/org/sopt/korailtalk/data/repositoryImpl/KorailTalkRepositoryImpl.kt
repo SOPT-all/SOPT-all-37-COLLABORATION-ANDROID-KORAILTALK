@@ -1,11 +1,11 @@
 package org.sopt.korailtalk.data.repositoryImpl
 
-import org.sopt.korailtalk.data.mapper.toDomain
 import org.sopt.korailtalk.data.mapper.toDto
 import org.sopt.korailtalk.data.mapper.toModel
 import org.sopt.korailtalk.data.service.KorailTalkApiService
 import org.sopt.korailtalk.data.util.safeApiCall
 import org.sopt.korailtalk.domain.model.DomainHomeBasicInfo
+import org.sopt.korailtalk.domain.model.DomainNationalVerify
 import org.sopt.korailtalk.domain.model.DomainTrainInfo
 import org.sopt.korailtalk.domain.model.DomainTrainInfoRequest
 import org.sopt.korailtalk.domain.model.TrainSearchResult
@@ -44,5 +44,15 @@ class KorailTalkRepositoryImpl @Inject constructor(
             isBookAvailable = isBookAvailable,
             cursor = cursor
         ).toModel()
+    }
+
+    override suspend fun postVerifyNational(
+        domainNationalVerify: DomainNationalVerify
+    ): Result<Boolean> {
+        return safeApiCall {
+            korailTalkService.postVerifyNational(
+                nationalVerifyRequestDto = domainNationalVerify.toDto()
+            ).data.verified
+        }
     }
 }

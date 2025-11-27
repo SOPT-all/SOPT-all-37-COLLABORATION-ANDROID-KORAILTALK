@@ -32,6 +32,7 @@ import org.sopt.korailtalk.core.designsystem.component.checkbox.KorailTalkBasicC
 import org.sopt.korailtalk.core.designsystem.component.textfield.KorailTalkBasicTextField
 import org.sopt.korailtalk.core.designsystem.theme.KORAILTALKTheme
 import org.sopt.korailtalk.core.designsystem.theme.KorailTalkTheme
+import org.sopt.korailtalk.domain.model.DomainNationalVerify
 import org.sopt.korailtalk.presentation.checkout.component.bottomsheet.MenuBottomSheet
 import org.sopt.korailtalk.presentation.checkout.component.bottomsheet.MenuBottomSheetType
 import org.sopt.korailtalk.presentation.checkout.component.row.CheckoutBasicRow
@@ -41,13 +42,16 @@ import org.sopt.korailtalk.presentation.checkout.component.row.CheckoutTextField
 
 @Composable
 fun CheckoutBottomView(
+    onNationalConfirmClick: (DomainNationalVerify) -> Unit,
     modifier: Modifier = Modifier
 ) { // @nahy-512 작업
     Column(
         modifier = modifier
     ) {
         // 국가유공자 할인
-        NationalMeritSection()
+        NationalMeritSection(
+            onNationalConfirmClick = onNationalConfirmClick
+        )
 
         Spacer(Modifier.height(8.dp))
 
@@ -64,7 +68,9 @@ fun CheckoutBottomView(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun NationalMeritSection() {
+private fun NationalMeritSection(
+    onNationalConfirmClick: (DomainNationalVerify) -> Unit
+) {
     var nationalIdText by remember { mutableStateOf("") }
     var passwordText by remember { mutableStateOf("") }
     var birthDateText by remember { mutableStateOf("") }
@@ -142,7 +148,15 @@ private fun NationalMeritSection() {
                             passwordText = passwordText,
                             birthDateText = birthDateText
                         ),
-                        onClick = {}
+                        onClick = {
+                            onNationalConfirmClick(
+                                DomainNationalVerify(
+                                    nationalId = nationalIdText,
+                                    password = passwordText,
+                                    birthDate = birthDateText
+                                )
+                            )
+                        }
                     )
                 }
             }
@@ -261,6 +275,7 @@ private fun checkButtonEnabled(
 private fun CheckoutBottomViewPreview() {
     KORAILTALKTheme {
         CheckoutBottomView(
+            onNationalConfirmClick = {},
             modifier = Modifier
                 .fillMaxSize()
                 .background(KorailTalkTheme.colors.white)

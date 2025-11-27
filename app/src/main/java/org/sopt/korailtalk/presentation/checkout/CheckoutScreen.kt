@@ -1,5 +1,6 @@
 package org.sopt.korailtalk.presentation.checkout
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -12,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
@@ -33,9 +33,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.sopt.korailtalk.R
 import org.sopt.korailtalk.core.common.util.extension.noRippleClickable
 import org.sopt.korailtalk.core.common.util.preview.DefaultPreview
+import org.sopt.korailtalk.core.designsystem.component.dialog.ConfirmDialog
 import org.sopt.korailtalk.core.designsystem.component.topappbar.BackTopAppBar
 import org.sopt.korailtalk.core.designsystem.theme.KorailTalkTheme
 import org.sopt.korailtalk.domain.model.DomainCouponData
+import org.sopt.korailtalk.domain.model.DomainNationalVerify
 import org.sopt.korailtalk.domain.model.DomainTrainInfo
 import org.sopt.korailtalk.domain.type.SeatType
 import org.sopt.korailtalk.domain.type.TrainType
@@ -56,11 +58,25 @@ fun CheckoutRoute(
     premiumSeatPrice: Int? = 20000, // FIXME sample
     viewModel: CheckoutViewModel = hiltViewModel()
 ) {
+    val checkoutUiState by viewModel.checkoutUiState.collectAsStateWithLifecycle()
+    // 다이얼로그용 상태
+    var dialogMessage by remember { mutableStateOf<String?>(null) }
+
     LaunchedEffect(Unit) {
         viewModel.getTrainInfo(seatType, trainId)
     }
 
-    val checkoutUiState by viewModel.checkoutUiState.collectAsStateWithLifecycle()
+    // 사이드 이펙트 수집 (에러 발생 등)
+    LaunchedEffect(Unit) {
+        viewModel.checkoutSideEffect.collect { sideEffect ->
+            when (sideEffect) {
+                is CheckoutSideEffect.ShowDialog -> {
+                    dialogMessage = sideEffect.message
+                }
+                else -> {}
+            }
+        }
+    }
 
     when(checkoutUiState) {
         is CheckoutUiState.Success -> {
@@ -72,7 +88,8 @@ fun CheckoutRoute(
                 onBackClick = navigateUp,
                 onCloseClick = navigateToHome,
                 normalSeatPrice = normalSeatPrice,
-                premiumSeatPrice = premiumSeatPrice
+                premiumSeatPrice = premiumSeatPrice,
+                onNationalConfirmClick = viewModel::postVerifyNation
             )
         }
         is CheckoutUiState.Failure -> {
@@ -80,6 +97,17 @@ fun CheckoutRoute(
         }
         else -> {}
     }
+
+    // 실제 다이얼로그 UI는 Composable 트리 안에
+    dialogMessage?.let { message ->
+        ConfirmDialog(
+            isVisible = true,
+            message = message,
+            onDismiss = { dialogMessage = null },
+            onConfirm = { dialogMessage = null }
+        )
+    }
+
 }
 
 @Composable
@@ -87,9 +115,10 @@ private fun CheckoutScreen(
     trainInfo: DomainTrainInfo,
     onBackClick: () -> Unit,
     onCloseClick: () -> Unit,
+    onNationalConfirmClick: (DomainNationalVerify) -> Unit,
     normalSeatPrice: Int = 0,
     premiumSeatPrice: Int? = null,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     var selectedCoupon by remember { mutableStateOf<DomainCouponData?>(null) }
 
@@ -141,7 +170,9 @@ private fun CheckoutScreen(
                 ) // 상단 ~ 할인쿠폰 적용
             }
             item { // @nahy-512
-                CheckoutBottomView() // 국가유공자 할인 ~ 하단
+                CheckoutBottomView(
+                    onNationalConfirmClick = onNationalConfirmClick
+                ) // 국가유공자 할인 ~ 하단
             }
         }
 
@@ -249,6 +280,7 @@ private fun CheckoutScreenPreview() {
     CheckoutScreen(
         trainInfo = trainInfo,
         onBackClick = {},
-        onCloseClick = {}
+        onCloseClick = {},
+        onNationalConfirmClick = {}
     )
 }
