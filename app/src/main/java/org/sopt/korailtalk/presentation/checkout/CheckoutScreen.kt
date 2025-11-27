@@ -120,6 +120,7 @@ private fun CheckoutScreen(
     modifier: Modifier = Modifier,
 ) {
     var selectedCoupon by remember { mutableStateOf<DomainCouponData?>(null) }
+    var finalPrice by remember { mutableStateOf(trainInfo.price) }
 
     Column(
         modifier = modifier
@@ -163,8 +164,8 @@ private fun CheckoutScreen(
                         selectedCoupon = it
                     }),
                     premiumSeatPrice = premiumSeatPrice,
-                    finalPriceCallback = { finalPrice ->
-                        //TODO 할인쿠폰 적용한 결과
+                    finalPriceCallback = { callbackPrice ->
+                        finalPrice = callbackPrice
                     }
                 ) // 상단 ~ 할인쿠폰 적용
             }
@@ -176,7 +177,7 @@ private fun CheckoutScreen(
         }
 
         FinalPriceInfo( // 총 결제 금액
-            price = 48800
+            price = finalPrice
         )
 
         BottomFixedButtons( // 예약취소 및 다음 버튼
