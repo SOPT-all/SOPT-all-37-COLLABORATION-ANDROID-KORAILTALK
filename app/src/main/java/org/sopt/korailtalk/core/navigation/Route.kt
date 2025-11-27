@@ -4,7 +4,10 @@ import kotlinx.serialization.Serializable
 
 interface Route {
     @Serializable
-    data object Checkout : Route
+    data class Checkout(
+        val seatType: String,
+        val trainId: String
+    ) : Route
 
     @Serializable
     data class Reservation(

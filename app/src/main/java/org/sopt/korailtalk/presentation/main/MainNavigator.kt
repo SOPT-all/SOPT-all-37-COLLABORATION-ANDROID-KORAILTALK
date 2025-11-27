@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import org.sopt.korailtalk.core.navigation.MainTabRoute.Home
-import org.sopt.korailtalk.core.navigation.Route
 import org.sopt.korailtalk.presentation.checkout.navigation.navigateToCheckout
 import org.sopt.korailtalk.presentation.home.navigation.navigateToHome
 import org.sopt.korailtalk.presentation.others.navigation.navigateToProduct
@@ -100,13 +99,7 @@ class MainNavigator(
     }
 
     fun navigateToCheckout(seatType: String, trainId: String) {
-        // 일단 받기만 하도록 했음 안그러면 계속 MainScreen에서 이런 오류떠서
-        // - Inapplicable candidate(s): fun navigateToCheckout(): Unit
-        /**
-         * TODO: Checkout 화면 API 연동 시 파라미터 전달 필요
-         *       (현재는 더미 데이터 사용으로 파라미터 미전달)
-         */
-        navController.navigateToCheckout()
+        navController.navigateToCheckout(seatType, trainId) //추가
     }
 
     fun navigateUp() {
