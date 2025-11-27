@@ -1,6 +1,7 @@
 package org.sopt.korailtalk.core.network.di
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import com.skydoves.retrofit.adapters.result.ResultCallAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -93,5 +94,6 @@ object NetworkModule {
             .addConverterFactory(
                 json.asConverterFactory(requireNotNull("application/json".toMediaTypeOrNull()))
             )
+            .addCallAdapterFactory(ResultCallAdapterFactory.create())
             .build()
 }

@@ -48,7 +48,7 @@ data class TrainDataResponseDto(
     val totalTrains: Int,
 
     @SerialName("nextCursor")
-    val nextCursor: String,
+    val nextCursor: String?, // null 처리
 
     @SerialName("trainList")
     val trainList: List<TrainItemResponseDto>

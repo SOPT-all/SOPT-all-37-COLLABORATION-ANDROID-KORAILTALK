@@ -24,17 +24,30 @@ import org.sopt.korailtalk.domain.type.SeatStatusType
 import org.sopt.korailtalk.domain.type.SeatType
 import org.sopt.korailtalk.domain.type.TrainType
 
+/**
+ * 열차의 매진 여부를 판별
+ * 일반석이 매진이고, 특실이 없거나 특실도 매진인 경우 매진으로 판단
+ * @return 매진 여부
+ */
+private fun DomainTrainItem.isSoldOut(): Boolean {
+    return normalSeat.status == SeatStatusType.SOLD_OUT &&
+            (premiumSeat?.status == SeatStatusType.SOLD_OUT || premiumSeat == null)
+}
+
+/**
+ * 열차 예약 카드 컴포넌트
+ * @param trainItem 열차 정보
+ * @param modifier Modifier
+ */
 @Composable
 fun ReservationCard(
-    trainItem: DomainTrainItem,  // ReservationInfo -> DomainTrainItem
+    trainItem: DomainTrainItem,
     modifier: Modifier = Modifier
 ) {
     val colors = LocalKorailTalkColorsProvider.current
     val typography = LocalKorailTalkTypographyProvider.current
 
-    // 매진 여부 계산
-    val isSoldOut = trainItem.normalSeat.status == SeatStatusType.SOLD_OUT &&
-            (trainItem.premiumSeat?.status == SeatStatusType.SOLD_OUT || trainItem.premiumSeat == null)
+    val isSoldOut = trainItem.isSoldOut()  // 확장 함수 사용
 
     Column(
         modifier = modifier
@@ -45,13 +58,13 @@ fun ReservationCard(
             )
             .border(
                 width = 1.dp,
-                color = colors.gray150,
+                color = colors.gray200,
                 shape = RoundedCornerShape(12.dp)
             )
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        // 열차 정보
+        // 열차 종류 및 번호
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -67,10 +80,9 @@ fun ReservationCard(
             )
         }
 
-        // 시간 정보
+        // 출발/도착 시간 및 소요시간
         Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -94,13 +106,13 @@ fun ReservationCard(
             }
             Spacer(modifier = Modifier.width(16.dp))
             Text(
-                text = "${trainItem.durationMinutes}분",  // Int를 문자열로 변환
+                text = "${trainItem.durationMinutes}분",
                 style = typography.body.body4M14,
                 color = colors.gray400
             )
         }
 
-        // 좌석 정보
+        // 좌석 정보 (매진이 아닐 때만 표시)
         if (!isSoldOut) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -110,7 +122,6 @@ fun ReservationCard(
                     seatType = trainItem.normalSeat.type,
                     status = trainItem.normalSeat.status,
                 )
-
                 // 특실이 있으면 표시
                 trainItem.premiumSeat?.let { premium ->
                     SeatTypeStateItem(

@@ -21,17 +21,21 @@ import org.sopt.korailtalk.core.designsystem.theme.KorailTalkTheme.typography
 import org.sopt.korailtalk.domain.type.SeatStatusType
 import org.sopt.korailtalk.domain.type.SeatType
 
-
+/**
+ * 좌석 타입과 상태를 표시하는 컴포넌트
+ * @param seatType 좌석 타입 (일반/특실)
+ * @param status 좌석 상태 (예매가능/매진임박/매진)
+ */
 @Composable
 fun SeatTypeStateItem(
     seatType: SeatType,
     status: SeatStatusType,
 ) {
-
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
+        // 좌석 타입 라벨 (일반/특)
         Box(
             modifier = Modifier
                 .width(37.dp)
@@ -48,27 +52,21 @@ fun SeatTypeStateItem(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = when (seatType) {
-                    SeatType.NORMAL -> "일반"
-                    SeatType.PREMIUM -> "특"
-                },
+                text = seatType.label,  // enum의 label 프로퍼티 직접 사용
                 style = typography.cap.cap2R12,
                 color = colors.black
             )
         }
 
-            Text(
-                text = when (status){
-                    SeatStatusType.ALMOST_SOLD_OUT -> "매진임박"
-                    SeatStatusType.AVAILABLE -> "예매가능"
-                    SeatStatusType.SOLD_OUT -> "매진"
-                },
-                style = typography.cap.cap1M12,
-                color = if (status.isUrgent) colors.pointRed
-                        else colors.gray400
-            )
-        }
+        // 좌석 상태 텍스트 (예매가능/매진임박/매진)
+        Text(
+            text = status.text,  // enum의 text 프로퍼티 직접 사용
+            style = typography.cap.cap1M12,
+            color = if (status.isUrgent) colors.pointRed
+            else colors.gray400
+        )
     }
+}
 
 @Composable
 @Preview(showBackground = true)
