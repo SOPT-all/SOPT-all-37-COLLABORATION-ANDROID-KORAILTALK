@@ -8,12 +8,13 @@ import org.sopt.korailtalk.data.dto.response.TrainInfoResponseDto
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface KorailTalkApiService {
 
     @POST("/api/v1/trains/{trainId}")
-    suspend fun getTrainInfo(@Body trainInfoRequestDto: TrainInfoRequestDto): Result<BaseResponse<TrainInfoResponseDto>>
+    suspend fun getTrainInfo(@Body trainInfoRequestDto: TrainInfoRequestDto, @Path("trainId") trainId: Long): BaseResponse<TrainInfoResponseDto>
 
     @GET("/api/v1/trains/home")
     suspend fun getHomeBasicInfo(): BaseResponse<HomeBasicInfoResponseDto>
@@ -29,4 +30,3 @@ interface KorailTalkApiService {
         @Query("cursor") cursor: String? = null
     ): Result<BaseResponse<TrainDataResponseDto>>  // Result 추가
 }
-

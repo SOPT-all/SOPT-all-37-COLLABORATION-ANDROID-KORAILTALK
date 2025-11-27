@@ -8,6 +8,8 @@ data class DomainTrainInfoRequest(
 )
 
 data class DomainTrainInfo(
+    val origin: String,
+    val destination: String,
     val startAt: String,
     val arriveAt: String,
     val type: TrainType,

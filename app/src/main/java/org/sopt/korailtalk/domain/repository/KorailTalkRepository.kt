@@ -6,7 +6,7 @@ import org.sopt.korailtalk.domain.model.DomainTrainInfoRequest
 import org.sopt.korailtalk.domain.model.TrainSearchResult
 
 interface KorailTalkRepository {
-    suspend fun getTrainInfo(domainTrainInfoRequest: DomainTrainInfoRequest): Result<DomainTrainInfo>
+    suspend fun getTrainInfo(domainTrainInfoRequest: DomainTrainInfoRequest, trainId: Long) : Result<DomainTrainInfo>
 
     suspend fun getHomeBasicInfo(): Result<DomainHomeBasicInfo>
 
