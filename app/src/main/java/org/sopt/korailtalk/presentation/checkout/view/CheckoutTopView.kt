@@ -333,7 +333,7 @@ fun CheckoutTopView(
     if(showMenuBottomSheetForPerson) {
         MenuBottomSheet(
             type = MenuBottomSheetType.Person,
-            personList = listOf("어른 - 1호차 12A / ${trainInfo.price.priceFormat()}"),
+            personList = listOf("어른 - 1호차 12A / ${trainInfo.price.priceFormat()}원"),
             selectedPersonItem = selectedPerson,
             onPersonClick = {
                 selectedPerson = it

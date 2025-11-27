@@ -26,6 +26,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
+import org.sopt.korailtalk.core.common.util.format.priceFormat
 import org.sopt.korailtalk.core.designsystem.component.button.OkButton
 import org.sopt.korailtalk.core.designsystem.component.checkbox.KorailTalkBasicCheckBox
 import org.sopt.korailtalk.presentation.checkout.component.dialog.ConfirmDialog
@@ -42,6 +43,7 @@ import org.sopt.korailtalk.presentation.checkout.component.row.CheckoutTextField
 
 @Composable
 fun CheckoutBottomView(
+    price: Int,
     onNationalConfirmClick: (DomainNationalVerify) -> Unit,
     modifier: Modifier = Modifier
 ) { // @nahy-512 작업
@@ -50,6 +52,7 @@ fun CheckoutBottomView(
     ) {
         // 국가유공자 할인
         NationalMeritSection(
+            price = price,
             onNationalConfirmClick = onNationalConfirmClick
         )
 
@@ -69,6 +72,7 @@ fun CheckoutBottomView(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun NationalMeritSection(
+    price: Int,
     onNationalConfirmClick: (DomainNationalVerify) -> Unit
 ) {
     var nationalIdText by remember { mutableStateOf("") }
@@ -81,7 +85,7 @@ private fun NationalMeritSection(
     var isDialogVisible by remember { mutableStateOf(false) }
 
     val personList = listOf(
-        "어른 - 1호차 12A / 48,800원",
+        "어른 - 1호차 12A / ${price.priceFormat()}원",
     )
 
     var selectedPersonItem by remember { mutableStateOf("") }
@@ -287,6 +291,7 @@ private fun checkButtonEnabled(
 private fun CheckoutBottomViewPreview() {
     KORAILTALKTheme {
         CheckoutBottomView(
+            price = 0,
             onNationalConfirmClick = {},
             modifier = Modifier
                 .fillMaxSize()

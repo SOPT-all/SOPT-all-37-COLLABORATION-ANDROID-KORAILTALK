@@ -176,6 +176,7 @@ private fun CheckoutScreen(
             }
             item { // @nahy-512
                 CheckoutBottomView(
+                    price = trainInfo.price,
                     onNationalConfirmClick = onNationalConfirmClick
                 ) // 국가유공자 할인 ~ 하단
             }
