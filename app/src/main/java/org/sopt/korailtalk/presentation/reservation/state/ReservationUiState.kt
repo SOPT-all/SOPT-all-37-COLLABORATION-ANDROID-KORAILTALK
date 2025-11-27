@@ -12,8 +12,8 @@ sealed interface ReservationUiState {
         val destination: String,
         val totalTrains: Int,
         val filteredTrains: List<DomainTrainItem> = trains,
-        val date: String = "11월 10일",
-        val dayOfWeek: String = "화",
+        val date: String = "12월 1일",
+        val dayOfWeek: String = "금",
         val passengerCount: Int = 1,
         val nextCursor: String? = null
     ) : ReservationUiState

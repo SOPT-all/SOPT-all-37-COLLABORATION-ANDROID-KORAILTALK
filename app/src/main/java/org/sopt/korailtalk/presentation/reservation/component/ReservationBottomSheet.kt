@@ -90,6 +90,7 @@ fun ReservationBottomSheet(
 
             // 일반실 선택
             SeatSelectionItem(
+                title = "일반실",
                 seatType = SeatType.NORMAL,
                 price = trainItem.normalSeat.price,
                 isSelected = selectedSeatType == SeatType.NORMAL,
@@ -102,6 +103,7 @@ fun ReservationBottomSheet(
             // 특실 선택 (있는 경우에만)
             trainItem.premiumSeat?.let { premium ->
                 SeatSelectionItem(
+                    title = "특실",
                     seatType = SeatType.PREMIUM,
                     price = premium.price,
                     isSelected = selectedSeatType == SeatType.PREMIUM,
