@@ -40,6 +40,8 @@ import org.sopt.korailtalk.presentation.checkout.component.row.CheckoutBasicRow
 import org.sopt.korailtalk.presentation.checkout.component.row.CheckoutDropDownRow
 import org.sopt.korailtalk.presentation.checkout.component.row.CheckoutSectionRow
 import org.sopt.korailtalk.presentation.checkout.component.row.CheckoutTextFieldRow
+import org.sopt.korailtalk.presentation.checkout.util.NationalIdVisualTransformation
+import org.sopt.korailtalk.presentation.checkout.util.formatNationalIdForRequest
 
 @Composable
 fun CheckoutBottomView(
@@ -104,14 +106,16 @@ private fun NationalMeritSection(
             title = "보훈 번호",
             placeholder = "보훈 번호 9자리",
             value = nationalIdText,
-            onValueChange = {
-                if (it.length <= 9) nationalIdText = it
+            onValueChange = { newValue ->
+                val digits = newValue.filter { it.isDigit() }.take(8)
+                nationalIdText = digits
             },
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Next
             ),
+            visualTransformation = NationalIdVisualTransformation()
         )
 
         CheckoutTextFieldRow(
@@ -160,7 +164,7 @@ private fun NationalMeritSection(
                             } else {
                                 onNationalConfirmClick(
                                     DomainNationalVerify(
-                                        nationalId = nationalIdText,
+                                        nationalId = formatNationalIdForRequest(nationalIdText),
                                         password = passwordText,
                                         birthDate = birthDateText
                                     )
@@ -281,7 +285,7 @@ private fun checkButtonEnabled(
     passwordText: String,
     birthDateText: String
 ): Boolean {
-    return nationalIdText.length == 9 &&
+    return nationalIdText.length == 8 &&
             passwordText.length == 4 &&
             birthDateText.length == 6
 }
