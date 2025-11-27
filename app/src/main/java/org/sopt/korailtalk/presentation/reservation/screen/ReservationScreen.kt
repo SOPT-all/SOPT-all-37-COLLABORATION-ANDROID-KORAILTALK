@@ -60,8 +60,8 @@ fun ReservationRoute(
         viewModel.searchTrains(
             origin = origin,
             destination = destination,
-            trainType = TrainType.KTX // <- Postman에서는 400뜨고 여기서는 KTX말고는 다 500떠요 (조회 실패: HTTP 500)
-            // trainType = null         // → 무궁화호 포함 → premiumSeat null 에러 → 500 에러
+            trainType = TrainType.KTX
+            //trainType = null  // null로 설정하면 KTX, SRT, ITX-새마을 병합 조회
         )
     }
 
@@ -84,7 +84,7 @@ fun ReservationRoute(
                     }.invokeOnCompletion {
                         viewModel.hideBottomSheet()
                         navigateToCheckout(
-                            seatType.name.lowercase(),
+                            seatType.name,
                             train.trainNumber,
                             train.normalSeat.price,
                             train.premiumSeat?.price
