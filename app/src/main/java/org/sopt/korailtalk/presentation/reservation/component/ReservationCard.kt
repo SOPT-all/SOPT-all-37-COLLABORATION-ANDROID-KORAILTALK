@@ -106,7 +106,7 @@ fun ReservationCard(
             }
             Spacer(modifier = Modifier.width(16.dp))
             Text(
-                text = "${trainItem.durationMinutes}분",
+                text = "${trainItem.durationMinutes / 60}시간 ${trainItem.durationMinutes % 60}분",
                 style = typography.body.body4M14,
                 color = colors.gray400
             )
