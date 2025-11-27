@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
@@ -29,9 +28,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import org.sopt.korailtalk.core.designsystem.component.button.OkButton
 import org.sopt.korailtalk.core.designsystem.component.checkbox.KorailTalkBasicCheckBox
+import org.sopt.korailtalk.presentation.checkout.component.dialog.ConfirmDialog
 import org.sopt.korailtalk.core.designsystem.component.textfield.KorailTalkBasicTextField
 import org.sopt.korailtalk.core.designsystem.theme.KORAILTALKTheme
 import org.sopt.korailtalk.core.designsystem.theme.KorailTalkTheme
+import org.sopt.korailtalk.domain.model.DomainNationalVerify
 import org.sopt.korailtalk.presentation.checkout.component.bottomsheet.MenuBottomSheet
 import org.sopt.korailtalk.presentation.checkout.component.bottomsheet.MenuBottomSheetType
 import org.sopt.korailtalk.presentation.checkout.component.row.CheckoutBasicRow
@@ -41,13 +42,16 @@ import org.sopt.korailtalk.presentation.checkout.component.row.CheckoutTextField
 
 @Composable
 fun CheckoutBottomView(
+    onNationalConfirmClick: (DomainNationalVerify) -> Unit,
     modifier: Modifier = Modifier
 ) { // @nahy-512 작업
     Column(
         modifier = modifier
     ) {
         // 국가유공자 할인
-        NationalMeritSection()
+        NationalMeritSection(
+            onNationalConfirmClick = onNationalConfirmClick
+        )
 
         Spacer(Modifier.height(8.dp))
 
@@ -64,7 +68,9 @@ fun CheckoutBottomView(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun NationalMeritSection() {
+private fun NationalMeritSection(
+    onNationalConfirmClick: (DomainNationalVerify) -> Unit
+) {
     var nationalIdText by remember { mutableStateOf("") }
     var passwordText by remember { mutableStateOf("") }
     var birthDateText by remember { mutableStateOf("") }
@@ -72,6 +78,7 @@ private fun NationalMeritSection() {
 
     val sheetState = rememberModalBottomSheetState()
     var isSheetVisible by remember { mutableStateOf(false) }
+    var isDialogVisible by remember { mutableStateOf(false) }
 
     val personList = listOf(
         "어른 - 1호차 12A / 48,800원",
@@ -142,7 +149,20 @@ private fun NationalMeritSection() {
                             passwordText = passwordText,
                             birthDateText = birthDateText
                         ),
-                        onClick = {}
+                        onClick = {
+                            // 개인정보 체크 X
+                            if (!isChecked) {
+                                isDialogVisible = true
+                            } else {
+                                onNationalConfirmClick(
+                                    DomainNationalVerify(
+                                        nationalId = nationalIdText,
+                                        password = passwordText,
+                                        birthDate = birthDateText
+                                    )
+                                )
+                            }
+                        }
                     )
                 }
             }
@@ -157,6 +177,12 @@ private fun NationalMeritSection() {
             },
         )
     }
+
+    ConfirmDialog(
+        isVisible = isDialogVisible,
+        message = "개인정보 수집 및 이용에 동의해주세요.",
+        onDismiss = { isDialogVisible = false }
+    )
 
     Spacer(Modifier.height(8.dp))
 
@@ -261,6 +287,7 @@ private fun checkButtonEnabled(
 private fun CheckoutBottomViewPreview() {
     KORAILTALKTheme {
         CheckoutBottomView(
+            onNationalConfirmClick = {},
             modifier = Modifier
                 .fillMaxSize()
                 .background(KorailTalkTheme.colors.white)

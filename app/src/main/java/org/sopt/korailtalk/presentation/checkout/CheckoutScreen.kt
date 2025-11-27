@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
@@ -33,12 +32,15 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.sopt.korailtalk.R
 import org.sopt.korailtalk.core.common.util.extension.noRippleClickable
 import org.sopt.korailtalk.core.common.util.preview.DefaultPreview
+import org.sopt.korailtalk.presentation.checkout.component.dialog.ConfirmDialog
 import org.sopt.korailtalk.core.designsystem.component.topappbar.BackTopAppBar
 import org.sopt.korailtalk.core.designsystem.theme.KorailTalkTheme
 import org.sopt.korailtalk.domain.model.DomainCouponData
+import org.sopt.korailtalk.domain.model.DomainNationalVerify
 import org.sopt.korailtalk.domain.model.DomainTrainInfo
 import org.sopt.korailtalk.domain.type.SeatType
 import org.sopt.korailtalk.domain.type.TrainType
+import org.sopt.korailtalk.presentation.checkout.component.dialog.ReservationCancelDialog
 import org.sopt.korailtalk.presentation.checkout.state.CheckoutUiState
 import org.sopt.korailtalk.presentation.checkout.view.CheckoutBottomView
 import org.sopt.korailtalk.presentation.checkout.view.CheckoutTopView
@@ -56,11 +58,28 @@ fun CheckoutRoute(
     premiumSeatPrice: Int? = 20000, // FIXME sample
     viewModel: CheckoutViewModel = hiltViewModel()
 ) {
+    val checkoutUiState by viewModel.checkoutUiState.collectAsStateWithLifecycle()
+    // 다이얼로그용 상태
+    var confirmDialogMessage by remember { mutableStateOf<String?>(null) }
+
     LaunchedEffect(Unit) {
         viewModel.getTrainInfo(seatType, trainId)
     }
 
-    val checkoutUiState by viewModel.checkoutUiState.collectAsStateWithLifecycle()
+    // 사이드 이펙트 수집 (에러 발생 등)
+    LaunchedEffect(Unit) {
+        viewModel.checkoutSideEffect.collect { sideEffect ->
+            when (sideEffect) {
+                is CheckoutSideEffect.ShowDialog -> {
+                    confirmDialogMessage = sideEffect.message
+                }
+                is CheckoutSideEffect.NavigateToHome -> {
+                    navigateToHome()
+                }
+                else -> {}
+            }
+        }
+    }
 
     when(checkoutUiState) {
         is CheckoutUiState.Success -> {
@@ -72,13 +91,24 @@ fun CheckoutRoute(
                 onBackClick = navigateUp,
                 onCloseClick = navigateToHome,
                 normalSeatPrice = normalSeatPrice,
-                premiumSeatPrice = premiumSeatPrice
+                premiumSeatPrice = premiumSeatPrice,
+                onNationalConfirmClick = viewModel::postVerifyNation,
+                onCancelClick = viewModel::deleteReservation
             )
         }
         is CheckoutUiState.Failure -> {
             //TODO 에러처리
         }
         else -> {}
+    }
+
+    // 실제 다이얼로그 UI는 Composable 트리 안에
+    confirmDialogMessage?.let { message ->
+        ConfirmDialog(
+            isVisible = true,
+            message = message,
+            onDismiss = { confirmDialogMessage = null }
+        )
     }
 }
 
@@ -87,11 +117,15 @@ private fun CheckoutScreen(
     trainInfo: DomainTrainInfo,
     onBackClick: () -> Unit,
     onCloseClick: () -> Unit,
+    onCancelClick: (Long) -> Unit,
+    onNationalConfirmClick: (DomainNationalVerify) -> Unit,
     normalSeatPrice: Int = 0,
     premiumSeatPrice: Int? = null,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     var selectedCoupon by remember { mutableStateOf<DomainCouponData?>(null) }
+    var finalPrice by remember { mutableStateOf(trainInfo.price) }
+    var isCancelDialogVisible by remember { mutableStateOf<Boolean>(false) }
 
     Column(
         modifier = modifier
@@ -135,25 +169,33 @@ private fun CheckoutScreen(
                         selectedCoupon = it
                     }),
                     premiumSeatPrice = premiumSeatPrice,
-                    finalPriceCallback = { finalPrice ->
-                        //TODO 할인쿠폰 적용한 결과
+                    finalPriceCallback = { callbackPrice ->
+                        finalPrice = callbackPrice
                     }
                 ) // 상단 ~ 할인쿠폰 적용
             }
             item { // @nahy-512
-                CheckoutBottomView() // 국가유공자 할인 ~ 하단
+                CheckoutBottomView(
+                    onNationalConfirmClick = onNationalConfirmClick
+                ) // 국가유공자 할인 ~ 하단
             }
         }
 
         FinalPriceInfo( // 총 결제 금액
-            price = 48800
+            price = finalPrice
         )
 
         BottomFixedButtons( // 예약취소 및 다음 버튼
-            onCancelClick = {},
+            onCancelClick = { isCancelDialogVisible = true },
             onNextClick = {}
         )
     }
+
+    ReservationCancelDialog(
+        isVisible = isCancelDialogVisible,
+        onDismiss = { isCancelDialogVisible = false },
+        onConfirm = { onCancelClick(trainInfo.reservationId) }
+    )
 }
 
 @Composable
@@ -249,6 +291,8 @@ private fun CheckoutScreenPreview() {
     CheckoutScreen(
         trainInfo = trainInfo,
         onBackClick = {},
-        onCloseClick = {}
+        onCloseClick = {},
+        onNationalConfirmClick = {},
+        onCancelClick = {}
     )
 }

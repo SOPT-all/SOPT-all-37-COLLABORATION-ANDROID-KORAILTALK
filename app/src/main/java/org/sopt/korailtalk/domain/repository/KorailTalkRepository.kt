@@ -1,6 +1,7 @@
 package org.sopt.korailtalk.domain.repository
 
 import org.sopt.korailtalk.domain.model.DomainHomeBasicInfo
+import org.sopt.korailtalk.domain.model.DomainNationalVerify
 import org.sopt.korailtalk.domain.model.DomainTrainInfo
 import org.sopt.korailtalk.domain.model.DomainTrainInfoRequest
 import org.sopt.korailtalk.domain.model.TrainSearchResult
@@ -18,4 +19,8 @@ interface KorailTalkRepository {
         isBookAvailable: Boolean? = null,
         cursor: String? = null
     ): Result<TrainSearchResult>
+
+    suspend fun postVerifyNational(
+        domainNationalVerify: DomainNationalVerify
+    ): Result<Boolean>
 }

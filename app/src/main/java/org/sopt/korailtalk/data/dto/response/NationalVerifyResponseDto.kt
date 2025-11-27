@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class DummyResponseDto (
-    @SerialName("data")
-    val data: String
+data class NationalVerifyResponseDto (
+    @SerialName("verified")
+    val verified: Boolean
 )
