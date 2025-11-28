@@ -22,7 +22,7 @@ fun NavController.navigateToReservation(
 
 fun NavGraphBuilder.reservationNavGraph(
     paddingValues: PaddingValues,
-    navigateToCheckout: (seatType: String, trainId: String, normalSeatPrice: Int, premiumSeatPrice: Int?) -> Unit,
+    navigateToCheckout: (seatType: String, trainId: Long, normalSeatPrice: Int, premiumSeatPrice: Int?) -> Unit,
     navigateUp: () -> Unit
 ) {
     composable<Route.Reservation> { backStackEntry ->

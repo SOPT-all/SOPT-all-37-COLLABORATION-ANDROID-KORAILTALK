@@ -14,7 +14,7 @@ import org.sopt.korailtalk.presentation.checkout.CheckoutRoute
 // 1) navigateToCheckout 확장 함수
 fun NavController.navigateToCheckout(
     seatType: String,
-    trainId: String,
+    trainId: Long,
     normalSeatPrice: Int,
     premiumSeatPrice: Int?,
     navOptions: NavOptions? = null
@@ -36,7 +36,7 @@ fun NavGraphBuilder.checkoutNavGraph(
             navigateToHome = navigateToHome,
             navigateUp = navigateUp,
             seatType = SeatType.valueOf(route.seatType),
-            trainId = route.trainId.toLong(),
+            trainId = route.trainId,
             normalSeatPrice = route.normalSeatPrice,
             premiumSeatPrice = route.premiumSeatPrice
         )

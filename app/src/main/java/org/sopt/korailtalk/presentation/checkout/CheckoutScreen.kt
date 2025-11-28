@@ -55,9 +55,9 @@ fun CheckoutRoute(
     navigateToHome: () -> Unit,
     navigateUp: () -> Unit,
     seatType: SeatType = SeatType.NORMAL,
-    trainId: Long = 1,
-    normalSeatPrice: Int = 48000, // FIXME sample
-    premiumSeatPrice: Int? = 20000, // FIXME sample
+    trainId: Long,
+    normalSeatPrice: Int, // FIXME sample
+    premiumSeatPrice: Int?, // FIXME sample
     viewModel: CheckoutViewModel = hiltViewModel()
 ) {
     val checkoutUiState by viewModel.checkoutUiState.collectAsStateWithLifecycle()

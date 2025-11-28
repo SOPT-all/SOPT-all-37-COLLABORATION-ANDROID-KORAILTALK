@@ -49,7 +49,7 @@ import org.sopt.korailtalk.presentation.reservation.viewmodel.ReservationViewMod
 @Composable
 fun ReservationRoute(
     paddingValues: PaddingValues,
-    navigateToCheckout: (String, String, Int, Int?) -> Unit,
+    navigateToCheckout: (String, Long, Int, Int?) -> Unit,
     navigateUp: () -> Unit,
     viewModel: ReservationViewModel = hiltViewModel()
 ) {
@@ -78,7 +78,7 @@ fun ReservationRoute(
                         viewModel.hideBottomSheet()
                         navigateToCheckout(
                             seatType.name,
-                            train.trainNumber,
+                            train.trainId,
                             train.normalSeat.price,
                             train.premiumSeat?.price
                         )

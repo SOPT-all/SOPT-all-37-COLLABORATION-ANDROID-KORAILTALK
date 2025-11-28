@@ -102,7 +102,8 @@ class ReservationViewModel @Inject constructor(
                     _uiState.update {
                         it.copy(
                             trains = UiState.Success(result.trains.toImmutableList()),
-                            totalTrains = result.totalTrains
+                            totalTrains = result.totalTrains,
+                            nextCursor = result.nextCursor
                         )
                     }
                 }
@@ -237,12 +238,13 @@ class ReservationViewModel @Inject constructor(
 
                 _uiState.update { currentState ->
                     currentState.copy(
-                        trains = currentState.trains.updateIfSuccess {
-                            (it.toImmutableList() + newFilteredTrains.toImmutableList()) as ImmutableList<DomainTrainItem>
+                        trains = currentState.trains.updateIfSuccess { oldList ->
+                            (oldList + newFilteredTrains).toImmutableList()
                         },
                         nextCursor = result.nextCursor
                     )
                 }
+
             }.onFailure { e ->
                 Log.e(TAG, "❌ [loadMoreTrains] 실패: ${e.message}", e)
             }
