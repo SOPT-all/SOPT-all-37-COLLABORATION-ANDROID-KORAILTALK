@@ -64,6 +64,7 @@ fun CheckoutRoute(
     // 다이얼로그용 상태
     var confirmDialogMessage by remember { mutableStateOf<String?>(null) }
 
+
     LaunchedEffect(Unit) {
         viewModel.getTrainInfo(seatType, trainId)
     }
@@ -126,8 +127,10 @@ private fun CheckoutScreen(
     modifier: Modifier = Modifier,
 ) {
     var selectedCoupon by remember { mutableStateOf<DomainCouponData?>(null) }
-    var finalPrice by remember { mutableIntStateOf(trainInfo.price) }
+    var finalPrice by remember { mutableIntStateOf(if(trainInfo.seatType == SeatType.NORMAL) normalSeatPrice else premiumSeatPrice ?: 0) }
+    var totalPrice by remember { mutableIntStateOf(if(trainInfo.seatType == SeatType.NORMAL) normalSeatPrice else premiumSeatPrice ?: 0) }
     var couponSalePrice by remember { mutableIntStateOf(0) }
+    var nationDiscount by rememberSaveable { mutableStateOf(false) }
 
     var isCancelDialogVisible by remember { mutableStateOf(false) }
     var isCancelConfirmDialogVisible by remember { mutableStateOf(false) }
@@ -167,10 +170,10 @@ private fun CheckoutScreen(
             item { // @kimjw2003
                 CheckoutTopView(
                     trainInfo = trainInfo,
-                    discountFee = 0,
+                    nationDiscount = nationDiscount,
                     couponSalePrice = couponSalePrice,
                     normalSeatPrice = normalSeatPrice,
-                    finalPrice = finalPrice,
+                    totalPrice = totalPrice,
                     selectedCoupon = selectedCoupon,
                     onSelectedCouponChange = ({
                         selectedCoupon = it
@@ -183,9 +186,10 @@ private fun CheckoutScreen(
             }
             item { // @nahy-512
                 CheckoutBottomView(
-                    price = trainInfo.price,
+                    price = totalPrice,
                     onNationalConfirmClick = onNationalConfirmClick,
                     finalPriceCallback = { callbackPrice ->
+                        nationDiscount = true
                         finalPrice = callbackPrice
                         couponSalePrice = trainInfo.price // 전체 운임 할인
                     }
