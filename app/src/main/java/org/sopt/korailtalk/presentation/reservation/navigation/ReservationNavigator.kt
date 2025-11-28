@@ -5,7 +5,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import androidx.navigation.toRoute
 import org.sopt.korailtalk.core.navigation.Route
 import org.sopt.korailtalk.presentation.reservation.screen.ReservationRoute
 
@@ -27,12 +26,8 @@ fun NavGraphBuilder.reservationNavGraph(
     navigateUp: () -> Unit
 ) {
     composable<Route.Reservation> { backStackEntry ->
-        val route = backStackEntry.toRoute<Route.Reservation>()
-
         ReservationRoute(
             paddingValues = paddingValues,
-            origin = route.origin,
-            destination = route.destination,
             navigateToCheckout = navigateToCheckout,
             navigateUp = navigateUp
         )
