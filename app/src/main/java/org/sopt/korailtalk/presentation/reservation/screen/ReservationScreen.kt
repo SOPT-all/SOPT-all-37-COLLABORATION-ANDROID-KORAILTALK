@@ -60,8 +60,7 @@ fun ReservationRoute(
         viewModel.searchTrains(
             origin = origin,
             destination = destination,
-            trainType = TrainType.KTX
-            //trainType = null  // null로 설정하면 KTX, SRT, ITX-새마을 병합 조회
+            trainType = null  // null로 설정하면 KTX, SRT, ITX-새마을 병합 조회
         )
     }
 
