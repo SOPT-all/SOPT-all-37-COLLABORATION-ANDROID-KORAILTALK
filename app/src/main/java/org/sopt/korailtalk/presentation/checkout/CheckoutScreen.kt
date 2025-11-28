@@ -18,8 +18,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -124,7 +126,9 @@ private fun CheckoutScreen(
     modifier: Modifier = Modifier,
 ) {
     var selectedCoupon by remember { mutableStateOf<DomainCouponData?>(null) }
-    var finalPrice by remember { mutableStateOf(trainInfo.price) }
+    var finalPrice by remember { mutableIntStateOf(trainInfo.price) }
+    var couponSalePrice by remember { mutableIntStateOf(0) }
+
     var isCancelDialogVisible by remember { mutableStateOf(false) }
     var isCancelConfirmDialogVisible by remember { mutableStateOf(false) }
 
@@ -164,6 +168,7 @@ private fun CheckoutScreen(
                 CheckoutTopView(
                     trainInfo = trainInfo,
                     discountFee = 0,
+                    couponSalePrice = couponSalePrice,
                     normalSeatPrice = normalSeatPrice,
                     selectedCoupon = selectedCoupon,
                     onSelectedCouponChange = ({
@@ -178,7 +183,11 @@ private fun CheckoutScreen(
             item { // @nahy-512
                 CheckoutBottomView(
                     price = trainInfo.price,
-                    onNationalConfirmClick = onNationalConfirmClick
+                    onNationalConfirmClick = onNationalConfirmClick,
+                    finalPriceCallback = { callbackPrice ->
+                        finalPrice = callbackPrice
+                        couponSalePrice = trainInfo.price // 전체 운임 할인
+                    }
                 ) // 국가유공자 할인 ~ 하단
             }
         }

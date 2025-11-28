@@ -50,6 +50,7 @@ fun CheckoutTopView(
     discountFee: Int,
     modifier: Modifier = Modifier,
     viewEnteredTime: Long = System.currentTimeMillis(),
+    couponSalePrice: Int = 0,
     normalSeatPrice: Int = 0,
     premiumSeatPrice: Int? = null,
     selectedCoupon: DomainCouponData? = null,
@@ -63,13 +64,12 @@ fun CheckoutTopView(
     var showMenuBottomSheetForCoupon by remember { mutableStateOf(false) }
     var showMenuBottomSheetForPerson by remember { mutableStateOf(false) }
 
-    var couponSalePrice by rememberSaveable { mutableIntStateOf(0) }
+    var couponSalePrice by rememberSaveable { mutableIntStateOf(couponSalePrice) }
     var finalPrice by rememberSaveable { mutableIntStateOf(trainInfo.price) }
-
 
     LaunchedEffect(selectedCoupon, selectedPerson, discountFee) {
         if(selectedCoupon != null && selectedPerson != null) {
-            couponSalePrice = (trainInfo.price * (selectedCoupon!!.discountRate * 0.01)).toInt()
+            couponSalePrice = (trainInfo.price * (selectedCoupon.discountRate * 0.01)).toInt()
 
             finalPrice = trainInfo.price - discountFee - couponSalePrice
             finalPriceCallback(finalPrice)
@@ -223,7 +223,7 @@ fun CheckoutTopView(
                 )
 
                 Text(
-                    text = "${couponSalePrice.priceFormat()} 원",
+                    text = "${if (couponSalePrice == 0) 0 else "-${couponSalePrice.priceFormat()}"}원",
                     style = KorailTalkTheme.typography.body.body1R16,
                     color = KorailTalkTheme.colors.gray400
                 )

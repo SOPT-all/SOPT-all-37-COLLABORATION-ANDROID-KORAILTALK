@@ -15,9 +15,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,7 +49,8 @@ import org.sopt.korailtalk.presentation.checkout.util.formatNationalIdForRequest
 fun CheckoutBottomView(
     price: Int,
     onNationalConfirmClick: (DomainNationalVerify) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    finalPriceCallback: (Int) -> Unit = {}
 ) { // @nahy-512 작업
     Column(
         modifier = modifier
@@ -55,13 +58,15 @@ fun CheckoutBottomView(
         // 국가유공자 할인
         NationalMeritSection(
             price = price,
-            onNationalConfirmClick = onNationalConfirmClick
+            onNationalConfirmClick = onNationalConfirmClick,
+            finalPriceCallback = finalPriceCallback
         )
 
         Spacer(Modifier.height(8.dp))
 
         // 중증보호자 할인
-        SevereGuardianSection()
+        SevereGuardianSection(
+        )
 
         // 현역병 할인
         ActiveDutySoldierSection()
@@ -75,7 +80,8 @@ fun CheckoutBottomView(
 @Composable
 private fun NationalMeritSection(
     price: Int,
-    onNationalConfirmClick: (DomainNationalVerify) -> Unit
+    onNationalConfirmClick: (DomainNationalVerify) -> Unit,
+    finalPriceCallback: (Int) -> Unit = {}
 ) {
     var nationalIdText by remember { mutableStateOf("") }
     var passwordText by remember { mutableStateOf("") }
@@ -85,12 +91,17 @@ private fun NationalMeritSection(
     val sheetState = rememberModalBottomSheetState()
     var isSheetVisible by remember { mutableStateOf(false) }
     var isDialogVisible by remember { mutableStateOf(false) }
+    var selectedPersonItem by rememberSaveable { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(selectedPersonItem) {
+        if (selectedPersonItem != null) {
+            finalPriceCallback(0)
+        }
+    }
 
     val personList = listOf(
         "어른 - 1호차 12A / ${price.priceFormat()}원",
     )
-
-    var selectedPersonItem by remember { mutableStateOf("") }
 
     CheckoutSectionRow(
         title = "국가 유공자 할인"
@@ -179,7 +190,7 @@ private fun NationalMeritSection(
         CheckoutDropDownRow(
             title = "적용 대상",
             placeholder = "적용할 승객 선택",
-            selected = selectedPersonItem,
+            selected = selectedPersonItem ?: "",
             onClick = {
                 isSheetVisible = true
             },
