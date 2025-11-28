@@ -480,7 +480,7 @@ private fun ReservationContent(
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                items(trains, key = { it.trainNumber + it.departureTime }) { train ->
+                items(trains, key = { it.trainId }) { train ->
                     val isDisabled = train.normalSeat.status == SeatStatusType.SOLD_OUT &&
                             (train.premiumSeat == null || train.premiumSeat.status == SeatStatusType.SOLD_OUT)
 
@@ -524,6 +524,7 @@ private fun ReservationScreenPreview() {
         uiState = ReservationUiState.Success(
             trains = listOf(
                 DomainTrainItem(
+                    trainId = 1,
                     type = TrainType.KTX,
                     trainNumber = "001",
                     departureTime = "05:13",
@@ -533,6 +534,7 @@ private fun ReservationScreenPreview() {
                     premiumSeat = SeatInfo(SeatType.PREMIUM, SeatStatusType.ALMOST_SOLD_OUT, 83000)
                 ),
                 DomainTrainItem(
+                    trainId = 2,
                     type = TrainType.SRT,
                     trainNumber = "182",
                     departureTime = "05:30",
@@ -542,6 +544,7 @@ private fun ReservationScreenPreview() {
                     premiumSeat = SeatInfo(SeatType.PREMIUM, SeatStatusType.AVAILABLE, 83000)
                 ),
                 DomainTrainItem(
+                    trainId = 3,
                     type = TrainType.MUGUNGHWA,
                     trainNumber = "456",
                     departureTime = "06:00",
@@ -556,6 +559,7 @@ private fun ReservationScreenPreview() {
             totalTrains = 24,
             filteredTrains = listOf(
                 DomainTrainItem(
+                    trainId = 1,
                     type = TrainType.KTX,
                     trainNumber = "001",
                     departureTime = "05:13",

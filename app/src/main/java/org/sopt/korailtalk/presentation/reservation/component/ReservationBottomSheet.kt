@@ -197,6 +197,7 @@ private fun ReservationBottomSheetPreview() {
         ) {
             ReservationBottomSheet(
                 trainItem = DomainTrainItem(
+                    trainId = 1,
                     type = TrainType.KTX,
                     trainNumber = "001",
                     departureTime = "05:13",
@@ -237,6 +238,7 @@ private fun ReservationBottomSheetPremiumSoldOutPreview() {
     if (showSheet) {
         ReservationBottomSheet(
             trainItem = DomainTrainItem(
+                trainId = 2,
                 type = TrainType.KTX,
                 trainNumber = "001",
                 departureTime = "05:13",
@@ -276,6 +278,7 @@ private fun ReservationBottomSheetNormalOnlyPreview() {
     if (showSheet) {
         ReservationBottomSheet(
             trainItem = DomainTrainItem(
+                trainId = 3,
                 type = TrainType.KTX,
                 trainNumber = "001",
                 departureTime = "05:13",

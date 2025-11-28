@@ -144,6 +144,7 @@ private fun ReservationCardPreview() {
         // 일반 예약 카드
         ReservationCard(
             trainItem = DomainTrainItem(
+                trainId = 1,
                 type = TrainType.KTX,
                 trainNumber = "001",
                 departureTime = "05:13",
@@ -157,6 +158,7 @@ private fun ReservationCardPreview() {
         // 매진 예약 카드
         ReservationCard(
             trainItem = DomainTrainItem(
+                trainId = 2,
                 type = TrainType.KTX,
                 trainNumber = "002",
                 departureTime = "06:00",
