@@ -37,11 +37,13 @@ private fun DomainTrainItem.isSoldOut(): Boolean {
 /**
  * 열차 예약 카드 컴포넌트
  * @param trainItem 열차 정보
+ * @param selectedSeatType 선택된 좌석 타입 ("전체", "일반실", "특실")
  * @param modifier Modifier
  */
 @Composable
 fun ReservationCard(
     trainItem: DomainTrainItem,
+    selectedSeatType: String = "전체",
     modifier: Modifier = Modifier
 ) {
     val colors = LocalKorailTalkColorsProvider.current
@@ -117,17 +119,36 @@ fun ReservationCard(
             Row(
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                // 일반석은 항상 표시
-                SeatTypeStateItem(
-                    seatType = trainItem.normalSeat.type,
-                    status = trainItem.normalSeat.status,
-                )
-                // 특실이 있으면 표시
-                trainItem.premiumSeat?.let { premium ->
-                    SeatTypeStateItem(
-                        seatType = premium.type,
-                        status = premium.status,
-                    )
+                when (selectedSeatType) {
+                    "일반실" -> {
+                        // 일반실만 표시
+                        SeatTypeStateItem(
+                            seatType = trainItem.normalSeat.type,
+                            status = trainItem.normalSeat.status,
+                        )
+                    }
+                    "특실" -> {
+                        // 특실만 표시
+                        trainItem.premiumSeat?.let { premium ->
+                            SeatTypeStateItem(
+                                seatType = premium.type,
+                                status = premium.status,
+                            )
+                        }
+                    }
+                    else -> {
+                        // 전체: 모두 표시
+                        SeatTypeStateItem(
+                            seatType = trainItem.normalSeat.type,
+                            status = trainItem.normalSeat.status,
+                        )
+                        trainItem.premiumSeat?.let { premium ->
+                            SeatTypeStateItem(
+                                seatType = premium.type,
+                                status = premium.status,
+                            )
+                        }
+                    }
                 }
             }
         }

@@ -262,6 +262,14 @@ private fun ReservationContent(
     onLoadMore: () -> Unit
 ) {
     val listState = rememberLazyListState()
+    val scope = rememberCoroutineScope()
+
+    // ✅ 필터 변경 시 스크롤을 맨 위로 리셋
+    LaunchedEffect(selectedTrainType, selectedSeatType, isBookAvailableOnly) {
+        scope.launch {
+            listState.scrollToItem(0)
+        }
+    }
 
     // 무한 스크롤 감지
     LaunchedEffect(listState) {
@@ -486,6 +494,7 @@ private fun ReservationContent(
 
                     ReservationCard(
                         trainItem = train,
+                        selectedSeatType = selectedSeatType,
                         modifier = Modifier.noRippleClickable(
                             enabled = !isDisabled && !isBookAvailableOnly || !isDisabled
                         ) {

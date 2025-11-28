@@ -4,10 +4,12 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.sopt.korailtalk.domain.model.DomainTrainItem
 import org.sopt.korailtalk.domain.repository.KorailTalkRepository
 import org.sopt.korailtalk.domain.type.SeatStatusType
@@ -83,45 +85,95 @@ class ReservationViewModel @Inject constructor(
     }
 
     /**
-     * 클라이언트 측 필터 적용
+     * 클라이언트 측 필터 적용 (백그라운드 스레드에서 처리)
      */
     fun applyClientSideFilter(
-        trainTypeFilter: String? = null,  // displayName으로 받음
+        trainTypeFilter: String? = null,
         seatTypeFilter: String? = null,
         isBookAvailableOnly: Boolean = false
     ) {
         val currentState = _uiState.value
         if (currentState !is ReservationUiState.Success) return
 
-        Log.d(TAG, "🎛 [applyClientSideFilter] 적용 - trainType=$trainTypeFilter, seatType=$seatTypeFilter, onlyAvailable=$isBookAvailableOnly")
+        Log.d(TAG, "🎛 [applyClientSideFilter] 시작 - trainType=$trainTypeFilter, 전체 데이터: ${currentState.trains.size}개")
+        Log.d(TAG, "🎛 [applyClientSideFilter] 적용 - seatType=$seatTypeFilter, onlyAvailable=$isBookAvailableOnly")
 
-        val filteredTrains = currentState.trains.filter { train ->
-            val matchesTrainType = when {
-                trainTypeFilter.isNullOrEmpty() || trainTypeFilter == "전체" -> true
-                else -> train.type.displayName == trainTypeFilter  // ✅ displayName과 비교
+        // ✅ 필터 상태 저장 (무한 스크롤 시 사용)
+        currentFilters = currentFilters.copy(
+            trainTypeFilter = trainTypeFilter,
+            seatTypeFilter = seatTypeFilter,
+            isBookAvailableOnly = isBookAvailableOnly
+        )
+
+        // ✅ 백그라운드 스레드에서 필터링 수행
+        viewModelScope.launch {
+            val startTime = System.currentTimeMillis()
+            
+            val filteredTrains = withContext(Dispatchers.Default) {
+                filterTrains(
+                    currentState.trains,
+                    trainTypeFilter,
+                    seatTypeFilter,
+                    isBookAvailableOnly
+                )
             }
+            
+            val elapsed = System.currentTimeMillis() - startTime
+            Log.d(TAG, "🎯 [applyClientSideFilter] 필터 결과 ${filteredTrains.size}개 (${elapsed}ms 소요)")
 
-            val matchesSeatType = when (seatTypeFilter) {
-                "일반실" -> train.normalSeat.status != SeatStatusType.SOLD_OUT
-                "특실" -> train.premiumSeat?.status != SeatStatusType.SOLD_OUT
-                else -> true
-            }
-
-            val matchesBookAvailable = if (isBookAvailableOnly) {
-                train.normalSeat.status != SeatStatusType.SOLD_OUT ||
-                        train.premiumSeat?.status != SeatStatusType.SOLD_OUT
-            } else true
-
-            matchesTrainType && matchesSeatType && matchesBookAvailable
+            _uiState.value = currentState.copy(filteredTrains = filteredTrains)
         }
-
-        Log.d(TAG, "🎯 [applyClientSideFilter] 필터 결과 ${filteredTrains.size}개")
-
-        _uiState.value = currentState.copy(filteredTrains = filteredTrains)
     }
 
     /**
-     * 무한 스크롤 - 추가 데이터 로드
+     * 열차 필터링 로직 (성능 최적화)
+     */
+    private fun filterTrains(
+        trains: List<DomainTrainItem>,
+        trainTypeFilter: String?,
+        seatTypeFilter: String?,
+        isBookAvailableOnly: Boolean
+    ): List<DomainTrainItem> {
+        // 모든 필터가 비활성화면 원본 리스트 그대로 반환
+        if (trainTypeFilter.isNullOrEmpty() || trainTypeFilter == "전체") {
+            if (seatTypeFilter.isNullOrEmpty() || seatTypeFilter == "전체") {
+                if (!isBookAvailableOnly) {
+                    return trains
+                }
+            }
+        }
+
+        return trains.filter { train ->
+            // 1. 열차 종류 필터 (가장 빠른 체크)
+            if (trainTypeFilter != null && trainTypeFilter != "전체") {
+                if (train.type.displayName != trainTypeFilter) return@filter false
+            }
+
+            // 2. 좌석 종류 필터
+            when (seatTypeFilter) {
+                "일반실" -> {
+                    if (train.normalSeat.status == SeatStatusType.SOLD_OUT) return@filter false
+                }
+                "특실" -> {
+                    if (train.premiumSeat == null || train.premiumSeat.status == SeatStatusType.SOLD_OUT) {
+                        return@filter false
+                    }
+                }
+            }
+
+            // 3. 예약 가능 필터 (마지막 체크)
+            if (isBookAvailableOnly) {
+                val hasAvailableSeat = train.normalSeat.status != SeatStatusType.SOLD_OUT ||
+                        (train.premiumSeat != null && train.premiumSeat.status != SeatStatusType.SOLD_OUT)
+                if (!hasAvailableSeat) return@filter false
+            }
+
+            true
+        }
+    }
+
+    /**
+     * 무한 스크롤 - 추가 데이터 로드 (필터 적용 개선)
      */
     fun loadMoreTrains() {
         val currentState = _uiState.value
@@ -143,15 +195,28 @@ class ReservationViewModel @Inject constructor(
             repository.getTrainList(
                 origin = currentState.origin,
                 destination = currentState.destination,
-                trainType = currentFilters.trainType?.serverValue,  // ✅ serverValue 사용
+                trainType = currentFilters.trainType?.serverValue,
                 seatType = currentFilters.seatType,
                 isBookAvailable = currentFilters.isBookAvailable,
                 cursor = currentState.nextCursor
             ).onSuccess { result ->
                 Log.d(TAG, "✅ [loadMoreTrains] 추가 성공: 새로 ${result.trains.size}개, nextCursor=${result.nextCursor}")
+                
+                // ✅ 새로 받은 데이터를 현재 필터 기준으로 필터링 (백그라운드 스레드)
+                val newFilteredTrains = withContext(Dispatchers.Default) {
+                    filterTrains(
+                        result.trains,
+                        currentFilters.trainTypeFilter,
+                        currentFilters.seatTypeFilter,
+                        currentFilters.isBookAvailableOnly
+                    )
+                }
+                
+                Log.d(TAG, "🎯 [loadMoreTrains] 필터 적용 후: ${newFilteredTrains.size}개")
+                
                 _uiState.value = currentState.copy(
                     trains = currentState.trains + result.trains,
-                    filteredTrains = currentState.filteredTrains + result.trains,
+                    filteredTrains = currentState.filteredTrains + newFilteredTrains,  // ✅ 필터링된 데이터만 추가
                     nextCursor = result.nextCursor
                 )
             }.onFailure { e ->
@@ -198,8 +263,12 @@ class ReservationViewModel @Inject constructor(
 
     //  FilterState 수정
     private data class FilterState(
-        val trainType: TrainType? = null,  // String → TrainType enum
+        val trainType: TrainType? = null,  // API 요청용 (enum)
         val seatType: String? = null,
-        val isBookAvailable: Boolean? = null
+        val isBookAvailable: Boolean? = null,
+        // UI 필터 상태 추가
+        val trainTypeFilter: String? = null,  // 클라이언트 필터용
+        val seatTypeFilter: String? = null,
+        val isBookAvailableOnly: Boolean = false
     )
 }
