@@ -170,6 +170,7 @@ private fun CheckoutScreen(
                     discountFee = 0,
                     couponSalePrice = couponSalePrice,
                     normalSeatPrice = normalSeatPrice,
+                    finalPrice = finalPrice,
                     selectedCoupon = selectedCoupon,
                     onSelectedCouponChange = ({
                         selectedCoupon = it

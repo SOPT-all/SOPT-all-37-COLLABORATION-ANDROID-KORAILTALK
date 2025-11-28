@@ -50,6 +50,7 @@ fun CheckoutTopView(
     discountFee: Int,
     modifier: Modifier = Modifier,
     viewEnteredTime: Long = System.currentTimeMillis(),
+    finalPrice: Int,
     couponSalePrice: Int = 0,
     normalSeatPrice: Int = 0,
     premiumSeatPrice: Int? = null,
@@ -65,7 +66,7 @@ fun CheckoutTopView(
     var showMenuBottomSheetForPerson by remember { mutableStateOf(false) }
 
     var couponSalePrice by rememberSaveable { mutableIntStateOf(couponSalePrice) }
-    var finalPrice by rememberSaveable { mutableIntStateOf(trainInfo.price) }
+    var finalPrice by rememberSaveable { mutableIntStateOf(finalPrice) }
 
     LaunchedEffect(selectedCoupon, selectedPerson, discountFee) {
         if(selectedCoupon != null && selectedPerson != null) {
@@ -75,7 +76,6 @@ fun CheckoutTopView(
             finalPriceCallback(finalPrice)
         }
     }
-
 
 
     Column(
@@ -381,6 +381,7 @@ private fun CheckoutTopViewPreview() {
     CheckoutTopView(
         trainInfo = trainInfo,
         discountFee = 0,
+        finalPrice = 28000,
         viewEnteredTime = System.currentTimeMillis() + 32_400_000
     )
 }
