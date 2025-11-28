@@ -100,7 +100,7 @@ class MainNavigator(
 
     fun navigateToCheckout(
         seatType: String,
-        trainId: String,
+        trainId: Long,
         normalSeatPrice: Int,
         premiumSeatPrice: Int?
     ) {

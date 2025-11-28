@@ -95,12 +95,7 @@ fun HomeScreen(
             Modifier.padding(start = 24.dp, top = 24.dp, end = 24.dp, bottom = 16.dp)
         ) {
             Text(
-                "어디로 갈까요,",
-                style = KorailTalkTheme.typography.headline.head4M18,
-                color = KorailTalkTheme.colors.primary700,
-            )
-            Text(
-                "민주 님?",
+                "어디로 가시겠어요?",
                 style = KorailTalkTheme.typography.headline.head3Sb18,
                 color = KorailTalkTheme.colors.primary700,
             )

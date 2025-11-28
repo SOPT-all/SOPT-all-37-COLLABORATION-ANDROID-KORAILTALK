@@ -15,9 +15,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,6 +28,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
+import org.sopt.korailtalk.core.common.util.format.priceFormat
 import org.sopt.korailtalk.core.designsystem.component.button.OkButton
 import org.sopt.korailtalk.core.designsystem.component.checkbox.KorailTalkBasicCheckBox
 import org.sopt.korailtalk.presentation.checkout.component.dialog.ConfirmDialog
@@ -39,24 +42,31 @@ import org.sopt.korailtalk.presentation.checkout.component.row.CheckoutBasicRow
 import org.sopt.korailtalk.presentation.checkout.component.row.CheckoutDropDownRow
 import org.sopt.korailtalk.presentation.checkout.component.row.CheckoutSectionRow
 import org.sopt.korailtalk.presentation.checkout.component.row.CheckoutTextFieldRow
+import org.sopt.korailtalk.presentation.checkout.util.NationalIdVisualTransformation
+import org.sopt.korailtalk.presentation.checkout.util.formatNationalIdForRequest
 
 @Composable
 fun CheckoutBottomView(
+    price: Int,
     onNationalConfirmClick: (DomainNationalVerify) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    finalPriceCallback: (Int) -> Unit = {}
 ) { // @nahy-512 작업
     Column(
         modifier = modifier
     ) {
         // 국가유공자 할인
         NationalMeritSection(
-            onNationalConfirmClick = onNationalConfirmClick
+            price = price,
+            onNationalConfirmClick = onNationalConfirmClick,
+            finalPriceCallback = finalPriceCallback
         )
 
         Spacer(Modifier.height(8.dp))
 
         // 중증보호자 할인
-        SevereGuardianSection()
+        SevereGuardianSection(
+        )
 
         // 현역병 할인
         ActiveDutySoldierSection()
@@ -69,7 +79,9 @@ fun CheckoutBottomView(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun NationalMeritSection(
-    onNationalConfirmClick: (DomainNationalVerify) -> Unit
+    price: Int,
+    onNationalConfirmClick: (DomainNationalVerify) -> Unit,
+    finalPriceCallback: (Int) -> Unit = {}
 ) {
     var nationalIdText by remember { mutableStateOf("") }
     var passwordText by remember { mutableStateOf("") }
@@ -79,12 +91,17 @@ private fun NationalMeritSection(
     val sheetState = rememberModalBottomSheetState()
     var isSheetVisible by remember { mutableStateOf(false) }
     var isDialogVisible by remember { mutableStateOf(false) }
+    var selectedPersonItem by rememberSaveable { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(selectedPersonItem) {
+        if (selectedPersonItem != null) {
+            finalPriceCallback(0)
+        }
+    }
 
     val personList = listOf(
-        "어른 - 1호차 12A / 48,800원",
+        "어른 - 1호차 12A / ${price.priceFormat()}원",
     )
-
-    var selectedPersonItem by remember { mutableStateOf("") }
 
     CheckoutSectionRow(
         title = "국가 유공자 할인"
@@ -100,14 +117,16 @@ private fun NationalMeritSection(
             title = "보훈 번호",
             placeholder = "보훈 번호 9자리",
             value = nationalIdText,
-            onValueChange = {
-                if (it.length <= 9) nationalIdText = it
+            onValueChange = { newValue ->
+                val digits = newValue.filter { it.isDigit() }.take(8)
+                nationalIdText = digits
             },
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Next
             ),
+            visualTransformation = NationalIdVisualTransformation()
         )
 
         CheckoutTextFieldRow(
@@ -156,7 +175,7 @@ private fun NationalMeritSection(
                             } else {
                                 onNationalConfirmClick(
                                     DomainNationalVerify(
-                                        nationalId = nationalIdText,
+                                        nationalId = formatNationalIdForRequest(nationalIdText),
                                         password = passwordText,
                                         birthDate = birthDateText
                                     )
@@ -171,7 +190,7 @@ private fun NationalMeritSection(
         CheckoutDropDownRow(
             title = "적용 대상",
             placeholder = "적용할 승객 선택",
-            selected = selectedPersonItem,
+            selected = selectedPersonItem ?: "",
             onClick = {
                 isSheetVisible = true
             },
@@ -277,7 +296,7 @@ private fun checkButtonEnabled(
     passwordText: String,
     birthDateText: String
 ): Boolean {
-    return nationalIdText.length == 9 &&
+    return nationalIdText.length == 8 &&
             passwordText.length == 4 &&
             birthDateText.length == 6
 }
@@ -287,6 +306,7 @@ private fun checkButtonEnabled(
 private fun CheckoutBottomViewPreview() {
     KORAILTALKTheme {
         CheckoutBottomView(
+            price = 0,
             onNationalConfirmClick = {},
             modifier = Modifier
                 .fillMaxSize()

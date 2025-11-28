@@ -27,6 +27,7 @@ import org.sopt.korailtalk.domain.type.SeatType
  */
 @Composable
 internal fun SeatSelectionItem(
+    title: String,
     seatType: SeatType,
     price: Int,
     isSelected: Boolean,
@@ -77,7 +78,7 @@ internal fun SeatSelectionItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = seatType.label,
+            text = title,
             style = KorailTalkTheme.typography.body.body1R16,
             color = textColor
         )

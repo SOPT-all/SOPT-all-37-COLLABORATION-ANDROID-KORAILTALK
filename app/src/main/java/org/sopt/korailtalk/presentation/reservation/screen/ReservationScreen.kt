@@ -24,8 +24,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 import org.sopt.korailtalk.R
+import org.sopt.korailtalk.core.common.state.UiState
 import org.sopt.korailtalk.core.common.util.extension.noRippleClickable
 import org.sopt.korailtalk.core.designsystem.component.checkbox.KorailTalkBasicCheckBox
 import org.sopt.korailtalk.core.designsystem.component.dropdown.KorailTalkDropdown
@@ -33,6 +36,7 @@ import org.sopt.korailtalk.core.designsystem.component.topappbar.BackTopAppBar
 import org.sopt.korailtalk.core.designsystem.theme.KorailTalkTheme
 import org.sopt.korailtalk.domain.model.DomainTrainItem
 import org.sopt.korailtalk.domain.model.SeatInfo
+import org.sopt.korailtalk.domain.type.TrainFilterType
 import org.sopt.korailtalk.domain.type.SeatStatusType
 import org.sopt.korailtalk.domain.type.SeatType
 import org.sopt.korailtalk.domain.type.TrainType
@@ -45,9 +49,7 @@ import org.sopt.korailtalk.presentation.reservation.viewmodel.ReservationViewMod
 @Composable
 fun ReservationRoute(
     paddingValues: PaddingValues,
-    origin: String,
-    destination: String,
-    navigateToCheckout: (String, String, Int, Int?) -> Unit,
+    navigateToCheckout: (String, Long, Int, Int?) -> Unit,
     navigateUp: () -> Unit,
     viewModel: ReservationViewModel = hiltViewModel()
 ) {
@@ -55,15 +57,6 @@ fun ReservationRoute(
     val bottomSheetState by viewModel.bottomSheetState.collectAsStateWithLifecycle()
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
-
-    LaunchedEffect(origin, destination) {
-        viewModel.searchTrains(
-            origin = origin,
-            destination = destination,
-            trainType = TrainType.KTX
-            //trainType = null  // null로 설정하면 KTX, SRT, ITX-새마을 병합 조회
-        )
-    }
 
 // 바텀시트 표시
     bottomSheetState.selectedTrain?.let { train ->
@@ -85,7 +78,7 @@ fun ReservationRoute(
                         viewModel.hideBottomSheet()
                         navigateToCheckout(
                             seatType.name,
-                            train.trainNumber,
+                            train.trainId,
                             train.normalSeat.price,
                             train.premiumSeat?.price
                         )
@@ -120,12 +113,12 @@ private fun ReservationScreen(
     onBackClick: () -> Unit,
     onTrainItemClick: (DomainTrainItem) -> Unit,
     onRefresh: () -> Unit,
-    onFilterChange: (String?, String, Boolean) -> Unit,
+    onFilterChange: (TrainFilterType, String, Boolean) -> Unit,
     onLoadMore: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // 필터 상태
-    var selectedTrainType by remember { mutableStateOf<String?>(null) }
+    // 필터 상태 (로컬 UI 상태)
+    var selectedTrainType by remember { mutableStateOf(TrainFilterType.ALL) }
     var selectedSeatType by remember { mutableStateOf("전체") }
     var selectedRouteType by remember { mutableStateOf("직통") }
     var isBookAvailableOnly by remember { mutableStateOf(false) }
@@ -143,101 +136,53 @@ private fun ReservationScreen(
                     contentDescription = "새로고침",
                     modifier = Modifier
                         .size(44.dp)
-                        .noRippleClickable {
-                            onRefresh()
-                        }
+                        .noRippleClickable { onRefresh() }
                 )
                 Image(
                     imageVector = ImageVector.vectorResource(R.drawable.ic_hamburger),
                     contentDescription = "메뉴",
                     modifier = Modifier.size(44.dp)
-                    // 메뉴 버튼은 아이콘 UI만 구현, 기능 구현하지 않음
                 )
             }
         )
 
-        // UI 상태에 따른 화면 표시
-        when (val state = uiState) {
-            is ReservationUiState.Initial -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        "출발지와 도착지를 선택해주세요",
-                        style = KorailTalkTheme.typography.body.body2M15,
-                        color = KorailTalkTheme.colors.gray400
-                    )
-                }
-            }
+        ReservationContent(
+            origin = uiState.origin,
+            destination = uiState.destination,
+            date = uiState.date,
+            dayOfWeek = uiState.dayOfWeek,
+            passengerCount = uiState.passengerCount,
+            totalTrains = uiState.totalTrains,
+            trainsState = uiState.trains,     // ⬅️ 여기 핵심
+            hasMoreData = uiState.nextCursor != null,
 
-            is ReservationUiState.Loading -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(color = KorailTalkTheme.colors.primary700)
-                }
-            }
+            selectedTrainType = selectedTrainType,
+            onTrainFilterSelected = { type ->
+                selectedTrainType = type
+                onFilterChange(selectedTrainType, selectedSeatType, isBookAvailableOnly)
+            },
 
-            is ReservationUiState.Success -> {
-                ReservationContent(
-                    origin = state.origin,
-                    destination = state.destination,
-                    date = state.date,
-                    dayOfWeek = state.dayOfWeek,
-                    passengerCount = state.passengerCount,
-                    totalTrains = state.filteredTrains.size,
-                    trains = state.filteredTrains,
-                    hasMoreData = state.nextCursor != null,
-                    selectedTrainType = selectedTrainType,
-                    onTrainTypeSelected = { type ->
-                        selectedTrainType = if (type == "전체") null else type
-                        onFilterChange(selectedTrainType, selectedSeatType, isBookAvailableOnly)
-                    },
-                    selectedSeatType = selectedSeatType,
-                    onSeatTypeSelected = { seat ->
-                        selectedSeatType = seat
-                        onFilterChange(selectedTrainType, selectedSeatType, isBookAvailableOnly)
-                    },
-                    selectedRouteType = selectedRouteType,
-                    onRouteTypeSelected = { route ->
-                        selectedRouteType = route
-                        // 환승은 구현하지 않음
-                    },
-                    isBookAvailableOnly = isBookAvailableOnly,
-                    onBookAvailableChanged = { checked ->
-                        isBookAvailableOnly = checked
-                        onFilterChange(selectedTrainType, selectedSeatType, isBookAvailableOnly)
-                    },
-                    onTrainItemClick = onTrainItemClick,
-                    onLoadMore = onLoadMore
-                )
-            }
+            selectedSeatType = selectedSeatType,
+            onSeatTypeSelected = { seat ->
+                selectedSeatType = seat
+                onFilterChange(selectedTrainType, selectedSeatType, isBookAvailableOnly)
+            },
 
-            is ReservationUiState.Error -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Text(
-                            "오류가 발생했습니다",
-                            style = KorailTalkTheme.typography.body.body2M15,
-                            color = KorailTalkTheme.colors.pointRed
-                        )
-                        Text(
-                            state.message,
-                            style = KorailTalkTheme.typography.body.body2M15,
-                            color = KorailTalkTheme.colors.gray400
-                        )
-                    }
-                }
-            }
-        }
+            selectedRouteType = selectedRouteType,
+            onRouteTypeSelected = { route ->
+                selectedRouteType = route
+                // 환승 구현하지 않음
+            },
+
+            isBookAvailableOnly = isBookAvailableOnly,
+            onBookAvailableChanged = { checked ->
+                isBookAvailableOnly = checked
+                onFilterChange(selectedTrainType, selectedSeatType, isBookAvailableOnly)
+            },
+
+            onTrainItemClick = onTrainItemClick,
+            onLoadMore = onLoadMore
+        )
     }
 }
 
@@ -249,10 +194,10 @@ private fun ReservationContent(
     dayOfWeek: String,
     passengerCount: Int,
     totalTrains: Int,
-    trains: List<DomainTrainItem>,
+    trainsState: UiState<ImmutableList<DomainTrainItem>>, // ⬅️ 변경
     hasMoreData: Boolean,
-    selectedTrainType: String?,
-    onTrainTypeSelected: (String) -> Unit,
+    selectedTrainType: TrainFilterType,
+    onTrainFilterSelected: (TrainFilterType) -> Unit,
     selectedSeatType: String,
     onSeatTypeSelected: (String) -> Unit,
     selectedRouteType: String,
@@ -263,14 +208,33 @@ private fun ReservationContent(
     onLoadMore: () -> Unit
 ) {
     val listState = rememberLazyListState()
+    val scope = rememberCoroutineScope()
 
-    // 무한 스크롤 감지
-    LaunchedEffect(listState) {
+    // 실제 리스트 데이터는 Success일 때만 꺼내서 사용
+    val trains: ImmutableList<DomainTrainItem> = when (trainsState) {
+        is UiState.Success -> trainsState.data
+        else -> persistentListOf()
+    }
+
+    // ✅ 필터 변경 시 스크롤을 맨 위로 리셋
+    LaunchedEffect(selectedTrainType, selectedSeatType, isBookAvailableOnly) {
+        scope.launch {
+            if (trains.isNotEmpty()) {
+                listState.scrollToItem(0)
+            }
+        }
+    }
+
+    // 무한 스크롤 감지 (Success + hasMoreData일 때만 동작)
+    LaunchedEffect(listState, trains, hasMoreData) {
         snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
             .collect { lastVisibleIndex ->
-                if (lastVisibleIndex != null &&
+                if (
+                    lastVisibleIndex != null &&
+                    trains.isNotEmpty() &&
                     lastVisibleIndex >= trains.size - 3 &&
-                    hasMoreData) {
+                    hasMoreData
+                ) {
                     onLoadMore()
                 }
             }
@@ -286,7 +250,7 @@ private fun ReservationContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(KorailTalkTheme.colors.white)
-                .padding(horizontal = 20.dp, vertical = 16.dp),
+                .padding(horizontal = 16.dp, vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Row(
@@ -321,15 +285,14 @@ private fun ReservationContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(KorailTalkTheme.colors.white)
-                .padding(horizontal = 20.dp, vertical = 12.dp),
+                .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                // 좌우 화살표는 클릭 불가 (구현하지 않음)
                 Image(
                     imageVector = ImageVector.vectorResource(R.drawable.ic_reservation_arrow),
                     contentDescription = "이전 날짜",
@@ -337,16 +300,24 @@ private fun ReservationContent(
                         .size(24.dp)
                         .then(Modifier.rotate(180f))
                 )
-                Text(
-                    text = "가는 날 $date ($dayOfWeek)",
-                    style = KorailTalkTheme.typography.body.body2M15,
-                    color = KorailTalkTheme.colors.black
-                )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(11.dp)
+                ) {
+                    Text(
+                        text = "가는 날",
+                        style = KorailTalkTheme.typography.body.body3R15,
+                        color = KorailTalkTheme.colors.gray400
+                    )
+                    Text(
+                        text = "$date ($dayOfWeek)",
+                        style = KorailTalkTheme.typography.body.body4R14,
+                        color = KorailTalkTheme.colors.black
+                    )
+                }
                 Image(
                     imageVector = ImageVector.vectorResource(R.drawable.ic_reservation_arrow),
                     contentDescription = "다음 날짜",
-                    modifier = Modifier
-                        .size(24.dp)
+                    modifier = Modifier.size(24.dp)
                 )
             }
 
@@ -371,32 +342,23 @@ private fun ReservationContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(KorailTalkTheme.colors.white)
-                .padding(horizontal = 20.dp)
-                .padding(bottom = 16.dp)
+                .padding(horizontal = 16.dp, vertical = 8.dp)
                 .horizontalScroll(rememberScrollState()),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            val trainTypes = buildList {
-                add("전체")
-                addAll(TrainType.entries.map { it.displayName })
-            }
+            val trainTypes = TrainFilterType.getFilterList()
 
             trainTypes.forEach { type ->
-                val isSelected = if (type == "전체") {
-                    selectedTrainType == null
-                } else {
-                    selectedTrainType == type
-                }
+                val isSelected = (selectedTrainType == type)
 
                 FilterChip(
                     selected = isSelected,
-                    onClick = {
-                        onTrainTypeSelected(type)
-                    },
+                    onClick = { onTrainFilterSelected(type) },
                     label = {
                         Text(
-                            text = type,
-                            style = KorailTalkTheme.typography.body.body2M15
+                            text = type.displayName,
+                            style = KorailTalkTheme.typography.body.body2M15,
+                            modifier = Modifier.padding(vertical = 8.dp)
                         )
                     },
                     colors = FilterChipDefaults.filterChipColors(
@@ -410,18 +372,16 @@ private fun ReservationContent(
                         selected = isSelected,
                         borderColor = KorailTalkTheme.colors.gray200,
                         selectedBorderColor = KorailTalkTheme.colors.black
-                    )
+                    ),
                 )
             }
         }
-
         // 드롭다운 필터 + 결과 개수
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(KorailTalkTheme.colors.white)
-                .padding(horizontal = 20.dp)
-                .padding(bottom = 16.dp),
+                .padding(horizontal = 16.dp)
+                .padding(vertical = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -433,7 +393,6 @@ private fun ReservationContent(
                     selectedItem = selectedSeatType,
                     onItemSelected = onSeatTypeSelected
                 )
-                // 환승 드롭다운은 클릭 불가 (구현하지 않음)
                 KorailTalkDropdown(
                     items = listOf("직통", "환승"),
                     selectedItem = selectedRouteType,
@@ -444,64 +403,112 @@ private fun ReservationContent(
             Text(
                 text = "결과 ($totalTrains)",
                 style = KorailTalkTheme.typography.cap.cap1M12,
-                color = KorailTalkTheme.colors.gray500
+                color = KorailTalkTheme.colors.black
             )
         }
 
-        // 열차 목록
-        if (trains.isEmpty()) {
-            // 조회 결과 없음
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+        when (trainsState) {
+            UiState.Init -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        "예약 가능한 기차가 없어요",
+                        text = "기차를 조회해 주세요.",
+                        style = KorailTalkTheme.typography.body.body3R15,
+                        color = KorailTalkTheme.colors.gray400
+                    )
+                }
+            }
+
+            UiState.Loading -> {
+                // 전체 영역 로딩
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(
+                        color = KorailTalkTheme.colors.primary700,
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
+            }
+
+            is UiState.Failure -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = trainsState.msg,
                         style = KorailTalkTheme.typography.body.body2M15,
                         color = KorailTalkTheme.colors.gray400
                     )
                 }
             }
-        } else {
-            LazyColumn(
-                state = listState,
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                items(trains, key = { it.trainNumber + it.departureTime }) { train ->
-                    val isDisabled = train.normalSeat.status == SeatStatusType.SOLD_OUT &&
-                            (train.premiumSeat == null || train.premiumSeat.status == SeatStatusType.SOLD_OUT)
 
-                    ReservationCard(
-                        trainItem = train,
-                        modifier = Modifier.noRippleClickable(
-                            enabled = !isDisabled && !isBookAvailableOnly || !isDisabled
+            is UiState.Success -> {
+                if (trains.isEmpty()) {
+                    // 조회 결과 없음
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            if (!isDisabled) {
-                                onTrainItemClick(train)
-                            }
-                        }
-                    )
-                }
-
-                // 로딩 인디케이터 (무한 스크롤)
-                if (hasMoreData) {
-                    item {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator(
-                                color = KorailTalkTheme.colors.primary700,
-                                modifier = Modifier.size(24.dp)
+                            Text(
+                                "예약 가능한 기차가 없어요",
+                                style = KorailTalkTheme.typography.body.body2M15,
+                                color = KorailTalkTheme.colors.gray400
                             )
+                        }
+                    }
+                } else {
+                    LazyColumn(
+                        state = listState,
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(trains, key = { it.trainId }) { train ->
+                            val isDisabled =
+                                train.normalSeat.status == SeatStatusType.SOLD_OUT &&
+                                        (train.premiumSeat == null ||
+                                                train.premiumSeat.status == SeatStatusType.SOLD_OUT)
+
+                            ReservationCard(
+                                trainItem = train,
+                                selectedSeatType = selectedSeatType,
+                                modifier = Modifier.noRippleClickable(
+                                    enabled = (!isDisabled && !isBookAvailableOnly) || !isDisabled
+                                ) {
+                                    if (!isDisabled) {
+                                        onTrainItemClick(train)
+                                    }
+                                }
+                            )
+                        }
+
+                        // 로딩 인디케이터 (무한 스크롤)
+                        if (hasMoreData) {
+                            item {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    CircularProgressIndicator(
+                                        color = KorailTalkTheme.colors.primary700,
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -513,51 +520,49 @@ private fun ReservationContent(
 @Preview
 @Composable
 private fun ReservationScreenPreview() {
+    val trains = persistentListOf(
+        DomainTrainItem(
+            trainId = 1,
+            type = TrainType.KTX,
+            trainNumber = "001",
+            departureTime = "05:13",
+            arrivalTime = "07:50",
+            durationMinutes = 157,
+            normalSeat = SeatInfo(SeatType.NORMAL, SeatStatusType.AVAILABLE, 59000),
+            premiumSeat = SeatInfo(SeatType.PREMIUM, SeatStatusType.ALMOST_SOLD_OUT, 83000)
+        ),
+        DomainTrainItem(
+            trainId = 2,
+            type = TrainType.SRT,
+            trainNumber = "182",
+            departureTime = "05:30",
+            arrivalTime = "08:20",
+            durationMinutes = 170,
+            normalSeat = SeatInfo(SeatType.NORMAL, SeatStatusType.AVAILABLE, 59000),
+            premiumSeat = SeatInfo(SeatType.PREMIUM, SeatStatusType.AVAILABLE, 83000)
+        ),
+        DomainTrainItem(
+            trainId = 3,
+            type = TrainType.MUGUNGHWA,
+            trainNumber = "456",
+            departureTime = "06:00",
+            arrivalTime = "10:30",
+            durationMinutes = 270,
+            normalSeat = SeatInfo(SeatType.NORMAL, SeatStatusType.SOLD_OUT, 35000),
+            premiumSeat = null
+        )
+    )
+
     ReservationScreen(
-        uiState = ReservationUiState.Success(
-            trains = listOf(
-                DomainTrainItem(
-                    type = TrainType.KTX,
-                    trainNumber = "001",
-                    departureTime = "05:13",
-                    arrivalTime = "07:50",
-                    durationMinutes = 157,
-                    normalSeat = SeatInfo(SeatType.NORMAL, SeatStatusType.AVAILABLE, 59000),
-                    premiumSeat = SeatInfo(SeatType.PREMIUM, SeatStatusType.ALMOST_SOLD_OUT, 83000)
-                ),
-                DomainTrainItem(
-                    type = TrainType.SRT,
-                    trainNumber = "182",
-                    departureTime = "05:30",
-                    arrivalTime = "08:20",
-                    durationMinutes = 170,
-                    normalSeat = SeatInfo(SeatType.NORMAL, SeatStatusType.AVAILABLE, 59000),
-                    premiumSeat = SeatInfo(SeatType.PREMIUM, SeatStatusType.AVAILABLE, 83000)
-                ),
-                DomainTrainItem(
-                    type = TrainType.MUGUNGHWA,
-                    trainNumber = "456",
-                    departureTime = "06:00",
-                    arrivalTime = "10:30",
-                    durationMinutes = 270,
-                    normalSeat = SeatInfo(SeatType.NORMAL, SeatStatusType.SOLD_OUT, 35000),
-                    premiumSeat = null
-                )
-            ),
+        uiState = ReservationUiState(
             origin = "서울",
             destination = "부산",
+            trains = UiState.Success(trains),
             totalTrains = 24,
-            filteredTrains = listOf(
-                DomainTrainItem(
-                    type = TrainType.KTX,
-                    trainNumber = "001",
-                    departureTime = "05:13",
-                    arrivalTime = "07:50",
-                    durationMinutes = 157,
-                    normalSeat = SeatInfo(SeatType.NORMAL, SeatStatusType.AVAILABLE, 59000),
-                    premiumSeat = SeatInfo(SeatType.PREMIUM, SeatStatusType.ALMOST_SOLD_OUT, 83000)
-                )
-            )
+            date = "12월 1일",
+            dayOfWeek = "금",
+            passengerCount = 1,
+            nextCursor = null
         ),
         onBackClick = {},
         onTrainItemClick = { },
@@ -571,12 +576,15 @@ private fun ReservationScreenPreview() {
 @Composable
 private fun ReservationScreenEmptyPreview() {
     ReservationScreen(
-        uiState = ReservationUiState.Success(
-            trains = emptyList(),
+        uiState = ReservationUiState(
             origin = "서울",
             destination = "부산",
+            trains = UiState.Success(persistentListOf()), // 빈 리스트
             totalTrains = 0,
-            filteredTrains = emptyList()
+            date = "12월 1일",
+            dayOfWeek = "금",
+            passengerCount = 1,
+            nextCursor = null
         ),
         onBackClick = {},
         onTrainItemClick = { },

@@ -6,7 +6,7 @@ interface Route {
     @Serializable
     data class Checkout(
         val seatType: String,
-        val trainId: String,
+        val trainId: Long,
         val normalSeatPrice: Int,
         val premiumSeatPrice: Int?
     ) : Route
