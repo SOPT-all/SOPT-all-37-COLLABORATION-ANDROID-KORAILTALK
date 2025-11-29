@@ -46,6 +46,7 @@ private fun String.toSeatStatusType(): SeatStatusType {
  */
 fun TrainItemResponseDto.toDomain(): DomainTrainItem {
     return DomainTrainItem(
+        trainId = trainId,
         type = type.toTrainType(),  // 확장 함수 사용
         trainNumber = trailNumber,
         departureTime = startAt,

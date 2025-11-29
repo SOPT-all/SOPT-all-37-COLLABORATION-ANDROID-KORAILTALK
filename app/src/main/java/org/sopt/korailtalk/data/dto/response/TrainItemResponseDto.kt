@@ -7,6 +7,9 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class TrainItemResponseDto(
 
+    @SerialName("trainId")
+    val trainId: Long,
+
     @SerialName("type")
     val type: String,
 

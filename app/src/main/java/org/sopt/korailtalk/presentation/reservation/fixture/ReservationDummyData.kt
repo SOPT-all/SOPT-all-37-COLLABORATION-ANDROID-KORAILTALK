@@ -18,6 +18,7 @@ object ReservationDummyData {
     val seoulToBusanTrains = listOf(
         // KTX - 예약 가능
         DomainTrainItem(
+            trainId = 1,
             type = TrainType.KTX,
             trainNumber = "001",
             departureTime = "05:13",
@@ -36,6 +37,7 @@ object ReservationDummyData {
         ),
         // KTX - 일반실 매진임박, 특실 예약가능
         DomainTrainItem(
+            trainId = 2,
             type = TrainType.KTX,
             trainNumber = "003",
             departureTime = "05:30",
@@ -54,6 +56,7 @@ object ReservationDummyData {
         ),
         // SRT - 예약 가능
         DomainTrainItem(
+            trainId = 3,
             type = TrainType.SRT,
             trainNumber = "101",
             departureTime = "06:00",
@@ -72,6 +75,7 @@ object ReservationDummyData {
         ),
         // KTX - 매진
         DomainTrainItem(
+            trainId = 4,
             type = TrainType.KTX,
             trainNumber = "005",
             departureTime = "06:10",
@@ -90,6 +94,7 @@ object ReservationDummyData {
         ),
         // SRT - 특실 매진임박
         DomainTrainItem(
+            trainId = 5,
             type = TrainType.SRT,
             trainNumber = "103",
             departureTime = "06:30",
@@ -108,6 +113,7 @@ object ReservationDummyData {
         ),
         // ITX-새마을 - 예약 가능
         DomainTrainItem(
+            trainId = 6,
             type = TrainType.ITX_SAEMAEUL,
             trainNumber = "201",
             departureTime = "07:05",
@@ -122,6 +128,7 @@ object ReservationDummyData {
         ),
         // KTX - 일반실 예약가능, 특실 매진
         DomainTrainItem(
+            trainId = 7,
             type = TrainType.KTX,
             trainNumber = "007",
             departureTime = "07:30",
@@ -140,6 +147,7 @@ object ReservationDummyData {
         ),
         // 무궁화호 - 예약 가능 (특실 없음)
         DomainTrainItem(
+            trainId = 8,
             type = TrainType.MUGUNGHWA,
             trainNumber = "1201",
             departureTime = "08:00",
@@ -154,6 +162,7 @@ object ReservationDummyData {
         ),
         // SRT - 예약 가능
         DomainTrainItem(
+            trainId = 9,
             type = TrainType.SRT,
             trainNumber = "105",
             departureTime = "08:20",
@@ -172,6 +181,7 @@ object ReservationDummyData {
         ),
         // ITX-마음 - 매진임박
         DomainTrainItem(
+            trainId = 10,
             type = TrainType.ITX_MAEUM,
             trainNumber = "301",
             departureTime = "09:15",
@@ -186,6 +196,7 @@ object ReservationDummyData {
         ),
         // KTX - 일반실 매진, 특실 예약가능
         DomainTrainItem(
+            trainId = 11,
             type = TrainType.KTX,
             trainNumber = "009",
             departureTime = "09:40",
@@ -204,6 +215,7 @@ object ReservationDummyData {
         ),
         // 무궁화호 - 매진 (특실 없음)
         DomainTrainItem(
+            trainId = 12,
             type = TrainType.MUGUNGHWA,
             trainNumber = "1203",
             departureTime = "10:30",
@@ -218,6 +230,7 @@ object ReservationDummyData {
         ),
         // SRT - 모두 예약 가능
         DomainTrainItem(
+            trainId = 13,
             type = TrainType.SRT,
             trainNumber = "107",
             departureTime = "11:00",
@@ -236,6 +249,7 @@ object ReservationDummyData {
         ),
         // KTX - 모두 예약 가능
         DomainTrainItem(
+            trainId = 14,
             type = TrainType.KTX,
             trainNumber = "011",
             departureTime = "11:30",
@@ -254,6 +268,7 @@ object ReservationDummyData {
         ),
         // ITX-새마을 - 매진임박
         DomainTrainItem(
+            trainId = 15,
             type = TrainType.ITX_SAEMAEUL,
             trainNumber = "203",
             departureTime = "12:15",
@@ -273,6 +288,7 @@ object ReservationDummyData {
      */
     val seoulToDaejeonTrains = listOf(
         DomainTrainItem(
+            trainId = 101,
             type = TrainType.KTX,
             trainNumber = "401",
             departureTime = "06:00",
@@ -290,6 +306,7 @@ object ReservationDummyData {
             )
         ),
         DomainTrainItem(
+            trainId = 102,
             type = TrainType.SRT,
             trainNumber = "501",
             departureTime = "06:30",
@@ -307,6 +324,7 @@ object ReservationDummyData {
             )
         ),
         DomainTrainItem(
+            trainId = 103,
             type = TrainType.MUGUNGHWA,
             trainNumber = "1401",
             departureTime = "07:15",

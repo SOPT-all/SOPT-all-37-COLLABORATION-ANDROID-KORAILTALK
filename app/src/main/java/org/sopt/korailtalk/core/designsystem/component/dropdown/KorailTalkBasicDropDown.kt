@@ -15,11 +15,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -32,12 +31,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalFontFamilyResolver
-import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import org.sopt.korailtalk.core.common.util.extension.noRippleClickable
@@ -54,6 +51,7 @@ fun KorailTalkDropdown(
     var expanded by remember { mutableStateOf(false) }
     val measurer = rememberTextMeasurer()
 
+    // 선택된 텍스트 기준 너비 계산 + 아이콘/패딩 여유분
     val textWidth = LocalDensity.current.run {
         measurer.measure(
             text = selectedItem,
@@ -61,20 +59,22 @@ fun KorailTalkDropdown(
         ).size.width.toDp() + 36.dp
     }
 
-
-    // 화살표
+    // 화살표 회전 애니메이션
     val rotateAngle by animateFloatAsState(
         targetValue = if (expanded) 180f else 0f,
         label = "ArrowAnimation"
     )
 
     Box(
-        modifier
-            .zIndex(1f)
+        modifier = modifier
+            .width(textWidth)
+            .zIndex(1f) // 다른 컴포넌트 위에 뜨도록
     ) {
-        Column(
+        // 상단 선택 영역 (앵커)
+        Row(
             Modifier
-                .width(textWidth)
+                .fillMaxWidth()
+                .height(36.dp)
                 .background(
                     color = KorailTalkTheme.colors.white,
                     shape = RoundedCornerShape(size = 4.dp)
@@ -84,72 +84,71 @@ fun KorailTalkDropdown(
                     color = KorailTalkTheme.colors.gray200,
                     shape = RoundedCornerShape(size = 4.dp)
                 )
-        ) { //상단 선택된 아이템
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .height(36.dp)
-                    .clickable {
-                        expanded = !expanded
-                        onItemSelected(items.first())
-                    }
-                    .padding(horizontal = 8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = if (expanded) items[0] else selectedItem,
-                    color = KorailTalkTheme.colors.gray500,
-                    style = KorailTalkTheme.typography.body.body2M15,
+                .clickable {
+                    expanded = !expanded
+                    onItemSelected(items.first())
+                },
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = if (expanded) items[0] else selectedItem,
+                color = KorailTalkTheme.colors.gray500,
+                style = KorailTalkTheme.typography.body.body2M15,
+                modifier = Modifier
+                    .padding(start = 8.dp)
+                    .weight(1f),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            Icon(
+                imageVector = Icons.Default.ArrowDropDown,
+                contentDescription = "Dropdown Arrow",
+                modifier = Modifier
+                    .size(24.dp)
+                    .rotate(rotateAngle)
+                    .padding(end = 4.dp),
+                tint = KorailTalkTheme.colors.gray500
+            )
+        }
 
-                    )
-                Icon(
-                    imageVector = Icons.Default.ArrowDropDown,
-                    contentDescription = "Dropdown Arrow",
-                    modifier = Modifier
-                        .size(24.dp)
-                        .rotate(rotateAngle)
-                        .padding(1.dp),
-                    tint = KorailTalkTheme.colors.gray500
+        // 팝업 드롭다운 메뉴
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            offset = DpOffset(x = 0.dp, y = (-2).dp),
+            shadowElevation = 0.dp,
+            modifier = Modifier
+                .width(textWidth)
+                .background(
+                    color = KorailTalkTheme.colors.white,
+                    shape = RoundedCornerShape(4.dp)
                 )
-            }
+                .border(
+                    width = 1.dp,
+                    color = KorailTalkTheme.colors.gray200,
+                    shape = RoundedCornerShape(4.dp)
+                )
+        ) {
+            val itemsToShow = items.drop(1)
 
-            // 펼쳐졌을 때 나오는 리스트 영역
-            if (expanded) {
-                val itemsToShow = items.drop(1)
-
-                LazyColumn(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    item {
-                        HorizontalDivider(
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 8.dp),
-                            thickness = 1.dp,
-                            color = KorailTalkTheme.colors.gray100
-                        )
+            itemsToShow.forEachIndexed { index, item ->
+                DropdownItem(
+                    item = item,
+                    onItemClick = {
+                        onItemSelected(item)
+                        expanded = false
                     }
-                    itemsIndexed(itemsToShow) { index, item ->
-                        DropdownItem(
-                            item = item,
-                            onItemClick = {
-                                onItemSelected(item)
-                                expanded = false
-                            }
-                        )
+                )
 
-                        if (index < itemsToShow.lastIndex) {
-                            HorizontalDivider(
-                                Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 8.dp),
-                                thickness = 1.dp,
-                                color = KorailTalkTheme.colors.gray100
-                            )
-
-                        }
-                    }
+                if (index < itemsToShow.lastIndex) {
+                    HorizontalDivider(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp),
+                        thickness = 1.dp,
+                        color = KorailTalkTheme.colors.gray100
+                    )
                 }
             }
         }
@@ -165,14 +164,13 @@ fun DropdownItem(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .noRippleClickable(
-                onClick = onItemClick
-            )
+            .background(KorailTalkTheme.colors.white)
+            .noRippleClickable(onClick = onItemClick)
     ) {
         Row(
             modifier = modifier
                 .fillMaxWidth()
-                .height(36.dp)
+                .height(30.dp)
                 .padding(horizontal = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -181,20 +179,9 @@ fun DropdownItem(
                 color = KorailTalkTheme.colors.gray500,
                 style = KorailTalkTheme.typography.body.body2M15,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis // 영역 벗어났을 때 처리
+                overflow = TextOverflow.Ellipsis
             )
         }
-    }
-}
-
-@Composable
-fun rememberTextMeasurer(): TextMeasurer {
-    val fontFamilyResolver = LocalFontFamilyResolver.current
-    val density = LocalDensity.current
-    val layoutDirection = LocalLayoutDirection.current
-
-    return remember(fontFamilyResolver, density, layoutDirection) {
-        TextMeasurer(fontFamilyResolver, density, layoutDirection)
     }
 }
 

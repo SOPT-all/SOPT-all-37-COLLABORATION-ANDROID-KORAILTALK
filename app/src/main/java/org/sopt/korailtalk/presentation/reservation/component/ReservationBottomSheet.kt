@@ -90,6 +90,7 @@ fun ReservationBottomSheet(
 
             // 일반실 선택
             SeatSelectionItem(
+                title = "일반실",
                 seatType = SeatType.NORMAL,
                 price = trainItem.normalSeat.price,
                 isSelected = selectedSeatType == SeatType.NORMAL,
@@ -102,6 +103,7 @@ fun ReservationBottomSheet(
             // 특실 선택 (있는 경우에만)
             trainItem.premiumSeat?.let { premium ->
                 SeatSelectionItem(
+                    title = "특실",
                     seatType = SeatType.PREMIUM,
                     price = premium.price,
                     isSelected = selectedSeatType == SeatType.PREMIUM,
@@ -195,6 +197,7 @@ private fun ReservationBottomSheetPreview() {
         ) {
             ReservationBottomSheet(
                 trainItem = DomainTrainItem(
+                    trainId = 1,
                     type = TrainType.KTX,
                     trainNumber = "001",
                     departureTime = "05:13",
@@ -235,6 +238,7 @@ private fun ReservationBottomSheetPremiumSoldOutPreview() {
     if (showSheet) {
         ReservationBottomSheet(
             trainItem = DomainTrainItem(
+                trainId = 2,
                 type = TrainType.KTX,
                 trainNumber = "001",
                 departureTime = "05:13",
@@ -274,6 +278,7 @@ private fun ReservationBottomSheetNormalOnlyPreview() {
     if (showSheet) {
         ReservationBottomSheet(
             trainItem = DomainTrainItem(
+                trainId = 3,
                 type = TrainType.KTX,
                 trainNumber = "001",
                 departureTime = "05:13",

@@ -5,6 +5,7 @@ import org.sopt.korailtalk.domain.type.SeatType
 import org.sopt.korailtalk.domain.type.TrainType
 
 data class DomainTrainItem(
+    val trainId: Long,
     val type: TrainType,
     val trainNumber: String,
     val departureTime: String,

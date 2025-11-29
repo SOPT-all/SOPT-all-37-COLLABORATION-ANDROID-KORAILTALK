@@ -18,8 +18,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,14 +55,15 @@ fun CheckoutRoute(
     navigateToHome: () -> Unit,
     navigateUp: () -> Unit,
     seatType: SeatType = SeatType.NORMAL,
-    trainId: Long = 1,
-    normalSeatPrice: Int = 48000, // FIXME sample
-    premiumSeatPrice: Int? = 20000, // FIXME sample
+    trainId: Long,
+    normalSeatPrice: Int, // FIXME sample
+    premiumSeatPrice: Int?, // FIXME sample
     viewModel: CheckoutViewModel = hiltViewModel()
 ) {
     val checkoutUiState by viewModel.checkoutUiState.collectAsStateWithLifecycle()
     // 다이얼로그용 상태
     var confirmDialogMessage by remember { mutableStateOf<String?>(null) }
+
 
     LaunchedEffect(Unit) {
         viewModel.getTrainInfo(seatType, trainId)
@@ -124,8 +127,13 @@ private fun CheckoutScreen(
     modifier: Modifier = Modifier,
 ) {
     var selectedCoupon by remember { mutableStateOf<DomainCouponData?>(null) }
-    var finalPrice by remember { mutableStateOf(trainInfo.price) }
-    var isCancelDialogVisible by remember { mutableStateOf<Boolean>(false) }
+    var finalPrice by remember { mutableIntStateOf(if(trainInfo.seatType == SeatType.NORMAL) normalSeatPrice else premiumSeatPrice ?: 0) }
+    var totalPrice by remember { mutableIntStateOf(if(trainInfo.seatType == SeatType.NORMAL) normalSeatPrice else premiumSeatPrice ?: 0) }
+    var couponSalePrice by remember { mutableIntStateOf(0) }
+    var nationDiscount by rememberSaveable { mutableStateOf(false) }
+
+    var isCancelDialogVisible by remember { mutableStateOf(false) }
+    var isCancelConfirmDialogVisible by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier
@@ -162,8 +170,10 @@ private fun CheckoutScreen(
             item { // @kimjw2003
                 CheckoutTopView(
                     trainInfo = trainInfo,
-                    discountFee = 0,
+                    nationDiscount = nationDiscount,
+                    couponSalePrice = couponSalePrice,
                     normalSeatPrice = normalSeatPrice,
+                    totalPrice = totalPrice,
                     selectedCoupon = selectedCoupon,
                     onSelectedCouponChange = ({
                         selectedCoupon = it
@@ -176,7 +186,13 @@ private fun CheckoutScreen(
             }
             item { // @nahy-512
                 CheckoutBottomView(
-                    onNationalConfirmClick = onNationalConfirmClick
+                    price = totalPrice,
+                    onNationalConfirmClick = onNationalConfirmClick,
+                    finalPriceCallback = { callbackPrice ->
+                        nationDiscount = true
+                        finalPrice = callbackPrice
+                        couponSalePrice = trainInfo.price // 전체 운임 할인
+                    }
                 ) // 국가유공자 할인 ~ 하단
             }
         }
@@ -191,10 +207,25 @@ private fun CheckoutScreen(
         )
     }
 
+    // 예약 취소 (아니오/예) 다이얼로그
     ReservationCancelDialog(
         isVisible = isCancelDialogVisible,
         onDismiss = { isCancelDialogVisible = false },
-        onConfirm = { onCancelClick(trainInfo.reservationId) }
+        onConfirm = {
+            isCancelDialogVisible = false
+            isCancelConfirmDialogVisible = true
+            //TODO: 예약 취소 진행
+        }
+    )
+
+    // 예약 취소 확인 다이얼로그
+    ConfirmDialog(
+        isVisible = isCancelConfirmDialogVisible,
+        message = "예약이 취소되었습니다.",
+        onDismiss = {
+            isCancelConfirmDialogVisible = false
+            onCancelClick(trainInfo.reservationId)
+        }
     )
 }
 

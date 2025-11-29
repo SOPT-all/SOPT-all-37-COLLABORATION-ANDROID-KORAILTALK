@@ -57,6 +57,7 @@ sealed interface TypographyTokens {
         val body2M15: TextStyle,
         val body3R15: TextStyle,
         val body4M14: TextStyle,
+        val body4R14: TextStyle,
         val body5R13: TextStyle
     )
 
@@ -132,6 +133,10 @@ val defaultKorailTalkTypography = KorailTalkTypography(
         ),
         body4M14 = KorailTalkTextStyle(
             fontFamily = PretendardFont.Medium,
+            fontSize = 14.sp
+        ),
+        body4R14 = KorailTalkTextStyle(
+            fontFamily = PretendardFont.Regular,
             fontSize = 14.sp
         ),
         body5R13 = KorailTalkTextStyle(
